@@ -62,6 +62,13 @@ export const MenuAdmin = ({ className, userType, active }) => {
                         <MySubButton text={"Demande d'inscription"} href={'/admin/comptes/demande'} />
                     </div>
                 </li>
+                {/* Menu Media */}
+                <li>
+                    <a href="/admin/media" className='hover:bg-blue-600 hover:text-white hover:shadow-md flex items-center justify-start px-4 py-3 w-full font-medium text-left transition-all duration-300'>
+                        <i className="fa-solid fa-images mr-3"></i>
+                        Média
+                    </a>
+                </li>
 
                 {/* Menu Offre */}
                 <li>
@@ -138,7 +145,7 @@ export const MenuAdmin = ({ className, userType, active }) => {
                     <MyButton
                         disabled={false}
                         text={'Titre accueil & SEO accueil'}
-                        icon={'fa-solid fa-newspaper'}
+                        icon={'fa-solid fa-heading'}
                         onClick={() => toggleMenu('titre')}
                         isActive={activeId === 'titre'}
                     />
@@ -152,7 +159,7 @@ export const MenuAdmin = ({ className, userType, active }) => {
                     <MyButton
                         disabled={false}
                         text={'Page'}
-                        icon={'fa-solid fa-newspaper'}
+                        icon={'fa-solid fa-file'}
                         onClick={() => toggleMenu('page')}
                         isActive={activeId === 'page'}
                     />

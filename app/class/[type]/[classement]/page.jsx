@@ -24,7 +24,7 @@ export async function generateMetadata({ params, searchParams }) {
     }
 
     return {
-        title: meta[0].meta_title == '' ? meta[0].title : meta[0].meta_title,
+        title: meta[0].meta_title == null || '' ? meta[0].title : meta[0].meta_title,
         description: meta[0].meta_description,
         // robots: data.indexation == 0 ? "noindex, nofollow" : "index, follow",
         robots: pages === 1 ? meta[0].indexation == 0 ? "noindex, nofollow" : "index, follow" : "noindex, follow"
@@ -86,16 +86,16 @@ const page = async ({ params, searchParams }) => {
                 <div className="space-y-20">
                     <Title params={titres[0]} />
                     <Pagination data={data} classements={classements} total={total} produits={produits} />
-                    <Faq classements={classes} />
                     <div className="xs:px-[5vw] px-[20px] w-full justify-center flex">
                         {titres[0]?.content ? (
-                            <div className="overflow-x-auto prose max-w-none">
+                            <div className="overflow-x-auto max-w-none flex justify-center lg:mx-[180px] mt-10  bg-gray-100 p-5 rounded-xl shadow-xl">
                                 <div className="no-tailwind" dangerouslySetInnerHTML={{ __html: titres[0].content }} />
                             </div>
                         ) : (
                             <p>Contenu indisponible.</p>
                         )}
                     </div>
+                    <Faq classements={classes} />
                 </div>
             </div>
             <Footer articles={articles} result={footers} classements={classements} />

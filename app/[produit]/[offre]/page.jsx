@@ -52,7 +52,7 @@ const page = async ({ params }) => {
     const filterData = (data, terms) => {
         return data.filter((item) =>
             item.classement.some((term) =>
-                terms.some((t) => t.id === term.id) // Comparaison basée sur un identifiant unique
+                terms.some((t) => t.slug === term.slug) // Comparaison basée sur un identifiant unique
             )
         );
     };
@@ -64,7 +64,7 @@ const page = async ({ params }) => {
             <Header classement={classements} produits={produits} />
             <div className="pt-10">
                 <div className="w-full lg:flex mt-10 bg-white shadow-lg rounded-lg ">
-                    <div className="w-full lg:w-2/3 border-r border-gray-200 p-6">
+                    <div className="w-full lg:w-2/2.5 border-r border-gray-200 p-6">
                         <div className="border-b border-gray-200 pb-6">
                             <div className="flex items-center px-3 pt-3 pb-4">
                                 <img src={data?.image ? data?.image : data?.title} className='mr-4 w-20 h-20 rounded-xl shadow-md object-cover' />
@@ -98,10 +98,10 @@ const page = async ({ params }) => {
                         <div className='pt-6'>
                             <img src={data?.image ? data?.image : data?.title} alt="Illustration" className="w-full rounded-md h-[400px] sm:h-[500px] object-cover shadow-md" />
                         </div>
-                        <div className='xs:px-[5vw] px-[5px] rounded-md mt-6 '>
+                        <div className='xs:px-[5vw] px-[5px] rounded-md mt-6 bg-gray-100 p-5 rounded-xl shadow-xl'>
                             <h2 className="text-xl font-semibold mb-4">{data?.title}</h2>
                             {data?.content && (
-                                <div className="overflow-x-auto prose max-w-none">
+                                <div className="overflow-x-auto max-w-none">
                                     <div className="no-tailwind" dangerouslySetInnerHTML={{ __html: data.content }} />
                                 </div>
                             )}
@@ -117,7 +117,7 @@ const page = async ({ params }) => {
                         <div className="w-full flex flex-col items-center gap-y-4">
                             {filteredData.map((item, index) => (
                                 <div key={index} className="w-full flex flex-wrap justify-center">
-                                    <Chatbot produits={produits} data={item} params={produit} classements={classements} className={"lg:w-full w-[400px]"} />
+                                    <Chatbot produits={produits} data={item} params={produit} classements={classements} />
                                 </div>
                             ))}
                         </div>

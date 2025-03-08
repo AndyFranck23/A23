@@ -26,3 +26,17 @@ export async function GET(req, { params }) {
         return NextResponse.json({ error: "Image non trouvée" }, { status: 404 });
     }
 }
+
+export async function DELETE(request, { params }) {
+    // On récupère le nom de l'image depuis les paramètres d'URL
+    const { filename } = params;
+    const filePath = path.join(process.cwd(), 'uploads', filename);
+
+    try {
+        // Supprime le fichier
+        await fs.unlink(filePath);
+        return NextResponse.json({ message: 'Image supprimée avec succès' }, { status: 200 });
+    } catch (error) {
+        return NextResponse.json({ error: error.message || 'Erreur lors de la suppression de l\'image' }, { status: 500 });
+    }
+}

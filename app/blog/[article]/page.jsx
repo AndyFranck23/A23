@@ -1,5 +1,6 @@
 import { Footer } from '@/components/Footer'
 import Header from '@/components/Header'
+import { slugify } from '@/components/Slug'
 import React from 'react'
 
 export async function generateMetadata({ params }) {
@@ -22,15 +23,17 @@ const page = async ({ params }) => {
         fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/types`, { cache: "no-store" }),
         fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/classements`, { cache: "no-store" }),
         fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/produit`, { cache: "no-store" }),
-        fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/blog?slug=${article}`),
+        fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/blog`),
         fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/footer`),
     ])
 
-    const [types, classements, produits, articles, footers] = await Promise.all([typesRes.json(), classementsRes.json(), produitsRes.json(), articlesRes.json(), footerRes.json()])
+    const [types, classements, produits, blog, footers] = await Promise.all([typesRes.json(), classementsRes.json(), produitsRes.json(), articlesRes.json(), footerRes.json()])
     const classement = types.map(category => ({
         ...category,
         classement: classements.filter(item => item.type === category.title)
     }));
+
+    const articles = blog?.filter(item => slugify(item.title) == article)
 
     return (
         <>
@@ -39,7 +42,7 @@ const page = async ({ params }) => {
                 <h1 className='text-2xl md:text-4xl text-black text-center font-bold mb-5'>{articles[0]?.title} </h1>
                 <div className="xs:px-[5vw] px-[20px] w-full justify-center flex">
                     {articles[0]?.content ? (
-                        <div className="overflow-x-auto prose max-w-none">
+                        <div className="overflow-x-auto max-w-none flex lg:mx-[180px] mt-10  bg-gray-100 p-5 rounded-xl shadow-xl">
                             <div className="no-tailwind" dangerouslySetInnerHTML={{ __html: articles[0].content }} />
                         </div>
                     ) : (
@@ -47,7 +50,7 @@ const page = async ({ params }) => {
                     )}
                 </div>
             </div>
-            <Footer articles={articles} result={footers} classements={classement} />
+            <Footer articles={blog} result={footers} classements={classement} />
         </>
     )
 }

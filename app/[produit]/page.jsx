@@ -74,16 +74,16 @@ const page = async ({ params, searchParams }) => {
                 <div className="space-y-20">
                     <Title params={caractProduits} />
                     <Pagination data={data} total={total} classements={classement} produits={produits} />
-                    <Faq classements={produits} />
                     <div className="xs:px-[5vw] px-[20px] w-full justify-center flex">
                         {caractProduits?.content ? (
-                            <div className="overflow-x-auto prose max-w-none">
+                            <div className="overflow-x-auto max-w-none flex justify-center lg:mx-[180px] mt-10  bg-gray-100 p-5 rounded-xl shadow-xl">
                                 <div className="no-tailwind" dangerouslySetInnerHTML={{ __html: caractProduits.content }} />
                             </div>
                         ) : (
                             <p>Contenu indisponible.</p>
                         )}
                     </div>
+                    <Faq classements={produits} />
                 </div>
             </div>
             <Footer articles={articles} result={footers} classements={classement} />

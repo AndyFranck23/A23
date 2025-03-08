@@ -32,7 +32,7 @@ export default function ModifierOffre({ id, classements, TINY_KEY, produit, offr
         meta_title: offre?.meta_title,
         meta_description: offre?.meta_description,
         responsable: userdata.identite,
-        prixType: devise
+        prixType: devise || 'USD'
     })
 
     // const correctedContent = offre?.content

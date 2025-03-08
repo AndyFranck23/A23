@@ -37,7 +37,7 @@ export const handleImageBrowser = async (callback, value, meta) => {
             return `
                     <div class="image-item" onclick="selectImage('${image}')">
                         <img src="/api/uploads/${image}" alt="${image}" class="image-thumbnail"/>
-                        <span>${image}</span>
+                        
                     </div>
                 `;
         }).join("");
@@ -156,7 +156,7 @@ export const handleImageSelect = async (setForm, form) => {
             return `
                     <div class="image-item" onclick="selectImage('${image}')">
                         <img src="/api/uploads/${image}" alt="${image}" class="image-thumbnail"/>
-                        <span>${image}</span>
+                        
                     </div>
                 `;
         }).join("");

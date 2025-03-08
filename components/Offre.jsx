@@ -11,9 +11,9 @@ export const Offre = ({ data, className, classements, produits }) => {
             <div className={`${className ? "" : "flex justify-center w-full"}`}>
                 {/* <div className=""> */}
                 {/* {path ? <h1 className='text-gray-600 text-3xl text-center font-bold my-10 '>{type + ': ' + path} </h1> : <h1 className='text-gray-600 text-3xl text-center font-bold my-10 '>Acceuil </h1>} */}
-                <div className={`${className ? "" : " flex flex-wrap gap-8 justify-around mx-5 w-full"}`}>
+                <div className={`${className ? "" : " flex flex-wrap gap-3 justify-center w-full p-5"}`}>
                     {data.map((item, index) =>
-                        <Chatbot produits={produits} key={index} data={item} classements={classements} className={"w-full xs:w-[400px]"} />
+                        <Chatbot produits={produits} key={index} data={item} classements={classements} />
                     )}
                 </div>
                 {/* </div> */}
@@ -38,7 +38,7 @@ export const Chatbot = ({ data, className, classements, produits }) => {
     // const prod = 
 
     return (
-        <div className={`bg-white grid grid-rows-[auto_50px] hover:scale-102 transition-all duration-300  hover:border-blue-600 border border-blue-100 rounded-xl shadow-lg my-3 w-full lg:w-[300px] xs:w-[350px]  ${className}`}>
+        <div className={`bg-white grid grid-rows-[auto_50px] hover:scale-102 transition-all duration-300  hover:border-blue-600 border border-blue-100 rounded-xl shadow-lg my-7 w-full xs:w-[300px] ${className}`}>
             <div className="">
                 <Link href={process.env.NEXT_PUBLIC_SITE_URL + "/" + data?.id_produit + "/" + data?.slug}>
                     {/* Image en pleine largeur  */}
