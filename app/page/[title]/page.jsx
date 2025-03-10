@@ -35,7 +35,7 @@ const page = async ({ params }) => {
     return (
         <>
             <Header classement={classement} produits={produits} />
-            <div className='text-black pt-20'>
+            <div className='text-black pt-20  mb-10'>
                 <h1 className='text-2xl md:text-4xl text-black text-center font-bold mb-5'>{data[0]?.title} </h1>
                 <div className="xs:px-[5vw] px-[20px] w-full justify-center flex">
                     {data[0]?.content ? (

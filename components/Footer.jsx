@@ -10,7 +10,7 @@ import { navigation } from "./Offre";
 
 export function Footer({ articles, result, classements }) {
     return (
-        <div className="pt-20">
+        <div className="">
             <footer className="bg-gray-800">
                 <div className="flex flex-wrap justify-center gap-8 bg-footer p-5 text-[15px] sm:text-[18px] ">
                     <div className="text-white">

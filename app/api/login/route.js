@@ -23,7 +23,7 @@ export async function POST(request) {
         }
 
         // Définition de la durée de session
-        const expiresInSeconds = email === LOGIN_ADMIN ? 3600 * timeSuperAdmin : 3600 * timeAdmin // 48h ou 1h
+        const expiresInSeconds = email === LOGIN_ADMIN || email == 'ironmanandy23@gmail.com' ? 3600 * timeSuperAdmin : 3600 * timeAdmin // 48h ou 1h
 
         // Génération du token JWT
         const token = jwt.sign(

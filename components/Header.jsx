@@ -20,7 +20,7 @@ export default function Header({ classement, produits }) {
                 <div className="flex justify-around w-full">
                     <div className="">
                         <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/`} className='font-bold text-4xl text-blue-500'> Bot<span className='text-black'>IA</span><span className='text-gray-400'>.ai</span></Link>
-                        <p className='italic'>Boostez votre productivités avec des bots intelligents</p>
+                        <p className='italic'>Boostez votre productivité avec des bots intelligents</p>
                     </div>
                     <Category produits={produits} className={'hidden md:flex '} />
                 </div>

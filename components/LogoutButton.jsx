@@ -257,7 +257,7 @@ export const handleImageSelect = async (setForm, form) => {
     }
 };
 
-export const ButtonClick = ({ href, data }) => {
+export const ButtonClick = ({ href, data, className }) => {
 
     const saveClick = async (offre) => {
         try {
@@ -269,12 +269,12 @@ export const ButtonClick = ({ href, data }) => {
     }
 
     return (
-        <div onClick={() => saveClick(data)} className=" mt-6">
+        <div onClick={() => saveClick(data)} className={`${className}`}>
             <a
                 href={href}
-                className='bg-red-500 hover:bg-red-600 p-2 rounded-xl border font-bold text-white'
+                className='bg-red-500 hover:bg-red-600 p-2 rounded-xl font-bold text-white'
             >
-                Voir le prestataire
+                Voir le prestataire<i className="ml-2 fa-solid fa-arrow-up-right-from-square"></i>
             </a>
         </div>
     )

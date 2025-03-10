@@ -81,7 +81,7 @@ const page = async ({ params, searchParams }) => {
     return (
         <div>
             <Header classement={classements} produits={produits} />
-            <div className="pt-10">
+            <div className="pt-10  mb-10">
                 <Slider types={types} />
                 <div className="space-y-20">
                     <Title params={titres[0]} />

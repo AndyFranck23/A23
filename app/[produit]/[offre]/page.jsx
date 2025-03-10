@@ -2,6 +2,7 @@ import { Footer } from '@/components/Footer'
 import Header from '@/components/Header'
 import { ButtonClick } from '@/components/LogoutButton'
 import { Chatbot } from '@/components/Offre'
+import { slugify } from '@/components/Slug'
 import Link from 'next/link'
 import React from 'react'
 
@@ -75,8 +76,8 @@ const page = async ({ params }) => {
                                     </p>
                                 </div>
                             </div>
-                            <div className='flex justify-between'>
-                                <Link href={process.env.NEXT_PUBLIC_SITE_URL + "/" + data.id_produit} className="bg-gray-100 p-2 rounded-xl border font-bold text-green-600 justify-self-start">{data.id_produit}</Link>
+                            <div className='flex justify-between items-center'>
+                                <Link href={process.env.NEXT_PUBLIC_SITE_URL + "/" + data?.id_produit} className="bg-gray-100 p-2 rounded-xl border font-bold text-green-600 justify-self-start">{produits?.filter(item => slugify(item.title) == data?.id_produit)[0].title}</Link>
                                 <ButtonClick
                                     href={
                                         typeof data?.lien === "string" &&
@@ -105,6 +106,34 @@ const page = async ({ params }) => {
                                     <div className="no-tailwind" dangerouslySetInnerHTML={{ __html: data.content }} />
                                 </div>
                             )}
+                        </div>
+                        <div className="pb-6">
+                            <div className="flex items-center px-3 pt-3 pb-4">
+                                <div>
+                                    <h1 className='text-3xl sm:text-4xl text-gray-900 font-extrabold m-2'>{data?.title}</h1>
+                                </div>
+                            </div>
+                            <div className='flex justify-between'>
+                                <Link href={process.env.NEXT_PUBLIC_SITE_URL + "/" + data?.id_produit} className="bg-gray-100 p-2 rounded-xl border font-bold text-green-600 justify-self-start">{produits?.filter(item => slugify(item.title) == data?.id_produit)[0].title}</Link>
+                            </div>
+                            <div className='flex flex-wrap m-3 gap-4'>
+                                {
+                                    data?.classement.map((item, index) =>
+                                        <Link key={index} href={navigation(item, classements)} className='px-3 py-1 text-sm border-2 border-blue-200 text-blue-600 rounded-full group-hover:border-white/50 group-hover:text-white hover:bg-blue-600 hover:text-white transition-all'>{item.title} </Link>
+                                    )}
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <p className=' text-red-600 font-bold text-4xl p-1'>A partir de: {data?.prix}</p>
+                                <ButtonClick
+                                    href={
+                                        typeof data?.lien === "string" &&
+                                            (data.lien.startsWith("http://") || data.lien.startsWith("https://"))
+                                            ? data.lien
+                                            : '#'
+                                    }
+                                    data={data}
+                                />
+                            </div>
                         </div>
                     </div>
                     <div className="w-full lg:w-1/3 flex flex-col items-center mx-auto p-6 bg-gray-50">

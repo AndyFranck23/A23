@@ -1,3 +1,4 @@
+import AcceuilProduct from '@/components/Accueil/AcceuilProduct';
 import Faq from '@/components/Faq';
 import { Footer } from '@/components/Footer';
 import Header from '@/components/Header';
@@ -69,10 +70,11 @@ const page = async ({ params, searchParams }) => {
     return (
         <div>
             <Header classement={classement} produits={produits} />
-            <div className="pt-10">
+            <div className="pt-10 mb-10">
                 <Slider types={types} />
                 <div className="space-y-20">
                     <Title params={caractProduits} />
+                    <AcceuilProduct params={produit} />
                     <Pagination data={data} total={total} classements={classement} produits={produits} />
                     <div className="xs:px-[5vw] px-[20px] w-full justify-center flex">
                         {caractProduits?.content ? (
