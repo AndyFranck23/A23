@@ -65,6 +65,7 @@ const page = async ({ params }) => {
             <Header classement={classements} produits={produits} />
             <div className="pt-10">
                 <div className="w-full lg:flex mt-10 bg-white shadow-lg rounded-lg ">
+                    {/* Contenue */}
                     <div className="w-full lg:w-2/2.5 border-r border-gray-200 p-6">
                         <div className="border-b border-gray-200 pb-6">
                             <div className="flex items-center px-3 pt-3 pb-4">
@@ -110,7 +111,7 @@ const page = async ({ params }) => {
                         <div className="pb-6">
                             <div className="flex items-center px-3 pt-3 pb-4">
                                 <div>
-                                    <h1 className='text-3xl sm:text-4xl text-gray-900 font-extrabold m-2'>{data?.title}</h1>
+                                    <h2 className='text-3xl sm:text-4xl text-gray-900 font-extrabold m-2'>{data?.title}</h2>
                                 </div>
                             </div>
                             <div className='flex justify-between'>
@@ -136,6 +137,7 @@ const page = async ({ params }) => {
                             </div>
                         </div>
                     </div>
+                    {/* Alternative */}
                     <div className="w-full lg:w-1/3 flex flex-col items-center mx-auto p-6 bg-gray-50">
                         {/* Section Titre */}
                         <h2 id="alternative" className="text-blue-700 text-3xl font-bold text-center mb-4">

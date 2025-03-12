@@ -47,7 +47,7 @@ export default function Card() {
         </p>
       </div>
       {/* Conteneur des cartes */}
-      <div className="">
+      <div className="flex justify-center">
         <div className="flex overflow-x-auto pb-4 gap-10 px-8 md:px-12">
           {/* ChatBot IA Card */}
           <div className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300 flex-shrink-0 w-80">
@@ -69,9 +69,11 @@ export default function Card() {
               </ul>
             </div>
             <div className="px-4 py-2">
-              <button className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 py-2 text-white">
-                En savoir plus <FontAwesomeIcon icon={faChevronRight} className="w-4 h-4 ml-1" />
-              </button>
+              <a href={`${process.env.NEXT_PUBLIC_SITE_URL}/chatbot-ia`} className="">
+                <div className="text-center w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 py-2 text-white">
+                  En savoir plus <FontAwesomeIcon icon={faChevronRight} className="w-4 h-4 ml-1" />
+                </div>
+              </a>
             </div>
           </div>
           {/* CallBot IA Card */}
@@ -93,9 +95,11 @@ export default function Card() {
               </ul>
             </div>
             <div className="px-4 py-2">
-              <button className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 py-2 text-white">
-                En savoir plus <FontAwesomeIcon icon={faChevronRight} className="w-4 h-4 ml-1" />
-              </button>
+              <a href={`${process.env.NEXT_PUBLIC_SITE_URL}/callbot-ia`} className="">
+                <div className="text-center w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 py-2 text-white">
+                  En savoir plus <FontAwesomeIcon icon={faChevronRight} className="w-4 h-4 ml-1" />
+                </div>
+              </a>
             </div>
           </div>
 
@@ -118,9 +122,11 @@ export default function Card() {
               </ul>
             </div>
             <div className="px-4 py-2">
-              <button className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 py-2 text-white">
-                En savoir plus <FontAwesomeIcon icon={faChevronRight} className="w-4 h-4 ml-1" />
-              </button>
+              <a href={`${process.env.NEXT_PUBLIC_SITE_URL}/mailbot-ia`} className="">
+                <div className="text-center w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 py-2 text-white">
+                  En savoir plus <FontAwesomeIcon icon={faChevronRight} className="w-4 h-4 ml-1" />
+                </div>
+              </a>
             </div>
           </div>
         </div>

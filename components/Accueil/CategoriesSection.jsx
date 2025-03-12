@@ -74,7 +74,7 @@ const CategoriesSection = ({ classement, produit, offres }) => {
                     .map((category, index) =>
                       <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/class/${slugify(category.type)}/${slugify(category.title)}`} key={index} className="w-80 bg-white rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg">
                         <div className="bg-blue-400 h-32 flex items-center justify-center text-5xl text-primary">
-                          <img src={category.logo ? category.logo : category.title} className="h-32 w-full object-cover" />
+                          <img src={"https://www.botia.ai/api/uploads/1741329619916-insta.jpg"} className="rounded-md object-cover w-[50px] h-[50px] mr-5" />
                         </div>
                         <div className="p-6">
                           <h3 className="text-xl font-semibold text-gray-900 mb-2">{category.title}</h3>
