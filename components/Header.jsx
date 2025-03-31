@@ -1,50 +1,50 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Menu } from './Menu';
 import Link from 'next/link';
-import { slugify } from './Slug';
+import DarkModeToggle from './DarkModeToggle';
+import { Bars3BottomRightIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
+import { Menu } from './Menu';
 
-// Composant principal Header
-export default function Header({ classement, produits }) {
-    const [isActive, setIsActive] = useState(false);
-
-    const toggleMenu = () => {
-        setIsActive(!isActive);
-    };
+export default function Header() {
+    const [menuActive, setMenuActive] = useState(false)
 
     return (
         <>
-            {isActive && <div onClick={() => setIsActive(!isActive)} className="h-screen bg-black/20 backdrop-blur-sm blakdrop-opacity-20 w-screen fixed z-30"></div>}
-            <div className="fixed w-full z-50 bg-white flex items-center h-[65px] md:justify-between justify-between px-5 ">
-                <div className="flex justify-around w-full">
-                    <div className="">
-                        <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/`} className='font-bold text-4xl text-blue-500'> Bot<span className='text-black'>IA</span><span className='text-gray-400'>.ai</span></Link>
-                        <p className='italic'>Boostez votre productivité avec des bots intelligents</p>
-                    </div>
-                    <Category produits={produits} className={'hidden md:flex '} />
-                </div>
-                <button className='text-black text-2xl' onClick={toggleMenu}>
-                    {isActive ? (<i className="fa-solid fa-xmark"></i>) : (<i className="fa-solid fa-bars"></i>)}
-                </button>
-            </div>
-            <Menu produits={produits} classement={classement} className={`transform ease-in-out duration-500 ${isActive ? 'translate-x-[0%]' : ' translate-x-[200%]'}`} />
+            {menuActive && <div onClick={() => setMenuActive(!menuActive)} className="h-screen bg-black/20 backdrop-blur-sm blakdrop-opacity-20 w-screen fixed z-30"></div>}
+            <nav className={`dark:bg-gray-700 dark:text-gray-300 bg-white text-gray-600 border-b dark:border-gray-700 w-screen fixed z-50`}>
+                <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className={`flex justify-between h-16 items-center`}>
+                        <Link href={`/`} className="text-2xl font-bold">
+                            <div className="flex items-center">
+                                <img src='/logo.png' className='h-20 w-20 object-cover' />
+                                <span className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                                    Les 3 Merveilles
+                                </span>
+                            </div>
+                        </Link>
+
+                        <div className={`hidden sm:flex items-center space-x-8`}>
+                            <Link href={`/`} className={`hover:text-blue-500`}>
+                                Accueil
+                            </Link>
+                            <Link href={`/chocolats`} className={`hover:text-blue-500`}>
+                                Chocolats
+                            </Link>
+                            <Link href={`/tech`} className={`hover:text-blue-500`}>
+                                Technologie
+                            </Link>
+                            <Link href={`/mode`} className={`hover:text-blue-500`}>
+                                La mode
+                            </Link>
+                            <DarkModeToggle className={'lg:block hidden'} />
+                        </div>
+                        <Bars3BottomRightIcon onClick={() => setMenuActive(!menuActive)} className='w-10 h-10' />
+                    </div >
+                </div >
+            </nav >
+            <div className=" pb-[65px]"></div>
+            <Menu className={`transform ease-in-out duration-500 ${menuActive ? 'translate-x-[0%]' : ' translate-x-[200%]'}`} />
         </>
     );
-};
-
-// Composant Category
-export const Category = ({ className, produits }) => {
-
-    return (
-        <div className={`gap-8 flex list-none items-center ${className}`}>
-            {produits?.map((data) => (
-                <li key={data.id}>
-                    <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/${slugify(data.title)}`} className='text-xl  hover:text-primary py-2 hover:border-b-2 hover:border-secondary'>
-                        {data.title}
-                    </Link>
-                </li>
-            ))}
-        </div>
-    );
-};
+}

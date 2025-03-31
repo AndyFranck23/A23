@@ -4,7 +4,7 @@ export default function robots() {
             userAgent: '*',
             allow: '/',
             // Pour bloquer certains dossiers, par exemple :
-            disallow: ['/admin/', '/image-browser/', '/login/', '/signup/']
+            disallow: ['/admin/', '/login/', '/signup/']
         },
         sitemap: `${process.env.NEXT_PUBLIC_SITE_URL}/sitemap.xml`
     }

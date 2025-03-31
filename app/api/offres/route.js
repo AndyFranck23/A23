@@ -1,156 +1,262 @@
-import { nombrePage, slugify } from '@/components/Slug';
-import { queryDB } from '@/lib/db';
-import { NextResponse } from 'next/server';
+import { nombrePage, slugify } from "@/components/Slug";
+import { queryDB } from "@/lib/db";
+import { NextResponse } from "next/server";
 import fs from 'fs/promises'
 import path from "path";
-
 
 export async function GET(request) {
     try {
         const { searchParams } = new URL(request.url);
         const page = parseInt(searchParams.get('page')) || 1;
-        const limit = parseInt(searchParams.get('limit')) || nombrePage; // Nombre d'éléments par page
-        const offset = (page - 1) * limit; // Décalage pour l'OFFSET
-        const produit = searchParams.get('produit');
+        const category = searchParams.get('cat');
         const slug = searchParams.get('slug');
-        const classement = searchParams.get('classement');
-        const accueil = searchParams.get('accueil');
-        const nbre = searchParams.get('nbre');
+        const type = searchParams.get('type');
+        const id = searchParams.get('id');
+        const limit = searchParams.get('limit');
+        const nbreOffre = searchParams.get('total');
+        const admin = searchParams.get('admin');
+        const meta = searchParams.get('meta');
+        const offset = (page - 1) * limit;
 
-        let sqlQuery = '';
-        let params = [];
+        let total = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE status = ?`, [1]);
 
-        if (!slug) {
-            if (accueil == 'tous') {
-                // sqlQuery = `SELECT * FROM offres WHERE id IN (SELECT MIN(id) FROM offres GROUP BY id_produit) ORDER BY id DESC LIMIT 5 OFFSET 15;`;
-                sqlQuery = `SELECT o.title AS title, o.slug AS slug, COUNT(c.id) AS clicks, o.classement AS classement, o.descriptionOC AS descriptionOC, o.image AS image, o.prix AS prix, o.reduction AS reduction, o.lien AS lien, o.id_produit AS id_produit, o.indexation AS indexation, o.content AS content, o.meta_title AS meta_title, o.meta_description AS meta_description
-                        FROM offres o 
-                        LEFT JOIN clicks c ON o.id = c.offre_id WHERE status = 'publier'
-                        GROUP BY o.id
-                        ORDER BY clicks DESC
-                        LIMIT 30`;
-            }
-            else if (classement) {
-                sqlQuery = `SELECT * FROM offres WHERE JSON_CONTAINS(classement, ?, '$') AND status = 'publier' ORDER BY id DESC LIMIT ? OFFSET ?`;
-                params = [JSON.stringify({ slug: classement }), limit, offset];
-            } else {
-                sqlQuery = `SELECT * FROM offres ${produit ? "WHERE id_produit = ? AND status = 'publier'" : "WHERE status = 'publier'"} ORDER BY id DESC LIMIT ? OFFSET ?`;
-                params = produit ? [produit, limit, offset] : [limit, offset];
-            }
+        let sql = `SELECT * FROM offres WHERE status = ? ORDER BY id DESC `
+        let params = [1]
+
+        if (limit) {
+            sql = `SELECT * FROM offres WHERE status = ? AND category = ? ORDER BY id DESC LIMIT ?`
+            params = [1, category, limit]
         }
-
+        if (category) {
+            sql = `SELECT * FROM offres WHERE category = ? ${admin ? '' : 'AND status = ?'} ORDER BY id DESC`
+            params = admin ? [category] : [category, 1]
+            total = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE category = ? AND status = ?`, [category, 1]);
+        }
+        if (id) {
+            sql = `SELECT * FROM offres WHERE id = ? ORDER BY id DESC`
+            params = [id]
+            total = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE id = ?`, [id]);
+        }
+        if (limit && page && category) {
+            sql = `SELECT * FROM offres WHERE category = ? AND status = ? ORDER BY id DESC LIMIT ? OFFSET ?`
+            params = [category, 1, limit, offset]
+            total = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE category = ? AND status = ?`, [category, 1]);
+        }
+        if (limit && page && category && type) {
+            sql = `SELECT * FROM offres WHERE category = ? AND subcategory = ? AND status = ? ORDER BY id DESC LIMIT ? OFFSET ?`
+            params = [category, type, 1, limit, offset]
+            total = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE category = ? AND subcategory = ? AND status = ?`, [category, type, 1]);
+        }
         if (slug) {
-            sqlQuery = `SELECT * FROM offres WHERE slug = ? AND status = 'publier'`;
-            params = [slug];
-            const offre = await queryDB(sqlQuery, params);
-            return NextResponse.json(offre[0] || { message: "Aucune offre trouvée" });
+            sql = `SELECT ${meta ? 'status,meta_title,meta_description' : '*'} FROM offres WHERE slug = ? AND status = ?`
+            params = [slug, 1]
+            total = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE slug = ? AND status = ?`, [slug, 1]);
+        }
+        if (type) {
+            sql = `SELECT * FROM offres WHERE subcategory = ? AND status = ? ORDER BY id DESC ${limit ? 'LIMIT ?' : ''}`
+            params = limit ? [type, 1, limit] : [type, 1]
+            total = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE subcategory = ? AND status = ? ORDER BY id DESC`, [type, 1]);
+        }
+        if (nbreOffre) {
+            const [nbreChoco] = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE category = ? AND status = ? ORDER BY id DESC`, ['chocolats', 1]);
+            const [nbreTech] = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE category = ? AND status = ? ORDER BY id DESC`, ['technologie', 1]);
+            const [nbreMode] = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE category = ? AND status = ? ORDER BY id DESC`, ['mode', 1]);
+            return NextResponse.json([nbreChoco, nbreTech, nbreMode])
         }
 
-        let total = 0
-        // Récupération des nombres d'offres de chaque classement et produit pour la page d'accueil
-        if (nbre) {
-            const offres = await queryDB(`SELECT classement, id_produit FROM offres WHERE status = 'publier'`, []);
-            return NextResponse.json({ offres });
-        }
-        // Récupération du total des offres pour la pagination
-        if (classement) {
-            [{ total }] = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE status = 'publier' AND JSON_CONTAINS(classement, ?, '$')`, [JSON.stringify({ slug: classement })]);
-        } else if (produit) {
-            [{ total }] = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE status = 'publier' AND id_produit = ?`, [produit]);
-        } else {
-            [{ total }] = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE status = 'publier'`, []);
-        }
-
-        // Récupération des offres avec pagination
-        const offres = await queryDB(sqlQuery, params);
-        return NextResponse.json({ offres, total });
+        const offres = await queryDB(sql, params)
+        return NextResponse.json({
+            offres, pagination: {
+                pageCount: (total[0].total / nombrePage) % 2 != 0 ? parseInt(total[0].total / nombrePage) + 1 : parseInt(total[0].total / nombrePage),
+                // currentPage: 1,
+                total: total[0].total
+            }
+        })
     } catch (error) {
-        console.error("Erreur dans GET /offres:", error);
-        return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+        return NextResponse.json({ message: "Erreur du serveur" })
     }
 }
-
-
 
 export async function POST(request) {
     try {
         const formData = await request.formData(); // Utilise formData() pour récupérer les données du formulaire
-        const form = Object.fromEntries(formData); // Convertit formData en objet pour un accès facile
+        const file = formData.getAll('file')
+        const image = formData.getAll('image')
+        const form = Object.fromEntries(formData);
 
-        // Validation des champs obligatoires
-        const requiredFields = ["title", "classement", "descriptionOC", "lien"];
-        for (let field of requiredFields) {
-            if (!form[field]) {
-                return NextResponse.json(
-                    { message: `Le champ ${field} est requis.` },
-                    { status: 400 }
-                );
-            }
-        }
-
-        let imagePublicPath = ''
-        if (form.file) {
+        let imagePublicPath = []
+        if (file.length > 0) {
             // Vérifier si file est bien un objet File
-            if (!(form.file instanceof File)) {
-                return NextResponse.json(
-                    { error: "Le fichier est invalide" },
-                    { status: 400 }
-                );
-            }
+            file.forEach(element => {
+                if (!(element instanceof File)) {
+                    return NextResponse.json(
+                        { message: "Le fichier est invalide" },
+                        { status: 401 }
+                    );
+                }
+            })
             // Définition du dossier d'upload (en dehors de /public/)
             const uploadDir = path.join(process.cwd(), "uploads"); // Stocke dans un dossier hors `public`
             await fs.mkdir(uploadDir, { recursive: true }); // Création du dossier si inexistant
 
             // Génération d'un nom unique pour l'image
-            const imageName = `${Date.now()}-${form.file.name.replace(/\s/g, "_")}`;
-            const filePath = path.join(uploadDir, imageName);
+            for (const element of file) {
+                const imageName = `${Date.now()}-${element.name.replace(/\s/g, "_")}`;
+                const filePath = path.join(uploadDir, imageName);
 
-            // Sauvegarde de l'image
-            const buffer = Buffer.from(await form.file.arrayBuffer());
-            await fs.writeFile(filePath, buffer);
+                // Sauvegarde de l'image
+                const buffer = Buffer.from(await element.arrayBuffer());
+                await fs.writeFile(filePath, buffer);
 
-            // Construction du chemin pour servir l'image via une API
-            imagePublicPath = `/api/uploads/${imageName}`;
+                // Construction du chemin pour servir l'image via une API
+                imagePublicPath.push(`/api/uploads/${imageName}`);
+            }
+            // console.log(imagePublicPath)
+        }
+        image.forEach(element => {
+            imagePublicPath.push(element)
+        });
+
+        const sql = `INSERT INTO offres (
+            name,
+            slug,
+            category,
+            subcategory,
+            price,
+            originalPrice,
+            remise, 
+            program,
+            image,
+            description,
+            poids,
+            features,
+            affiliateLink,
+            status,
+            meta_title,
+            meta_description
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        const values = [
+            form.name,
+            slugify(form.name),
+            form.category,
+            form.subcategory,
+            form.price,
+            form.originalPrice,
+            form.remise,
+            form.program,
+            imagePublicPath,
+            form.description,
+            form.poids,
+            form.features,
+            form.affiliateLink,
+            form.status,
+            form.meta_title,
+            form.meta_description
+        ]
+        await queryDB(sql, values)
+        return NextResponse.json({ message: "Offre ajouté avec succès" })
+    } catch (error) {
+        console.log(error)
+        return NextResponse.json({ message: "Erreur de serveur" })
+    }
+}
+
+
+export async function PUT(request) {
+    try {
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
+
+        const formData = await request.formData(); // Utilise formData() pour récupérer les données du formulaire
+        const file = formData.getAll('file')
+        const image = formData.getAll('image')
+        const form = Object.fromEntries(formData);
+
+        let imagePublicPath = []
+        if (file.length > 0) {
+            // Vérifier si file est bien un objet File
+            file.forEach(element => {
+                if (!(element instanceof File)) {
+                    return NextResponse.json(
+                        { message: "Le fichier est invalide" },
+                        { status: 401 }
+                    );
+                }
+            })
+            // Définition du dossier d'upload (en dehors de /public/)
+            const uploadDir = path.join(process.cwd(), "uploads"); // Stocke dans un dossier hors `public`
+            await fs.mkdir(uploadDir, { recursive: true }); // Création du dossier si inexistant
+
+            // Génération d'un nom unique pour l'image
+            for (const element of file) {
+                const imageName = `${Date.now()}-${element.name.replace(/\s/g, "_")}`;
+                const filePath = path.join(uploadDir, imageName);
+
+                // Sauvegarde de l'image
+                const buffer = Buffer.from(await element.arrayBuffer());
+                await fs.writeFile(filePath, buffer);
+
+                // Construction du chemin pour servir l'image via une API
+                imagePublicPath.push(`/api/uploads/${imageName}`);
+            }
         }
 
-        // Conversion des objets en JSON si nécessaire (classement et descriptionOC)
-        const classementStr = form.classement ? JSON.stringify(JSON.parse(form.classement)) : null;
-        // const descriptionOCStr = form.descriptionOC ? JSON.stringify(JSON.parse(form.descriptionOC)) : null;
+        const allImages = [...image, ...imagePublicPath]
 
-        const sql = `
-            INSERT INTO offres 
-            (title, slug, classement, descriptionOC, image, prix, reduction, lien, id_produit, indexation, content, meta_title, meta_description, responsable)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `;
-
+        const sql = `UPDATE offres SET
+            name = ?,
+            slug = ?,
+            category = ?,
+            subcategory = ?,
+            price = ?,
+            originalPrice = ?,
+            remise = ?, 
+            program = ?,
+            image = ?,
+            description = ?,
+            poids = ?,
+            features = ?,
+            affiliateLink = ?,
+            status = ?,
+            meta_title = ?,
+            meta_description = ?
+        WHERE id = ?`
         const values = [
-            JSON.parse(form.title),
-            JSON.parse(form.slug),
-            classementStr,
-            JSON.parse(form.descriptionOC),
-            imagePublicPath == '' ? JSON.parse(form.image) : imagePublicPath,
-            JSON.parse(form.prix) + " " + JSON.parse(form.prixType) || 0,
-            JSON.parse(form.reduction) || 0,
-            JSON.parse(form.lien),
-            slugify(JSON.parse(form.produit)) || null,
-            JSON.parse(form.indexation) == true ? 1 : 0, // Si indexation est coché, il doit être 1
-            JSON.parse(form.content),
-            JSON.parse(form.meta_title),
-            JSON.parse(form.meta_description),
-            JSON.parse(form.responsable),
-        ];
-
-        await queryDB(sql, values);
-
-        return NextResponse.json(
-            { message: "Offre ajoutée avec succès" },
-            { status: 200 }
-        );
+            form.name,
+            slugify(form.name),
+            form.category,
+            form.subcategory,
+            form.price,
+            form.originalPrice,
+            form.remise,
+            form.program,
+            allImages,
+            form.description,
+            form.poids,
+            form.features,
+            form.affiliateLink,
+            form.status,
+            form.meta_title,
+            form.meta_description,
+            id
+        ]
+        await queryDB(sql, values)
+        return NextResponse.json({ message: "Offre modifié avec succès" })
     } catch (error) {
-        console.error("Erreur dans POST /offres:", error);
-        return NextResponse.json(
-            { message: error.message || "Erreur serveur" },
-            { status: 500 }
-        );
+        return NextResponse.json({ message: "Erreur de serveur" })
+    }
+}
+
+export async function DELETE(request) {
+    try {
+        const { searchParams } = new URL(request.url);
+        const id = parseInt(searchParams.get('id')) || '';
+
+        const sql = `DELETE FROM offres WHERE id = ?`
+        const values = [id]
+        await queryDB(sql, values)
+        return NextResponse.json({ message: "Offre supprimé avec succès" })
+    } catch (error) {
+        return NextResponse.json({ message: "Erreur de serveur" })
     }
 }

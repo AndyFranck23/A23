@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 export function middleware(request) {
-    const token = request.cookies.get('authToken')?.value
+    const token = request.cookies.get('token')?.value
     const protectedRoutes = ['/admin']
 
     if (!token && protectedRoutes.includes(request.nextUrl.pathname)) {

@@ -1,67 +1,52 @@
-'use client';
-
 import Link from "next/link";
-import { slugify } from "./Slug";
-import { navigation } from "./Offre";
 
-// import React from 'react'
-// setColumns(columns.map(col => ({ ...col, lists: [] }))); // Réinitialise les listes
-
-
-export function Footer({ articles, result, classements }) {
+export default function Footer({ articles }) {
     return (
-        <div className="">
-            <footer className="bg-gray-800">
-                <div className="flex flex-wrap justify-center gap-8 bg-footer p-5 text-[15px] sm:text-[18px] ">
-                    <div className="text-white">
-                        <h2 className="text-white pb-[30px] font-bold">TRUCS & ASTUCES DE IA</h2>
-                        <ul className=" list-[circle] pl-5 text-gray-200 space-y-2">
-                            {articles?.map((page) => (
-                                <li key={page.id} className="hover:text-gray-400">
-                                    <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/blog/${slugify(page.title)}`}>{page.title}</Link>
-                                </li>
-                            ))}
+        <footer className="bg-black/90 text-white">
+            <div className="max-w-7xl mx-auto px-4">
+                <div className="grid md:grid-cols-4 gap-8 py-8">
+                    <div>
+                        <h3 className="text-xl font-bold mb-4">Les 3 Merveilles</h3>
+                        {
+                            articles?.length > 0 &&
+                            articles?.map((item, index) =>
+                                <div key={index} className="">
+                                    <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/blog/${item.slug}`} className="hover:text-white text-gray-400">{item.title}</Link>
+                                </div>
+                            )
+                        }
+                        {/* <p className="text-gray-400">Votre guide ultime pour les produits tech et les meilleures affaires.</p> */}
+                    </div>
+                    <div>
+                        <h4 className="font-semibold mb-4">Produits</h4>
+                        <ul className="space-y-2 text-gray-400">
+                            <li><Link href={`/chocolats`} className="hover:text-white">Chocolat</Link></li>
+                            <li><Link href={`/tech`} className="hover:text-white">Technologie</Link></li>
+                            <li><Link href={`/mode`} className="hover:text-white">La mode</Link></li>
                         </ul>
                     </div>
-                    {
-                        result?.map((item, index) =>
-                            <div key={index} className="text-white">
-                                <div className="">
-                                    <h2 className="text-white pb-[30px] font-bold">{item.title}</h2>
-                                    <ul className=" list-[circle] pl-5 text-gray-200 space-y-2">
-                                        {JSON.parse(item.lists).map((page, id) =>
-                                            <div key={id} className="">
-                                                {
-                                                    page.map((ele, j) =>
-                                                        <li key={j} className="hover:text-gray-400">
-                                                            {
-                                                                ele instanceof Object ?
-                                                                    <Link href={navigation(ele, classements)}>{ele.title}</Link> :
-                                                                    <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/#`}>{ele}</Link>
-                                                            }
-                                                        </li>
-                                                    )
-                                                }
-                                                {
-                                                    id < JSON.parse(item.lists).length - 1 &&
-                                                    <div className="w-full my-10">
-                                                        <div className="bg-white w-[9vw] h-1 flex justify-center"></div>
-                                                    </div>
-                                                }
-                                            </div>
-                                        )}
-                                    </ul>
-                                </div>
-                            </div>
-                        )
-                    }
+                    <div>
+                        <h4 className="font-semibold mb-4">Légal</h4>
+                        <ul className="space-y-2 text-gray-400">
+                            <li><a href="#" className="hover:text-white">Mentions légales</a></li>
+                            <li><a href="#" className="hover:text-white">Confidentialité</a></li>
+                            <li><a href="#" className="hover:text-white">Affiliation</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 className="font-semibold mb-4">Contact</h4>
+                        <p className="text-gray-400">contact@les3merveilles.com</p>
+                        <div className="flex space-x-6 mt-4 text-xl">
+                            <a href="#" target="_blank" className="hover:text-blue-400"><i className="fa-brands fa-facebook"></i> </a>
+                            <a href="#" target="_blank" className="hover:text-blue-400"><i className="fa-brands fa-instagram"></i> </a>
+                            <a href="#" target="_blank" className="hover:text-blue-400"><i className="fa-brands fa-linkedin"></i> </a>
+                        </div>
+                    </div>
                 </div>
-            </footer>
-            <div className="flex justify-center items-center text-center p-5 text-xs sm:text-lg">
-                <p>{result[0].text} |
-                    <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/page/mentions-legales`} className="text-blue-500"> Mentions légales</Link>
-                </p>
+                <div className="border-t border-gray-800 py-5 text-center text-gray-400">
+                    <p>© 2025 Les 3 Merveilles. Tous droits réservés.</p>
+                </div>
             </div>
-        </div>
-    )
+        </footer>
+    );
 }

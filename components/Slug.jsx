@@ -8,4 +8,4 @@ export function slugify(title) {
         .replace(/\s+/g, "-"); // Remplace les espaces par des tirets
 }
 
-export const nombrePage = 20
+export const nombrePage = 3

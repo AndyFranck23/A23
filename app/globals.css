@@ -12,3 +12,7 @@
 .no-tailwind * {
     all: revert;
 }
+
+.prose {
+    @apply max-w-3xl mx-auto leading-relaxed;
+}

@@ -3,25 +3,23 @@ import { slugify } from "@/components/Slug";
 export default async function sitemap() {
     try {
         // Récupération des données depuis l'API via Promise.all
-        const [offresRes, classementsRes, produitsRes, articlesRes] = await Promise.all([
-            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres`),
-            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/classements`),
-            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/produit`),
-            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/blog`),
+        const [offresRes, categoryRes, articlesRes] = await Promise.all([
+            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?cat=chocolats`),
+            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category`),
+            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/articles`),
         ]);
 
         // Vérification que toutes les réponses sont correctes
-        if (!offresRes.ok || !classementsRes.ok || !produitsRes.ok || !articlesRes.ok) {
+        if (!offresRes.ok || !categoryRes.ok || !articlesRes.ok) {
             throw new Error("Erreur lors de la récupération des données API");
         }
 
-        // Traitement des réponses JSON
-        const [{ offres }, classements, produits, articles] = await Promise.all([
-            offresRes.json(),
-            classementsRes.json(),
-            produitsRes.json(),
-            articlesRes.json(),
-        ]);
+        // Conversion des réponses en JSON
+        const offresData = await offresRes.json();
+        const categories = await categoryRes.json();
+        const articles = await articlesRes.json();
+
+        const offres = offresData.offres || offresData;
 
         // Définition des pages statiques de votre site
         const staticPages = [
@@ -32,7 +30,19 @@ export default async function sitemap() {
                 priority: 1.0,
             },
             {
-                url: `${process.env.NEXT_PUBLIC_SITE_URL}/page`,
+                url: `${process.env.NEXT_PUBLIC_SITE_URL}/chocolats`,
+                lastModified: new Date().toISOString(),
+                changeFrequency: "daily",
+                priority: 0.8,
+            },
+            {
+                url: `${process.env.NEXT_PUBLIC_SITE_URL}/tech`,
+                lastModified: new Date().toISOString(),
+                changeFrequency: "daily",
+                priority: 0.8,
+            },
+            {
+                url: `${process.env.NEXT_PUBLIC_SITE_URL}/mode`,
                 lastModified: new Date().toISOString(),
                 changeFrequency: "daily",
                 priority: 0.8,
@@ -40,26 +50,24 @@ export default async function sitemap() {
         ];
 
         // Génération des entrées pour les pages dynamiques
-        const dynamicPagesProduits = produits?.map((item) => ({
-            url: `${process.env.NEXT_PUBLIC_SITE_URL}/${slugify(item.title)}`,
-            changeFrequency: "daily",
-            priority: 0.7,
-        })) || [];
 
-        const dynamicPagesClassement = classements?.map((item) => ({
-            url: `${process.env.NEXT_PUBLIC_SITE_URL}/class/${slugify(item.type)}/${slugify(item.title)}`,
+        const dynamicPagesClassement = categories?.map((item) => ({
+            url: `${process.env.NEXT_PUBLIC_SITE_URL}/chocolats/${item.slug}`,
+            lastModified: new Date().toISOString(),
             changeFrequency: "daily",
             priority: 0.6,
         })) || [];
 
         const dynamicPagesOffres = offres?.map((item) => ({
-            url: `${process.env.NEXT_PUBLIC_SITE_URL}/${slugify(item.id_produit)}/${item.slug}`,
+            url: `${process.env.NEXT_PUBLIC_SITE_URL}/${slugify(item.category)}/${slugify(item.subcategory)}/${item.slug}`,
+            lastModified: new Date().toISOString(),
             changeFrequency: "daily",
             priority: 0.5,
         })) || [];
 
         const dynamicPagesBlog = articles?.map((item) => ({
-            url: `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${slugify(item.title)}`,
+            url: `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${item.slug}`,
+            lastModified: new Date().toISOString(),
             changeFrequency: "daily",
             priority: 0.4,
         })) || [];
@@ -67,7 +75,6 @@ export default async function sitemap() {
         // Retourne la liste complète des URL
         return [
             ...staticPages,
-            ...dynamicPagesProduits,
             ...dynamicPagesClassement,
             ...dynamicPagesOffres,
             ...dynamicPagesBlog,
@@ -78,3 +85,4 @@ export default async function sitemap() {
         return [];
     }
 }
+export const dynamic = 'force-dynamic';
