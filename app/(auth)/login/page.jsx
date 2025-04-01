@@ -11,7 +11,7 @@ export default function Signup() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const res = await fetch(`/api/auth/login`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),

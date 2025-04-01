@@ -13,7 +13,7 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/articles?footer=true`)
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/articles?footer=true`, { cache: "no-store" })
     const data = await response.json()
 
     return (

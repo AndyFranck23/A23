@@ -18,7 +18,7 @@ export default function ListeOffres() {
         const fetchOffres = async () => {
             try {
                 // Remplacez cette URL par votre endpoint API réel
-                const response = await fetch(`/api/offres?cat=${category}&admin=dd`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?cat=${category}&admin=dd`);
                 if (!response.statusText) {
                     throw new Error('Erreur lors de la récupération des offres');
                 }
