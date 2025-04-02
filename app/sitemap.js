@@ -74,11 +74,14 @@ export default async function sitemap() {
 
         // Retourne la liste complète des URL
         return [
+            "<?xml version='1.0' encoding='UTF-8'?>",
             ...staticPages,
             ...dynamicPagesClassement,
             ...dynamicPagesOffres,
             ...dynamicPagesBlog,
-        ];
+        ]
+        // }
+        // `;
     } catch (error) {
         console.error("Fetch failed for posts in sitemap:", error);
         // Retourner un tableau vide pour éviter de bloquer le build
