@@ -11,21 +11,14 @@ export const metadata = {
   robots: 'index, follow'
 };
 
-export default async function RootLayout({ children }) {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/articles?footer=true`, { cache: "no-store" })
-    const data = await response.json()
-
-    return (
-      <html lang="fr" suppressHydrationWarning>
-        <body>          {/*  className={inter.className} */}
-          <Header />
-          {children}
-          <Footer articles={data} />
-        </body>
-      </html>
-    );
-  } catch (error) {
-    console.log(error)
-  }
+export default function RootLayout({ children }) {
+  return (
+    <html lang="fr" suppressHydrationWarning>
+      <body>          {/*  className={inter.className} */}
+        <Header />
+        {children}
+        <Footer />
+      </body>
+    </html>
+  );
 }

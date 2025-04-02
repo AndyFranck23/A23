@@ -4,37 +4,85 @@ import Hero from '@/components/Accueil/Hero';
 import ProductsSection from '@/components/Accueil/ProductsSection';
 import OffreSection from '@/components/Accueil/OffreSection';
 // import Carousel from '@/components/Accueil/Carousel';
-
-export default function Home() {
-  const slides = [
-    {
-      id: 1,
-      image: '/images/slide1.jpg',
-      caption: 'Inspiration Chocolatée',
-    },
-    {
-      id: 2,
-      image: '/images/slide2.jpg',
-      caption: 'Technologie Innovante',
-    },
-    {
-      id: 3,
-      image: '/images/slide3.png',
-      caption: 'Style et Élégance',
-    },
-  ];
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Hero />
-      <ProductsSection />
-      <DescriptionSection />
-      <OffreSection />
-      {/* <Carousel slides={slides} /> */}
-      <ArticlesSection />
-    </div>
-  );
+export async function generateMetadata() {
+    return {
+        title: "BotIA.ai: top sélection des meilleurs ChatBot IA, CallBot IA et MailBot IA",
+        description: "Avec BotIA, boostez votre relation client avec notre sélection des meilleurs ChatBot IA, CallBot IA et MailBot IA. Notre guide complet vous aide à choisir la solution la plus adaptée à vos besoins et à votre budget.",
+        // robots: data.indexation == 0 ? "noindex, nofollow" : "index, follow",
+        robots: "index, follow"
+    }
 }
 
+export default async function page() {
+    try {
+        const [chocoRes, techRes, modeRes, articlesRes, totalRes] = await Promise.all([
+            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?limit=3&cat=chocolats`),
+            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?limit=3&cat=technologie`),
+            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?limit=3&cat=mode`),
+            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/articles`),
+            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?total=total`)
+        ])
+        const [dataChoco, dataTech, dataMode, dataArticles, total] = await Promise.all([
+            chocoRes.json(),
+            techRes.json(),
+            modeRes.json(),
+            articlesRes.json(),
+            totalRes.json()
+        ])
+
+        const articles = dataArticles?.map(item => ({
+            ...item,
+            image: item.image == "" ? [] : JSON.parse(item.image)
+        }))
+
+        const chocolats = dataChoco?.offres.map(item => ({
+            ...item,
+            features: item.features.split(',').map(f => f.trim()),
+            image: item.image == "" ? [] : JSON.parse(item.image)
+        }))
+        const technologie = dataTech?.offres.map(item => ({
+            ...item,
+            features: item.features.split(',').map(f => f.trim()),
+            image: item.image == "" ? [] : JSON.parse(item.image)
+        }))
+        const mode = dataMode?.offres.map(item => ({
+            ...item,
+            features: item.features.split(',').map(f => f.trim()),
+            image: item.image == "" ? [] : JSON.parse(item.image)
+        }))
+
+        // const slides = [
+        //   {
+        //     id: 1,
+        //     image: '/images/slide1.jpg',
+        //     caption: 'Inspiration Chocolatée',
+        //   },
+        //   {
+        //     id: 2,
+        //     image: '/images/slide2.jpg',
+        //     caption: 'Technologie Innovante',
+        //   },
+        //   {
+        //     id: 3,
+        //     image: '/images/slide3.png',
+        //     caption: 'Style et Élégance',
+        //   },
+        // ];
+        return (
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+                <Hero />
+                <ProductsSection total={total} />
+                <DescriptionSection />
+                <OffreSection chocolats={chocolats} technologie={technologie} mode={mode} />
+                {/* <Carousel slides={slides} /> */}
+                <ArticlesSection articles={articles} />
+            </div>
+        );
+    } catch (error) {
+        console.log(error)
+    }
+}
+export const dynamic = 'force-dynamic';
 
 {/* <div className="max-w-4xl mx-auto my-8 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
   En-tête
