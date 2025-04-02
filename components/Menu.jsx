@@ -27,16 +27,16 @@ export const Menu = ({ className }) => {
         <div className="flex justify-end">
             <div className={`overflow-y-auto fixed dark:bg-gray-900 dark:text-gray-300 bg-white w-[200px] h-screen z-40 px-2 pr-5 ${className}`}>
                 <div className="">
-                    <Link href={`/`} className={`flex justify-between items-center w-full p-3 rounded-2xl  dark:hover:bg-gray-800 hover:bg-gray-200`}>
+                    <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/`} className={`flex justify-between items-center w-full p-3 rounded-2xl  dark:hover:bg-gray-800 hover:bg-gray-200`}>
                         Accueil
                     </Link>
-                    <Link href={`/chocolats`} className={`flex justify-between items-center w-full p-3 rounded-2xl  dark:hover:bg-gray-800 hover:bg-gray-200`}>
+                    <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/chocolats`} className={`flex justify-between items-center w-full p-3 rounded-2xl  dark:hover:bg-gray-800 hover:bg-gray-200`}>
                         Chocolats
                     </Link>
-                    <Link href={`/tech`} className={`flex justify-between items-center w-full p-3 rounded-2xl  dark:hover:bg-gray-800 hover:bg-gray-200`}>
+                    <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/tech`} className={`flex justify-between items-center w-full p-3 rounded-2xl  dark:hover:bg-gray-800 hover:bg-gray-200`}>
                         Technologie
                     </Link>
-                    <Link href={`/mode`} className={`flex justify-between items-center w-full p-3 rounded-2xl  dark:hover:bg-gray-800 hover:bg-gray-200`}>
+                    <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/mode`} className={`flex justify-between items-center w-full p-3 rounded-2xl  dark:hover:bg-gray-800 hover:bg-gray-200`}>
                         La mode
                     </Link>
                     <div className="">
@@ -111,11 +111,11 @@ export const Menu = ({ className }) => {
                             </div>
                         }
                     </div>
-                    <Link href={`/blog`} className={`flex justify-between items-center w-full p-3 rounded-2xl  dark:hover:bg-gray-800 hover:bg-gray-200`}>
+                    <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/blog`} className={`flex justify-between items-center w-full p-3 rounded-2xl  dark:hover:bg-gray-800 hover:bg-gray-200`}>
                         Blog
                     </Link>
                     <DarkModeToggle className={`flex justify-between items-center w-full p-3 rounded-2xl`} />
-                    <Link href={`/about`} className={`flex justify-between items-center w-full p-3 rounded-2xl  dark:hover:bg-gray-800 hover:bg-gray-200'}`}>
+                    <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/about`} className={`flex justify-between items-center w-full p-3 rounded-2xl  dark:hover:bg-gray-800 hover:bg-gray-200'}`}>
                         À propos
                     </Link>
                 </div>

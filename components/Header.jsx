@@ -15,7 +15,7 @@ export default function Header() {
             <nav className={`dark:bg-gray-700 dark:text-gray-300 bg-white text-gray-600 border-b dark:border-gray-700 w-screen fixed z-50`}>
                 <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
                     <div className={`flex justify-between h-16 items-center`}>
-                        <Link href={`/`} className="text-2xl font-bold">
+                        <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/`} className="text-2xl font-bold">
                             <div className="flex items-center">
                                 <img src='/logo.png' className='h-20 w-20 object-cover' />
                                 <span className="text-2xl font-bold text-gray-800 dark:text-gray-100">
@@ -25,16 +25,16 @@ export default function Header() {
                         </Link>
 
                         <div className={`hidden sm:flex items-center space-x-8`}>
-                            <Link href={`/`} className={`hover:text-blue-500`}>
+                            <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/`} className={`hover:text-blue-500`}>
                                 Accueil
                             </Link>
-                            <Link href={`/chocolats`} className={`hover:text-blue-500`}>
+                            <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/chocolats`} className={`hover:text-blue-500`}>
                                 Chocolats
                             </Link>
-                            <Link href={`/tech`} className={`hover:text-blue-500`}>
+                            <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/tech`} className={`hover:text-blue-500`}>
                                 Technologie
                             </Link>
-                            <Link href={`/mode`} className={`hover:text-blue-500`}>
+                            <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/mode`} className={`hover:text-blue-500`}>
                                 La mode
                             </Link>
                             <DarkModeToggle className={'lg:block hidden'} />

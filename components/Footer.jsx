@@ -24,9 +24,9 @@ export default async function Footer() {
                         <div>
                             <h4 className="font-semibold mb-4">Produits</h4>
                             <ul className="space-y-2 text-gray-400">
-                                <li><Link href={`/chocolats`} className="hover:text-white">Chocolat</Link></li>
-                                <li><Link href={`/tech`} className="hover:text-white">Technologie</Link></li>
-                                <li><Link href={`/mode`} className="hover:text-white">La mode</Link></li>
+                                <li><Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/chocolats`} className="hover:text-white">Chocolat</Link></li>
+                                <li><Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/tech`} className="hover:text-white">Technologie</Link></li>
+                                <li><Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/mode`} className="hover:text-white">La mode</Link></li>
                             </ul>
                         </div>
                         <div>
