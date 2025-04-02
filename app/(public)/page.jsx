@@ -4,14 +4,6 @@ import Hero from '@/components/Accueil/Hero';
 import ProductsSection from '@/components/Accueil/ProductsSection';
 import OffreSection from '@/components/Accueil/OffreSection';
 // import Carousel from '@/components/Accueil/Carousel';
-export async function generateMetadata() {
-    return {
-        title: "BotIA.ai: top sélection des meilleurs ChatBot IA, CallBot IA et MailBot IA",
-        description: "Avec BotIA, boostez votre relation client avec notre sélection des meilleurs ChatBot IA, CallBot IA et MailBot IA. Notre guide complet vous aide à choisir la solution la plus adaptée à vos besoins et à votre budget.",
-        // robots: data.indexation == 0 ? "noindex, nofollow" : "index, follow",
-        robots: "index, follow"
-    }
-}
 
 export default async function page() {
     try {
