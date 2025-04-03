@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
     try {
-        const uploadsDir = path.join(process.cwd(), "uploads");
+        const uploadsDir = path.join(process.cwd(), "/uploads");
 
         if (!fs2.existsSync(uploadsDir)) {
             console.error("❌ Le dossier 'uploads' n'existe pas !");
@@ -32,13 +32,13 @@ export async function POST(request) {
         }
 
         // Définir le dossier de destination (créé s'il n'existe pas)
-        const uploadDir = path.join(process.cwd(), "uploads");
+        const uploadDir = path.join(process.cwd(), "/uploads");
         await fs.mkdir(uploadDir, { recursive: true });
 
         // Générer un nom de fichier unique
         let fileName = ''
         for (const ele of file) {
-            fileName = `${Date.now()}-${ele.name}`;
+            fileName = `${Date.now()}-${ele.name.replace(/\s/g, "_")}`;
             const filePath = path.join(uploadDir, fileName);
 
             // Convertir le fichier en buffer et l'écrire sur le disque
@@ -46,11 +46,11 @@ export async function POST(request) {
             await fs.writeFile(filePath, buffer);
         }
 
-        return NextResponse.json(
-            { location: `/api/uploads/${fileName}` },
-            { message: "Image uploadée avec succès" },
-            { status: 200 }
-        );
+        return NextResponse.json({
+            message: "Image uploadée avec succès",
+            location: `/api/uploads/${fileName}`,
+            status: 200
+        });
     } catch (error) {
         return NextResponse.json(
             { error: error.message || "Erreur lors de l'upload de l'image" },

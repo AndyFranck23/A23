@@ -29,7 +29,7 @@ export async function GET(req, { params }) {
 
 export async function DELETE(request, { params }) {
     // On récupère le nom de l'image depuis les paramètres d'URL
-    const { filename } = params;
+    const { filename } = await params;
     const filePath = path.join(process.cwd(), 'uploads', filename);
 
     try {

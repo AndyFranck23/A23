@@ -96,7 +96,7 @@ export async function POST(request) {
                 }
             })
             // Définition du dossier d'upload (en dehors de /public/)
-            const uploadDir = path.join(process.cwd(), "uploads"); // Stocke dans un dossier hors `public`
+            const uploadDir = path.join(process.cwd(), "/uploads"); // Stocke dans un dossier hors `public`
             await fs.mkdir(uploadDir, { recursive: true }); // Création du dossier si inexistant
 
             // Génération d'un nom unique pour l'image
