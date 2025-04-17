@@ -11,17 +11,30 @@ export const metadata = {
   robots: 'index, follow'
 };
 
-export default function RootLayout({ children }) {
-  return (
-    <html lang="fr" suppressHydrationWarning>
-      <head>
-        <meta name="google-site-verification" content="Se1vDnap2z_kfKlGSWxpmWTH56WFkIaVTr2w5ecKVSQ" />
-      </head>
-      <body>          {/*  className={inter.className} */}
-        <Header />
-        {children}
-        <Footer />
-      </body>
-    </html>
-  );
+export default async function RootLayout({ children }) {
+  try {
+    const [categoryRes, produitRes] = await Promise.all([
+      fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?xml=df`),
+      fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/produit?xml=df`)
+    ])
+    const [categories, produit] = await Promise.all([
+      categoryRes.json(),
+      produitRes.json()
+    ])
+
+    return (
+      <html lang="fr" suppressHydrationWarning>
+        <head>
+          <meta name="google-site-verification" content="Se1vDnap2z_kfKlGSWxpmWTH56WFkIaVTr2w5ecKVSQ" />
+        </head>
+        <body>          {/*  className={inter.className} */}
+          <Header produits={produit} category={categories} />
+          {children}
+          <Footer produits={produit} />
+        </body>
+      </html>
+    );
+  } catch (error) {
+    console.log(error)
+  }
 }

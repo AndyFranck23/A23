@@ -1,10 +1,11 @@
 // app/produit/chocolat-premium/page.js
 
+import { slugify } from "../Slug";
 import ProductCard from "./ProductCard";
 
 export default async function Alternative({ type }) {
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?type=${type}&limit=6`)
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?category_id=${type}&limit=6`)
         const { offres } = await response.json()
         const chocolats = offres?.map(item => ({
             ...item,

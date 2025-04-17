@@ -1,36 +1,18 @@
 "use client";
 import MyInput from '@/components/Admin/MyInput';
 import axios from 'axios';
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export default function NewProductForm() {
-    const params = useParams()
-    const id = params.catdata
     const [load, setLoad] = useState(false);
     const [form, setForm] = useState({
-        produit_id: id,
-        name: '',
-        category: '',
+        nom: '',
         description: '',
         status: 0,
         meta_title: '',
         meta_description: ''
     });
     const [message, setMessage] = useState('');
-
-    useEffect(() => {
-        const fetchProduit = async () => {
-            try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/produit?id=${id}`)
-                const [produit] = await response.json()
-                setForm({ ...form, category: produit.nom })
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        fetchProduit()
-    }, [])
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -44,7 +26,7 @@ export default function NewProductForm() {
             Object.keys(form).forEach(key => {
                 formData.append(key, form[key]);
             });
-            const res = await axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category`, formData, {
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/produit`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -53,8 +35,7 @@ export default function NewProductForm() {
             alert(res.data.message)
             setMessage(res.data.message);
             setForm({
-                ...form,
-                name: '',
+                nom: '',
                 description: '',
                 status: 0,
                 meta_title: '',
@@ -72,25 +53,17 @@ export default function NewProductForm() {
         <>
             <div className="w-full h-screen text-gray-700 dark:text-gray-200 dark:bg-gray-700">
                 <div className="max-w-4xl mx-auto p-4">
-                    <h1 className="text-2xl font-bold mb-4">Ajouter un nouveau catégorie</h1>
+                    <h1 className="text-2xl font-bold mb-4">Ajouter un nouveau produit</h1>
                     {message && <p className="mb-4 text-green-600">{message}</p>}
                     <form onSubmit={handleSubmit} className="md:grid grid-cols-2 gap-3">
                         <div className="">
                             <MyInput
-                                name="name"
+                                name="nom"
                                 required
                                 label={"Nom"}
                                 type="text"
-                                value={form.name}
+                                value={form.nom}
                                 onChange={handleChange}
-                            />
-                            <MyInput
-                                name="category"
-                                required
-                                label={"Catégorie"}
-                                type="text"
-                                value={form.category}
-                                disabled={true}
                             />
                             {/* <MyInput
                             name="image"

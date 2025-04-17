@@ -25,15 +25,14 @@ export async function generateMetadata({ params, searchParams }) {
     }
 }
 
-export const nbreProduitParPage = 2
 const page = async ({ params, searchParams }) => {
     try {
         const searchParam = await searchParams
         const currentPage = parseInt(searchParam.page) || 1
 
-        const { type } = await params
+        const { type, produit } = await params
         const [offresRes, categoryRes] = await Promise.all([
-            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?page=${currentPage}&limit=${nombrePage}&cat=chocolats&type=${type}`),
+            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?page=${currentPage}&limit=${nombrePage}&produit_id=${produit}&category_id=${type}`),
             fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?slug=${type}`)
         ])
         const [{ offres, pagination }, [category]] = await Promise.all([

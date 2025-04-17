@@ -6,7 +6,7 @@ import { Bars3BottomRightIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { Menu } from './Menu';
 
-export default function Header() {
+export default function Header({ produits, category }) {
     const [menuActive, setMenuActive] = useState(false)
 
     return (
@@ -31,10 +31,10 @@ export default function Header() {
                             <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/chocolats`} className={`hover:text-blue-500`}>
                                 Chocolats
                             </Link>
-                            <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/tech`} className={`hover:text-blue-500`}>
+                            <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/technologie`} className={`hover:text-blue-500`}>
                                 Technologie
                             </Link>
-                            <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/mode`} className={`hover:text-blue-500`}>
+                            <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/la-mode`} className={`hover:text-blue-500`}>
                                 La mode
                             </Link>
                             <DarkModeToggle className={'lg:block hidden'} />
@@ -44,7 +44,11 @@ export default function Header() {
                 </div >
             </nav >
             <div className=" pb-[65px]"></div>
-            <Menu className={`transform ease-in-out duration-500 ${menuActive ? 'translate-x-[0%]' : ' translate-x-[200%]'}`} />
+            <Menu
+                produits={produits}
+                category={category}
+                className={`transform ease-in-out duration-500 ${menuActive ? 'translate-x-[0%]' : ' translate-x-[200%]'}`}
+            />
         </>
     );
 }

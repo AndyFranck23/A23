@@ -7,67 +7,134 @@ import path from "path";
 export async function GET(request) {
     try {
         const { searchParams } = new URL(request.url);
-        const page = parseInt(searchParams.get('page')) || 1;
-        const category = searchParams.get('cat');
+        const pagination = searchParams.get('page')
+        const page = parseInt(pagination) || 1;
+        const produit_id = searchParams.get('produit_id');
         const slug = searchParams.get('slug');
-        const type = searchParams.get('type');
+        const category_id = searchParams.get('category_id');
         const id = searchParams.get('id');
         const limit = searchParams.get('limit');
         const nbreOffre = searchParams.get('total');
         const admin = searchParams.get('admin');
         const meta = searchParams.get('meta');
+        const xml = searchParams.get('xml');
         const offset = (page - 1) * limit;
+
+        const querysql = `SELECT 
+                offres.*, 
+                produits.slug AS produit,
+                categories.slug AS category 
+            FROM offres
+                LEFT JOIN produits ON offres.produit_id = produits.id
+                LEFT JOIN categories ON offres.category_id = categories.id`
 
         let total = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE status = ?`, [1]);
 
-        let sql = `SELECT * FROM offres WHERE status = ? ORDER BY id DESC `
+        let sql = `${querysql} WHERE offres.status = ? ORDER BY offres.id DESC `
         let params = [1]
 
-        if (limit) {
-            sql = `SELECT * FROM offres WHERE status = ? AND category = ? ORDER BY id DESC LIMIT ?`
-            params = [1, category, limit]
+        if (xml) {
+            sql = `SELECT 
+                offres.slug, 
+                produits.slug AS produit,
+                categories.slug AS category 
+                FROM offres
+                LEFT JOIN produits ON offres.produit_id = produits.id
+                LEFT JOIN categories ON offres.category_id = categories.id`
+            params = []
         }
-        if (category) {
-            sql = `SELECT * FROM offres WHERE category = ? ${admin ? '' : 'AND status = ?'} ORDER BY id DESC`
-            params = admin ? [category] : [category, 1]
-            total = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE category = ? AND status = ?`, [category, 1]);
+
+        // Pour la page / et admin
+        if (produit_id) {
+            sql = `${querysql}
+            ${!isNaN(Number(produit_id)) ? 'WHERE offres.produit_id = ?' : 'WHERE produits.slug = ?'}
+            ${admin ? '' : 'AND offres.status = ?'} 
+            ORDER BY offres.id DESC 
+            ${limit ? 'LIMIT ?' : ''}`
+            params = admin ? limit ? [produit_id, limit] : [produit_id] : limit ? [produit_id, 1, limit] : [produit_id, 1]
+            total = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE produit_id = ? AND status = ?`, [produit_id, 1]);
         }
+
+        // Pour le update dans l'admin
         if (id) {
-            sql = `SELECT * FROM offres WHERE id = ? ORDER BY id DESC`
+            sql = `${querysql} WHERE offres.id = ? ORDER BY offres.id DESC`
             params = [id]
             total = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE id = ?`, [id]);
         }
-        if (limit && page && category) {
-            sql = `SELECT * FROM offres WHERE category = ? AND status = ? ORDER BY id DESC LIMIT ? OFFSET ?`
-            params = [category, 1, limit, offset]
-            total = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE category = ? AND status = ?`, [category, 1]);
+
+        // Pour la page url: /chocolats
+        if (limit && pagination && produit_id) {
+            sql = `${querysql} ${!isNaN(Number(produit_id)) ? 'WHERE offres.produit_id = ?' : 'WHERE produits.slug = ?'} AND offres.status = ? ORDER BY offres.id DESC LIMIT ? OFFSET ?`
+            params = [produit_id, 1, limit, offset]
+            total = await queryDB(`SELECT COUNT(*) AS total,
+                produits.nom
+                FROM offres 
+                LEFT JOIN produits ON offres.produit_id = produits.id
+                ${!isNaN(Number(produit_id)) ? 'WHERE offres.produit_id = ?' : 'WHERE produits.slug = ?'}
+                AND offres.status = ?`, [produit_id, 1]);
         }
-        if (limit && page && category && type) {
-            sql = `SELECT * FROM offres WHERE category = ? AND subcategory = ? AND status = ? ORDER BY id DESC LIMIT ? OFFSET ?`
-            params = [category, type, 1, limit, offset]
-            total = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE category = ? AND subcategory = ? AND status = ?`, [category, type, 1]);
+
+        // Pour la page url: chocolats/bonbonOU...
+        if (limit && pagination && produit_id && category_id) {
+            sql = `${querysql} 
+            ${!isNaN(Number(produit_id)) ? 'WHERE offres.produit_id = ?' : 'WHERE produits.slug = ?'} 
+            ${!isNaN(Number(category_id)) ? 'AND offres.category_id = ?' : 'AND categories.slug = ?'} 
+            AND offres.status = ? ORDER BY offres.id DESC LIMIT ? OFFSET ?`
+            params = [produit_id, category_id, 1, limit, offset]
+            total = await queryDB(`SELECT COUNT(*) AS total, 
+                produits.nom,
+                categories.nom
+                FROM offres 
+                LEFT JOIN produits ON offres.produit_id = produits.id
+                LEFT JOIN categories ON offres.category_id = categories.id
+                ${!isNaN(Number(produit_id)) ? 'WHERE offres.produit_id = ?' : 'WHERE produits.slug = ?'} 
+                ${!isNaN(Number(category_id)) ? 'AND offres.category_id = ?' : 'AND categories.slug = ?'}
+                AND offres.status = ?`,
+                [produit_id, category_id, 1]);
         }
+
+        // Pour la page de fiche-produit
         if (slug) {
-            sql = `SELECT ${meta ? 'status,meta_title,meta_description' : '*'} FROM offres WHERE slug = ? AND status = ?`
+            sql = `SELECT ${meta ? 'offres.status,offres.meta_title,offres.meta_description,' : 'offres.*,'}
+            produits.nom AS produit,
+            categories.nom AS category 
+            FROM offres
+            LEFT JOIN produits ON offres.produit_id = produits.id
+            LEFT JOIN categories ON offres.category_id = categories.id 
+            WHERE offres.slug = ? AND offres.status = ?`
             params = [slug, 1]
             total = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE slug = ? AND status = ?`, [slug, 1]);
         }
-        if (type) {
-            sql = `SELECT * FROM offres WHERE subcategory = ? AND status = ? ORDER BY id DESC ${limit ? 'LIMIT ?' : ''}`
-            params = limit ? [type, 1, limit] : [type, 1]
-            total = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE subcategory = ? AND status = ? ORDER BY id DESC`, [type, 1]);
+
+        // Pour les alternatives
+        if (category_id) {
+            sql = `${querysql}
+            ${!isNaN(Number(category_id)) ? 'WHERE offres.category_id = ?' : 'WHERE categories.slug = ?'}
+            AND offres.status = ? ORDER BY offres.id DESC ${limit ? 'LIMIT ?' : ''}`
+            params = limit ? [category_id, 1, limit] : [category_id, 1]
+            total = await queryDB(`SELECT COUNT(*) AS total,
+                categories.nom AS category
+                FROM offres 
+                LEFT JOIN categories ON offres.category_id = categories.id
+                ${!isNaN(Number(category_id)) ? 'WHERE offres.category_id = ?' : 'WHERE categories.slug = ?'} 
+                AND offres.status = ? ORDER BY offres.id DESC`, [category_id, 1]);
         }
+
+        // Pour les nombres d'offres dans le page / pour chaque produits
         if (nbreOffre) {
-            const [nbreChoco] = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE category = ? AND status = ? ORDER BY id DESC`, ['chocolats', 1]);
-            const [nbreTech] = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE category = ? AND status = ? ORDER BY id DESC`, ['technologie', 1]);
-            const [nbreMode] = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE category = ? AND status = ? ORDER BY id DESC`, ['mode', 1]);
-            return NextResponse.json([nbreChoco, nbreTech, nbreMode])
+            const produits = await queryDB(`SELECT id FROM produits`)
+            let tab = []
+            for (let i = 0; i < produits.length; i++) {
+                let [test] = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE produit_id = ? AND status = ? ORDER BY id DESC`, [produits[i].id, 1]);
+                tab.push(test)
+            }
+            return NextResponse.json(tab)
         }
 
         const offres = await queryDB(sql, params)
         return NextResponse.json({
             offres, pagination: {
-                pageCount: (total[0].total / nombrePage) % 2 != 0 ? parseInt(total[0].total / nombrePage) + 1 : parseInt(total[0].total / nombrePage),
+                pageCount: (total[0].total % nombrePage != 0) ? parseInt(total[0].total / nombrePage) + 1 : parseInt(total[0].total / nombrePage),
                 // currentPage: 1,
                 total: total[0].total
             }
@@ -118,10 +185,10 @@ export async function POST(request) {
         });
 
         const sql = `INSERT INTO offres (
+            produit_id,
+            category_id,
             name,
             slug,
-            category,
-            subcategory,
             price,
             originalPrice,
             remise, 
@@ -136,10 +203,10 @@ export async function POST(request) {
             meta_description
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         const values = [
+            form.produit_id,
+            form.category_id,
             form.name,
             slugify(form.name),
-            form.category,
-            form.subcategory,
             form.price,
             form.originalPrice,
             form.remise,
@@ -204,10 +271,10 @@ export async function PUT(request) {
         const allImages = [...image, ...imagePublicPath]
 
         const sql = `UPDATE offres SET
+            produit_id = ?,
+            category_id = ?,
             name = ?,
             slug = ?,
-            category = ?,
-            subcategory = ?,
             price = ?,
             originalPrice = ?,
             remise = ?, 
@@ -222,10 +289,10 @@ export async function PUT(request) {
             meta_description = ?
         WHERE id = ?`
         const values = [
+            form.produit_id,
+            form.category_id,
             form.name,
             slugify(form.name),
-            form.category,
-            form.subcategory,
             form.price,
             form.originalPrice,
             form.remise,

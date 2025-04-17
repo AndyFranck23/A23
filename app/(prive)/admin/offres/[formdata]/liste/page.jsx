@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 
 export default function ListeOffres() {
     const params = useParams()
-    const category = params.formdata
+    const produit_id = params.formdata
     const [offres, setOffres] = useState([]);
     const [loading, setLoading] = useState(true);
     const [suppression, setSuppression] = useState(false);
@@ -18,7 +18,7 @@ export default function ListeOffres() {
         const fetchOffres = async () => {
             try {
                 // Remplacez cette URL par votre endpoint API réel
-                const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?cat=${category}&admin=dd`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?produit_id=${produit_id}&admin=dd`);
                 if (!response.ok) {
                     throw new Error('Erreur lors de la récupération des offres');
                 }
@@ -57,7 +57,7 @@ export default function ListeOffres() {
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">Gestion des offres</h1>
                     <Link
-                        href={`/admin/produits/${category}/add`}
+                        href={`/admin/offres/${produit_id}/add`}
                         className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition duration-200"
                     >
                         Ajouter une offre
@@ -75,7 +75,7 @@ export default function ListeOffres() {
                                     Catégorie
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                                    Type
+                                    Produit
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                                     Statut
@@ -96,10 +96,10 @@ export default function ListeOffres() {
                                             <div className="text-sm font-medium text-gray-900 dark:text-gray-200">{offre.name}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-500 dark:text-gray-400">{offre.category}</div>
+                                            <div className="text-sm text-gray-500 dark:text-gray-400">{offre.produit}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-500 dark:text-gray-400">{offre.subcategory}</div>
+                                            <div className="text-sm text-gray-500 dark:text-gray-400">{offre.category}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span
@@ -116,7 +116,7 @@ export default function ListeOffres() {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <Link
-                                                href={`/admin/produits/${offre.category}/update/${offre.id}`}
+                                                href={`/admin/offres/${offre.produit_id}/update/${offre.id}`}
                                                 className="text-blue-600 hover:text-blue-900 mr-3"
                                             >
                                                 Éditer

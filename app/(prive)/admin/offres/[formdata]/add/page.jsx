@@ -7,14 +7,15 @@ import { useEffect, useState } from 'react';
 
 export default function NewProductForm() {
     const params = useParams()
-    const id = params.id
-    const category = params.formdata
+    const produit_id = params.formdata
     const [load, setLoad] = useState(false);
     const [loading, setLoading] = useState(true);
     const [imageType, setImageType] = useState('url') // 'url' ou 'upload'
     const [imageFile, setImageFile] = useState([]) // Pour stocker le fichier uploadé
     const [type, setType] = useState([])
     const [form, setForm] = useState({
+        produit_id: produit_id,
+        category_id: '',
         name: '',
         category: '',
         subcategory: '',
@@ -34,28 +35,12 @@ export default function NewProductForm() {
     const [message, setMessage] = useState('');
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchCategories = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?id=${id}`)
-                const { offres } = await response.json()
-                const data = offres
-                setForm({
-                    name: data[0].name,
-                    category: data[0].category,
-                    subcategory: data[0].subcategory,
-                    price: data[0].price,
-                    originalPrice: data[0].originalPrice,
-                    remise: data[0].remise,
-                    program: data[0].program,
-                    image: data[0].image == "" ? [] : JSON.parse(data[0].image),
-                    description: data[0].description,
-                    poids: data[0].poids,
-                    features: data[0].features,
-                    affiliateLink: data[0].affiliateLink,
-                    status: data[0].status,
-                    meta_title: data[0].meta_title,
-                    meta_description: data[0].meta_description
-                })
+                const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?produit_id=${produit_id}`)
+                const data = await response.json()
+                setType(data)
+                setForm({ ...form, category: data[0].category })
                 setMessage('');
             } catch (error) {
                 console.log(error)
@@ -64,21 +49,12 @@ export default function NewProductForm() {
                 setLoading(false);
             }
         }
-        const fetchCategories = async () => {
-            try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?cat=${category}`)
-                const data = await response.json()
-                setType(data)
-            } catch (error) {
-                console.log(error)
-                setMessage('Erreur de connexion données non récupérer');
-            } finally {
-                setLoading(false);
-            }
-        }
         fetchCategories()
-        fetchData()
     }, [])
+
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
 
     const handleImageChange = (type, value) => {
         if (type === 'url') {
@@ -99,10 +75,6 @@ export default function NewProductForm() {
         });
     };
 
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoad(true)
@@ -120,13 +92,31 @@ export default function NewProductForm() {
                     formData.append('file', file); // Clé répétée "file"
                 });
             }
-            const res = await axios.put(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?id=${id}`, formData, {
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
             alert(res.data.message)
             setMessage(res.data.message);
+            setForm({
+                ...form,
+                name: '',
+                subcategory: '',
+                price: '',
+                originalPrice: '',
+                remise: '',
+                program: '',
+                image: [],
+                description: '',
+                poids: 0,
+                features: '',
+                affiliateLink: '',
+                status: 0,
+                meta_title: '',
+                meta_description: ''
+            });
+            setImageFile([])
         } catch (error) {
             console.error(error);
             setMessage('Erreur de connexion');
@@ -147,7 +137,7 @@ export default function NewProductForm() {
         <>
             <div className="w-full h-screen text-gray-700 dark:text-gray-200 dark:bg-gray-700">
                 <div className="max-w-4xl mx-auto p-4">
-                    <h1 className="text-2xl font-bold mb-4">Modification d'un produit</h1>
+                    <h1 className="text-2xl font-bold mb-4">Ajouter un nouveau produit</h1>
                     {message && <p className="mb-4 text-green-600">{message}</p>}
                     <form onSubmit={handleSubmit} encType='multipart/form-data' className="md:grid grid-cols-2 gap-3">
                         <div className="">
@@ -174,7 +164,11 @@ export default function NewProductForm() {
                                     name="subcategory"
                                     required
                                     value={form.subcategory}
-                                    onChange={handleChange}
+                                    onChange={(e) => setForm({
+                                        ...form,
+                                        subcategory: e.target.value,
+                                        category_id: type.find(item => item.nom == e.target.value).id
+                                    })}
                                     className='w-full p-2 border focus:ring-1 focus:ring-blue-500 outline-none dark:bg-transparent dark:border-gray-600'
                                 >
                                     <option value="" className='hidden'>Sélection</option>
@@ -185,6 +179,7 @@ export default function NewProductForm() {
                                     }
                                 </select>
                             </div>
+                            {/* Ajout de l'image */}
                             <div className="">
                                 <label className="block text-gray-700 font-medium mb-2 text-sm sm:text-md">
                                     Images (Multiple)
@@ -271,6 +266,7 @@ export default function NewProductForm() {
                                     </div>
                                 )}
                             </div>
+                            {/* Fin image */}
                             <div className='mt-2'>
                                 <label className="block">Description</label>
                                 <textarea
@@ -356,30 +352,18 @@ export default function NewProductForm() {
                                 className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 col-span-2"
                             >
                                 {
-                                    load ? "Enregistrement en cours ..." : "Modifier le produit"
+                                    load ? "Enregistrement en cours ..." : "Enregistrer le produit"
                                 }
                             </button>
-                            {
-                                form.status == 1 ?
-                                    <button disabled={load}
-                                        onClick={() => setForm({ ...form, status: 0 })}
-                                        type="submit"
-                                        className="bg-white border-2 border-red-500 text-red-600 py-2 px-4 rounded hover:bg-gray-100 col-span-2"
-                                    >
-                                        {
-                                            load ? "Broullion en cours ..." : "Broullion"
-                                        }
-                                    </button> :
-                                    <button disabled={load}
-                                        onClick={() => setForm({ ...form, status: 1 })}
-                                        type="submit"
-                                        className="bg-white border-2 border-blue-500 text-blue-600 py-2 px-4 rounded hover:bg-gray-100 col-span-2"
-                                    >
-                                        {
-                                            load ? "Publication en cours ..." : "Publier"
-                                        }
-                                    </button>
-                            }
+                            <button disabled={load}
+                                onClick={() => setForm({ ...form, status: 1 })}
+                                type="submit"
+                                className="bg-white border-2 border-blue-500 text-blue-600 py-2 px-4 rounded hover:bg-gray-100 col-span-2"
+                            >
+                                {
+                                    load ? "Publication en cours ..." : "Publier"
+                                }
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -391,7 +375,7 @@ export default function NewProductForm() {
                             <div className="mb-5 flex items-center justify-center">
                                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                             </div>
-                            <h2 className="text-2xl font-bold dark:text-white">Enregistrement en cours ...</h2>
+                            <h2 className="text-2xl font-bold dark:text-white">Ajout en cours ...</h2>
                         </div>
                     </div>
                 )

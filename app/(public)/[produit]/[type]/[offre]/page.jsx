@@ -125,7 +125,7 @@ export default async function page({ params }) {
                         </div>
                     </section>
 
-                    <Alternative type={chocolats[0]?.subcategory} />
+                    <Alternative type={chocolats[0]?.category} />
 
                     {/* Section avantages */}
                     <div className="mt-16 bg-amber-50 dark:bg-gray-700 rounded-2xl p-8 sm:p-12">

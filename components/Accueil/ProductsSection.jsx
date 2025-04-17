@@ -43,7 +43,7 @@ export default async function ProductsSection({ total }) {
                         </div>
                     </Link>
                     {/* Carte pour Technologie Électronique */}
-                    <Link href={`/tech`} className="hover:scale-105 duration-300 bg-white w-80 dark:bg-gray-900 shadow-lg rounded-lg overflow-hidden">
+                    <Link href={`/technologie`} className="hover:scale-105 duration-300 bg-white w-80 dark:bg-gray-900 shadow-lg rounded-lg overflow-hidden">
                         <div className="relative w-full h-48 ">
                             <Image
                                 src="/tech.png"
@@ -68,7 +68,7 @@ export default async function ProductsSection({ total }) {
                         </div>
                     </Link>
                     {/* Carte pour Mode */}
-                    <Link href={`/mode`} className="hover:scale-105 duration-300 bg-white w-80 dark:bg-gray-900 shadow-lg rounded-lg overflow-hidden">
+                    <Link href={`/la-mode`} className="hover:scale-105 duration-300 bg-white w-80 dark:bg-gray-900 shadow-lg rounded-lg overflow-hidden">
                         <div className="relative w-full h-48 ">
                             <Image
                                 src="/mode.png"

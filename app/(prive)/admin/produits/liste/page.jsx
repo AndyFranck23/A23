@@ -3,29 +3,26 @@
 import { DeleteConfirmation } from '@/components/composants';
 import axios from 'axios';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function ListeOffres() {
-    const params = useParams()
-    const category = params.catdata
-
-    const [warning, setWarning] = useState({ id: '', status: false });
-    const [categories, setCategories] = useState([]);
+    const [produits, setProduits] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [warning, setWarning] = useState({ id: '', status: false });
+
 
     useEffect(() => {
-        // Fonction pour récupérer les categories depuis l'API
+        // Fonction pour récupérer les produits depuis l'API
         const fetchOffres = async () => {
             try {
                 // Remplacez cette URL par votre endpoint API réel
-                const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?produit_id=${category}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/produit`);
                 if (!response.ok) {
-                    throw new Error('Erreur lors de la récupération des categories');
+                    throw new Error('Erreur lors de la récupération des produits');
                 }
                 const data = await response.json();
-                setCategories(data);
+                setProduits(data);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -57,12 +54,12 @@ export default function ListeOffres() {
         <>
             <div className="px-4 py-8 dark:text-gray-200 dark:bg-gray-700 w-full h-screen">
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">Gestion des catégories</h1>
+                    <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">Gestion de produit</h1>
                     <Link
-                        href={`/admin/category/${category}/add`}
+                        href={`/admin/produits/add`}
                         className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition duration-200"
                     >
-                        Ajouter une catégorie
+                        Ajouter un produit
                     </Link>
                 </div>
 
@@ -72,9 +69,6 @@ export default function ListeOffres() {
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                                     Titre
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                                    Catégorie
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                                     Status
@@ -88,14 +82,11 @@ export default function ListeOffres() {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-500 dark:bg-transparent">
-                            {categories.length > 0 ? (
-                                categories.map((elt, index) => (
+                            {produits.length > 0 ? (
+                                produits.map((elt, index) => (
                                     <tr key={index}>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900 dark:text-gray-200">{elt.nom}</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-500 dark:text-gray-400">{elt.category}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span
@@ -112,7 +103,7 @@ export default function ListeOffres() {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <Link
-                                                href={`/admin/category/${elt.produit_id}/update/${elt.id}`}
+                                                href={`/admin/produits/update/${elt.id}`}
                                                 className="text-blue-600 hover:text-blue-900 mr-3"
                                             >
                                                 Éditer
@@ -141,9 +132,10 @@ export default function ListeOffres() {
                 isOpen={warning.status}
                 onConfirm={() => confirmeDelete(warning.id)}
                 onCancel={() => setWarning({ ...warning, status: false })}
-                message={<> Tous les <strong>offres</strong> associé à cette élément seront aussi supprimé. <br />
-                    <strong className='text-red-500'>NB:</strong> Veuillez
-                    demander au développeur ou au super administration avant de faire cette action.</>}
+                message={<> Tous les <strong>offres</strong> et <strong>catégories</strong> associé
+                    à cette élément seront aussi supprimé. <br />
+                    <strong className='text-red-500'>NB:</strong> Veuillez demander au développeur ou au super
+                    administration avant de faire cette action.</>}
             />
         </>
     );
@@ -155,16 +147,15 @@ export default function ListeOffres() {
     }
 
     async function confirmeDelete(id) {
-        // if (confirm('Êtes-vous sûr de vouloir supprimer cette élément ?\nAttention: Tous les offres associé à cette élément seront aussi supprimé\nVeuillez demander au technicien ou au super administration avant de faire cette action')) {
         try {
-            const response = await axios.delete(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?id=${id}`);
+            const response = await axios.delete(`${process.env.NEXT_PUBLIC_SITE_URL}/api/produit?id=${id}`);
 
             if (!response.statusText) {
                 throw new Error('Échec de la suppression');
             }
 
-            // Mettre à jour la liste des categories après suppression
-            setCategories(categories.filter(elt => elt.id !== id));
+            // Mettre à jour la liste des produits après suppression
+            setProduits(produits.filter(elt => elt.id !== id));
         } catch (err) {
             setError(err.message);
         } finally {

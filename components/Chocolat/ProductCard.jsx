@@ -79,7 +79,7 @@ export default function ProductCard({ product }) {
                     </div>
 
                     <Link
-                        href={`${process.env.NEXT_PUBLIC_SITE_URL}/${slugify(product.category)}/${slugify(product.subcategory)}/${slugify(product.name)}`}
+                        href={`${process.env.NEXT_PUBLIC_SITE_URL}/${product.produit}/${product.category}/${product.slug}`}
                         className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors w-full text-center block"
                         rel="nofollow sponsored"
                     >

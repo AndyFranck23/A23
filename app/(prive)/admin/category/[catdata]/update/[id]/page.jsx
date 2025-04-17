@@ -11,6 +11,7 @@ export default function NewProductForm() {
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
     const [form, setForm] = useState({
+        produit_id: '',
         name: '',
         category: '',
         description: '',
@@ -25,6 +26,7 @@ export default function NewProductForm() {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?id=${id}`)
                 const data = await response.json()
                 setForm({
+                    produit_id: data[0].produit_id,
                     name: data[0].nom,
                     category: data[0].category,
                     description: data[0].description,

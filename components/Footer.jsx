@@ -1,9 +1,9 @@
 import Link from "next/link";
 
-export default async function Footer() {
+export default async function Footer({ produits }) {
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/articles?footer=true`)
-        const articles = await response.json()
+        const articlesRes = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/articles?footer=true`)
+        const articles = await articlesRes.json()
 
         return (
             <footer className="bg-black/90 text-white">
@@ -24,9 +24,14 @@ export default async function Footer() {
                         <div>
                             <h4 className="font-semibold mb-4">Produits</h4>
                             <ul className="space-y-2 text-gray-400">
-                                <li><Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/chocolats`} className="hover:text-white">Chocolat</Link></li>
-                                <li><Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/tech`} className="hover:text-white">Technologie</Link></li>
-                                <li><Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/mode`} className="hover:text-white">La mode</Link></li>
+                                {
+                                    produits?.length > 0 &&
+                                    <>
+                                        {produits?.map((item, index) =>
+                                            <li key={index}><Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/${item.slug}`} className="hover:text-white">{item.nom} </Link></li>
+                                        )}
+                                    </>
+                                }
                             </ul>
                         </div>
                         <div>

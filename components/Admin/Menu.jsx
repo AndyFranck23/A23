@@ -1,12 +1,26 @@
 'use client';
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const Menu = ({ className }) => {
     const [activeId, setActiveId] = useState(null)
+    const [produits, setProduits] = useState([])
     const toggleMenu = (id) => {
         setActiveId(activeId === id ? null : id)
     }
+
+    useEffect(() => {
+        const fetchProduit = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/produit?menu=dd`)
+                const produit = await response.json()
+                setProduits(produit)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        fetchProduit()
+    }, [])
 
     return (
         <>
@@ -22,19 +36,26 @@ export const Menu = ({ className }) => {
                         <BoutonMenu title={"Articles"} onClick={() => toggleMenu('Articles')} href={'/admin/articles/liste'} isActive={activeId} />
                     </li>
                     <li>
-                        <BoutonMenu title={"Produits"} onClick={() => toggleMenu('Produits')} href={''} isActive={activeId} />
-                        <div className={`bg-gray-200 dark:bg-gray-700 dark:text-white mt-2 rounded-lg overflow-hidden transition-all duration-300 ${activeId === 'Produits' ? 'max-h-40' : 'max-h-0'}`}>
-                            <MySubButton text={'Chocolats'} href={'/admin/produits/chocolats/liste'} />
-                            <MySubButton text={'Technologies'} href={'/admin/produits/technologie/liste'} />
-                            <MySubButton text={'La mode'} href={'/admin/produits/mode/liste'} />
+                        <BoutonMenu title={"Produits"} onClick={() => toggleMenu('Produits')} href={'/admin/produits/liste'} isActive={activeId} />
+                    </li>
+                    <li>
+                        <BoutonMenu title={"Offres"} onClick={() => toggleMenu('Offres')} href={''} isActive={activeId} />
+                        <div className={`bg-gray-200 dark:bg-gray-700 dark:text-white mt-2 rounded-lg overflow-hidden transition-all duration-300 ${activeId === 'Offres' ? 'max-h-40' : 'max-h-0'}`}>
+                            {
+                                produits?.map((item, index) =>
+                                    <MySubButton key={index} text={item.nom} href={`/admin/offres/${item.id}/liste`} />
+                                )
+                            }
                         </div>
                     </li>
                     <li>
                         <BoutonMenu title={"Catégories"} onClick={() => toggleMenu('Catégories')} href={''} isActive={activeId} />
                         <div className={`bg-gray-200 dark:bg-gray-700 dark:text-white mt-2 rounded-lg overflow-hidden transition-all duration-300 ${activeId === 'Catégories' ? 'max-h-40' : 'max-h-0'}`}>
-                            <MySubButton text={'Chocolats'} href={'/admin/category/chocolats/liste'} />
-                            <MySubButton text={'Technologies'} href={'/admin/category/technologie/liste'} />
-                            <MySubButton text={'La mode'} href={'/admin/category/mode/liste'} />
+                            {
+                                produits?.map((item, index) =>
+                                    <MySubButton key={index} text={item.nom} href={`/admin/category/${item.id}/liste`} />
+                                )
+                            }
                         </div>
                     </li>
                 </ul>

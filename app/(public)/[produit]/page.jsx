@@ -6,24 +6,36 @@ import { nombrePage } from '@/components/Slug';
 import BeautePage from '@/components/Mode/BeautePage';
 import TechPage from '@/components/tech/TechPage';
 
-// export const generateMetadata = {
-//     title: 'Chocolats Premium - Notre Sélection',
-//     description: 'Découvrez notre sélection exclusive de chocolats fins et produits d\'affiliation de qualité',
-//     robots: 'index, follow'
-//     // openGraph: {
-//     //     images: ['/og-chocolats.jpg'],
-//     // },
-// }
+export async function generateMetadata({ params, searchParams }) {
+    try {
+        const searchParam = await searchParams
+        const currentPage = parseInt(searchParam.page) || 1
+        const { produit } = await params
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/produit?slug=${produit}&meta=hh`)
+        const [meta] = await response.json()
+
+        return {
+            title: meta?.meta_title || 'Chocolats Premium - Notre Sélection',
+            description: meta?.meta_description || 'Découvrez notre sélection exclusive de chocolats fins et produits d\'affiliation de qualité',
+            robots: meta?.status == 1 ? currentPage == 1 ? 'index, follow' : 'noindex, follow' : 'noindex, nofollow'
+            // openGraph: {
+            //     images: ['/og-chocolats.jpg'],
+            // },
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 export default async function page({ params, searchParams }) {
     try {
         const { page } = await searchParams
         const { produit } = await params
         const currentPage = page ? parseInt(page) : 1; // Récupérer la page
-        if (produit == 'mode') {
+        if (produit == 'la-mode') {
             return <BeautePage />
         }
-        if (produit == 'tech') {
+        if (produit == 'technologie') {
             return <TechPage />
         }
 
@@ -51,8 +63,8 @@ export default async function page({ params, searchParams }) {
         // }
 
         const [chocoRes, subCatRes] = await Promise.all([
-            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?page=${currentPage}&limit=${nombrePage}&cat=chocolats`),
-            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?cat=${produit}`) // récupère les sous-cat qui on le Nom du champs Type == Chocolats
+            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?page=${currentPage}&limit=${nombrePage}&produit_id=${produit}`),
+            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?produit_id=${produit}`) // récupère les sous-cat qui on le Nom du champs Type == Chocolats
         ])
         const [{ offres, pagination }, subCatData] = await Promise.all([
             chocoRes.json(),
