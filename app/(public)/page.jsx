@@ -60,8 +60,8 @@ export default async function Page() {
     }));
 
   const chocolats = normalizeOffres(data.offres.filter(item => item.produit_id == 1) || []);
-  const technologie = normalizeOffres(data.offres.filter(item => item.produit_id == 3) || []);
-  const mode = normalizeOffres(data.offres.filter(item => item.produit_id == 4) || []);
+  const technologie = normalizeOffres(data.offres.filter(item => item.produit_id == 2) || []);
+  const mode = normalizeOffres(data.offres.filter(item => item.produit_id == 3) || []);
   const articles = dataArticles || [];
   const total = totalRes || 0;
   console.log(total)
