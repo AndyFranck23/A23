@@ -28,7 +28,7 @@ async function getSitemapData() {
                 url: `${process.env.NEXT_PUBLIC_SITE_URL}/`,
                 lastModified: new Date().toISOString(),
                 changeFrequency: 'daily',
-                priority: 0.1,
+                priority: 1.0,
             },
             {
                 url: `${process.env.NEXT_PUBLIC_SITE_URL}/about`,
