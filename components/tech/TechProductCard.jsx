@@ -1,6 +1,8 @@
 'use client';
 import Image from 'next/image';
 import { useState } from 'react';
+import { isValidImage } from '../composants';
+import Link from 'next/link';
 
 export default function TechProductCard({ product }) {
     const [showAllFeatures, setShowAllFeatures] = useState(false);
@@ -10,18 +12,22 @@ export default function TechProductCard({ product }) {
     return (
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col h-full">
             <div className="relative">
-                <Image
-                    src={`/tech.png`}
-                    alt={product?.name}
-                    className="w-full h-48 object-cover rounded-t-xl"
-                    fill
-                />
-                <div className="absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded-full text-xs">
-                    {product?.subcategory}
+                <div className="w-full h-48 rounded-t-xl ">
+                    <Image
+                        src={isValidImage(product.image[0]) ? product.image[0] : '/agentIA.png'}
+                        alt={product.name || 'image'}
+                        className='object-cover'
+                        fill
+                        quality={50}
+                    // unoptimized={false}
+                    />
                 </div>
-                {product?.discount && (
+                <div className="absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded-full text-xs">
+                    {product.categorie.nom}
+                </div>
+                {product?.remise && (
                     <div className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-full text-sm">
-                        -{product?.discount}%
+                        -{product?.remise}%
                     </div>
                 )}
             </div>
@@ -45,6 +51,13 @@ export default function TechProductCard({ product }) {
                         </div>
                     ))}
                 </div>
+                {features.length > 4 &&
+                    <button className='text-sm text-blue-500' onClick={() => setShowAllFeatures(!showAllFeatures)}>
+                        {
+                            showAllFeatures ? 'voir moins' : 'voir plus'
+                        }
+                    </button>
+                }
 
                 <div className="mt-auto space-y-2 pt-4">
                     <div className="flex items-center justify-between">
@@ -63,13 +76,13 @@ export default function TechProductCard({ product }) {
                         </span> */}
                     </div>
 
-                    <a
-                        href={product?.affiliateLink}
+                    <Link
+                        href={`${process.env.NEXT_PUBLIC_SITE_URL}/${product.produit.slug}/${product.categorie.slug}/${product.slug}`}
                         className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors w-full text-center block"
                         rel="nofollow sponsored"
                     >
-                        Comparer les offres
-                    </a>
+                        Voir l' offres
+                    </Link>
                 </div>
             </div>
         </div>

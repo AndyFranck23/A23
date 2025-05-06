@@ -2,8 +2,9 @@
 import React from 'react'
 import ProductCard from './Chocolat/ProductCard';
 import Link from 'next/link';
+import TechProductCard from './tech/TechProductCard';
 
-const Pagination = ({ chocolats, currentPage, totalPages }) => {
+const Pagination = ({ chocolats, currentPage, totalPages, produit }) => {
     const generatePageNumbers = () => {
         const pages = new Set();
 
@@ -33,22 +34,25 @@ const Pagination = ({ chocolats, currentPage, totalPages }) => {
         return result;
     };
 
+    const stylePagination = produit == "chocolats" ? "bg-amber-600 hover:bg-amber-700" : "bg-tech hover:bg-blue-700"
+
     return (
         <div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {chocolats.map((product) => (
-                    <ProductCard
-                        key={product.id}
-                        product={product}
-                    />
-                ))}
+                {chocolats.map((product) =>
+                    produit == "chocolats" ?
+                        <ProductCard
+                            key={product.id}
+                            product={product}
+                        /> : <TechProductCard key={product.id} product={product} />
+                )}
             </div>
 
             <div className="flex flex-wrap justify-center items-center mt-20 gap-2">
                 {currentPage > 1 && (
                     <Link
                         href={`?page=${currentPage - 1}`}
-                        className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
+                        className={`px-4 py-2 ${stylePagination} text-white rounded-lg transition-colors`}
                     >
                         Page Précédente
                     </Link>
@@ -72,7 +76,7 @@ const Pagination = ({ chocolats, currentPage, totalPages }) => {
                                 key={page}
                                 href={`?page=${page}`}
                                 className={`px-4 py-2 rounded-lg transition-colors ${currentPage === page
-                                    ? 'bg-amber-600 text-white hover:bg-amber-700'
+                                    ? ' text-white ' + stylePagination
                                     : 'bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white'
                                     }`}
                             >
@@ -85,7 +89,7 @@ const Pagination = ({ chocolats, currentPage, totalPages }) => {
                 {currentPage < totalPages && (
                     <Link
                         href={`?page=${currentPage + 1}`}
-                        className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
+                        className={`px-4 py-2 ${stylePagination} text-white rounded-lg transition-colors`}
                     >
                         Page Suivante
                     </Link>

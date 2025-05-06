@@ -35,23 +35,23 @@ export default function NewProductForm() {
     const [message, setMessage] = useState('');
 
     useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?produit_id=${produit_id}`)
-                const data = await response.json()
-                setType(data)
-                setForm({ ...form, category: data[0].produit.nom })
-                setMessage('');
-            } catch (error) {
-                console.log(error)
-                setMessage('Erreur de connexion données non récupérer');
-            } finally {
-                setLoading(false);
-            }
-        }
         fetchCategories()
     }, [])
 
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?produit_id=${produit_id}`)
+            const data = await response.json()
+            setType(data)
+            setForm({ ...form, category: data[0].produit.nom })
+            setMessage('');
+        } catch (error) {
+            console.log(error)
+            setMessage('Erreur de connexion, données non récupérer');
+        } finally {
+            setLoading(false);
+        }
+    }
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
@@ -68,6 +68,7 @@ export default function NewProductForm() {
     };
 
     const removeImage = (index) => {
+        imageFile.splice(index, 1);
         setForm(prev => {
             const newImages = [...prev.image];
             newImages.splice(index, 1);
@@ -173,6 +174,7 @@ export default function NewProductForm() {
                                 >
                                     <option value="" className='hidden'>Sélection</option>
                                     {
+                                        type.length > 0 &&
                                         type?.map((item, index) =>
                                             <option key={index} value={item.nom} className='dark:bg-gray-600'>{item.nom}</option>
                                         )
@@ -256,7 +258,7 @@ export default function NewProductForm() {
                                                     />
                                                     <button
                                                         type="button"
-                                                        onClick={() => removeImage(index)}
+                                                        onClick={() => removeImage(img)}
                                                         className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                                         ×
                                                     </button>

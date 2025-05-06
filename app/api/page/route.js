@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import fs from 'fs/promises'
 import path from "path";
 import prisma from "@/lib/PrismaClient";
+import { supabase } from "@/lib/supabase";
 
 export async function GET(request) {
     try {
@@ -15,6 +16,7 @@ export async function GET(request) {
 
         // let sql = `SELECT ${footer ? 'title,slug' : '*'} FROM pages ORDER BY id DESC`
         let sql = {
+            where: { status: true },
             select: footer ? { title: true, slug: true } : undefined,
             orderBy: { id: 'desc' }
         }
@@ -35,7 +37,7 @@ export async function GET(request) {
         }
         if (xml) {
             // sql = `SELECT slug FROM pages`
-            sql = {}
+            sql = { where: { status: true } }
             // params = []
         }
         // const pages = await queryDB(sql, params)
@@ -56,27 +58,23 @@ export async function POST(request) {
 
         let imagePublicPath = ''
         if (file) {
-            // Vérifier si file est bien un objet File
-            if (!(file instanceof File)) {
-                return NextResponse.json(
-                    { message: "Le fichier est invalide" },
-                    { status: 401 }
-                );
+            const fileExt = file.name.split(".").pop()
+            const fileName = `${Date.now()}.${fileExt}`
+            const filePath = `${fileName}`
+            let { error } = await supabase.storage
+                .from("images")
+                .upload(filePath, file)
+
+            if (error) {
+                throw error
             }
-            // Définition du dossier d'upload (en dehors de /public/)
-            const uploadDir = path.join(process.cwd(), "uploads"); // Stocke dans un dossier hors `public`
-            await fs.mkdir(uploadDir, { recursive: true }); // Création du dossier si inexistant
 
-            // Génération d'un nom unique pour l'image
-            const imageName = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
-            const filePath = path.join(uploadDir, imageName);
-
-            // Sauvegarde de l'image
-            const buffer = Buffer.from(await file.arrayBuffer());
-            await fs.writeFile(filePath, buffer);
+            const { data: url } = await supabase.storage
+                .from("images")
+                .getPublicUrl(filePath)
 
             // Construction du chemin pour servir l'image via une API
-            imagePublicPath = `/api/uploads/${imageName}`
+            imagePublicPath = `${url.publicUrl}`
         }
 
         await prisma.page.create({
@@ -109,27 +107,23 @@ export async function PUT(request) {
 
         let imagePublicPath = []
         if (file) {
-            // Vérifier si file est bien un objet File
-            if (!(file instanceof File)) {
-                return NextResponse.json(
-                    { message: "Le fichier est invalide" },
-                    { status: 401 }
-                );
+            const fileExt = file.name.split(".").pop()
+            const fileName = `${Date.now()}.${fileExt}`
+            const filePath = `${fileName}`
+            let { error } = await supabase.storage
+                .from("images")
+                .upload(filePath, file)
+
+            if (error) {
+                throw error
             }
-            // Définition du dossier d'upload (en dehors de /public/)
-            const uploadDir = path.join(process.cwd(), "uploads"); // Stocke dans un dossier hors `public`
-            await fs.mkdir(uploadDir, { recursive: true }); // Création du dossier si inexistant
 
-            // Génération d'un nom unique pour l'image
-            const imageName = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
-            const filePath = path.join(uploadDir, imageName);
-
-            // Sauvegarde de l'image
-            const buffer = Buffer.from(await file.arrayBuffer());
-            await fs.writeFile(filePath, buffer);
+            const { data: url } = await supabase.storage
+                .from("images")
+                .getPublicUrl(filePath)
 
             // Construction du chemin pour servir l'image via une API
-            imagePublicPath = `/api/uploads/${imageName}`
+            imagePublicPath = `${url.publicUrl}`
         }
 
         await prisma.page.update({

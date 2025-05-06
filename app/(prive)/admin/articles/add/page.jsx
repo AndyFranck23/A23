@@ -254,10 +254,10 @@ export default function NewProductForm() {
                                     ],
                                     toolbar:
                                         "undo redo | formatselect | bold italic | forecolor backcolor emoticons | \
-                        alignleft aligncenter alignright alignjustify | \
-                        bullist numlist outdent indent | removeformat | help | \
-                        link image media | codesample emoticons | print fullscreen preview | \
-                        ",
+                                        alignleft aligncenter alignright alignjustify | \
+                                        bullist numlist outdent indent | removeformat | help | \
+                                        link image media | codesample emoticons | print fullscreen preview | \
+                                        ",
                                     images_upload_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/uploads`,
                                     automatic_uploads: true,
                                     file_picker_types: "image media",

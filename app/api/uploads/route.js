@@ -2,20 +2,32 @@ import path from 'path';
 import fs from 'fs/promises';
 import fs2 from 'fs';
 import { NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase';
 
 export async function GET() {
     try {
-        const uploadsDir = path.join(process.cwd(), "/uploads");
+        const { data: files, error } = await supabase
+            .storage
+            .from('images')
+            .list('', {
+                limit: 100,        // nombre max de fichiers
+                offset: 0,         // pagination
+                sortBy: { column: 'name', order: 'asc' }
+            })
 
-        if (!fs2.existsSync(uploadsDir)) {
-            console.error("❌ Le dossier 'uploads' n'existe pas !");
-            return NextResponse.json({ error: "Dossier 'uploads' non trouvé" }, { status: 500 });
+        if (error) {
+            return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
-        const files = fs2.readdirSync(uploadsDir); // Utiliser la version synchrone
-        console.log("✅ Images trouvées :", files);
+        const urls = files.map(file => {
+            const { publicUrl } = supabase
+                .storage
+                .from('images')
+                .getPublicUrl(file.name).data
+            return { name: file.name, url: publicUrl }
+        })
 
-        return NextResponse.json({ images: files }, { status: 200 });
+        return NextResponse.json({ images: urls }, { status: 200 });
     } catch (error) {
         console.error("🔥 Erreur serveur :", error);
         return NextResponse.json({ error: "Erreur interne du serveur" }, { status: 500 });
@@ -31,27 +43,34 @@ export async function POST(request) {
             return NextResponse.json({ message: "Aucun fichier fourni" }, { status: 400 });
         }
 
-        // Définir le dossier de destination (créé s'il n'existe pas)
-        const uploadDir = path.join(process.cwd(), "/uploads");
-        await fs.mkdir(uploadDir, { recursive: true });
-
         // Générer un nom de fichier unique
-        let fileName = ''
+        let fileTiny = ''
         for (const ele of file) {
-            fileName = `${Date.now()}-${ele.name.replace(/\s/g, "_")}`;
-            const filePath = path.join(uploadDir, fileName);
+            const fileExt = ele.name.split(".").pop()
+            const fileName = `${Date.now()}.${fileExt}`
+            const filePath = `${fileName}`
+            fileTiny = `${fileName}`
+            let { error } = await supabase.storage
+                .from("images")
+                .upload(filePath, ele)
 
-            // Convertir le fichier en buffer et l'écrire sur le disque
-            const buffer = Buffer.from(await ele.arrayBuffer());
-            await fs.writeFile(filePath, buffer);
+            if (error) {
+                throw error
+            }
         }
+
+        const { publicUrl } = supabase
+            .storage
+            .from('images')
+            .getPublicUrl(fileTiny).data
 
         return NextResponse.json({
             message: "Image uploadée avec succès",
-            location: `/api/uploads/${fileName}`,
+            location: `${publicUrl}`,
             status: 200
         });
     } catch (error) {
+        console.log(error)
         return NextResponse.json(
             { error: error.message || "Erreur lors de l'upload de l'image" },
             { status: 500 }

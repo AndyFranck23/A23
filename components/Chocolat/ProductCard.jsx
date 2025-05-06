@@ -1,7 +1,6 @@
 'use client';
 import Link from 'next/link';
 import { useState } from 'react';
-import { slugify } from '../Slug';
 import Image from 'next/image';
 import { isValidImage } from '../composants';
 
@@ -15,12 +14,12 @@ export default function ProductCard({ product }) {
             <div className="relative">
                 <div className="w-full h-48 rounded-t-xl ">
                     <Image
-                        src={'/agentIA.png'}
+                        src={isValidImage(product.image[0]) ? product.image[0] : '/agentIA.png'}
                         alt={'image'}
                         className='object-cover'
                         fill
                         quality={50}
-                        unoptimized={false}
+                    // unoptimized={false}
                     />
                 </div>
                 {product.remise && (

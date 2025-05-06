@@ -36,14 +36,16 @@ export const dynamic = 'force-dynamic';
 
 export default async function Page() {
   // Lancer toutes les requêtes en parallèle
-  const [data, dataArticles, totalRes] = await Promise.all([
-    safeFetch(`${BASE_URL}/api/offres?limit=3&produit_id=produit`),
+  const [chocolatsRes, techRes, modeRes, dataArticles, totalRes] = await Promise.all([
+    safeFetch(`${BASE_URL}/api/offres?limit=3&produit_id=chocolats`),
+    safeFetch(`${BASE_URL}/api/offres?limit=3&produit_id=technologie`),
+    safeFetch(`${BASE_URL}/api/offres?limit=3&produit_id=la-mode`),
     safeFetch(`${BASE_URL}/api/articles`),
     safeFetch(`${BASE_URL}/api/offres?total=total`)
   ]);
 
   // Si une requête critique a échoué, on peut afficher un message d’erreur ou un fallback
-  if (!data) {
+  if (!chocolatsRes) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-red-500">Impossible de charger les offres pour le moment.</p>
@@ -59,12 +61,12 @@ export default async function Page() {
       image: item.image && item.image !== '[]' ? JSON.parse(item.image) : []
     }));
 
-  const chocolats = normalizeOffres(data.offres.filter(item => item.produit_id == 1) || []);
-  const technologie = normalizeOffres(data.offres.filter(item => item.produit_id == 2) || []);
-  const mode = normalizeOffres(data.offres.filter(item => item.produit_id == 3) || []);
+  const chocolats = normalizeOffres(chocolatsRes.offres);
+  const technologie = normalizeOffres(techRes.offres);
+  const mode = normalizeOffres(modeRes.offres);
   const articles = dataArticles || [];
   const total = totalRes || 0;
-  console.log(total)
+  // console.log(total)
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">

@@ -16,3 +16,22 @@
     max-width: 100%;
     height: auto;
 }
+
+@theme {
+    /* Vos couleurs “light” */
+    --color-chocolate: #6B3E2E;
+    --color-fashion: #FF69B4;
+    --color-tech: #2E6B5E;
+
+    /* Amber : vous définissez chaque nuance dont vous avez besoin */
+    --color-amber-50: #fffbeb;
+    --color-amber-100: #fef3c7;
+    --color-amber-600: #d97706;
+    --color-amber-800: #92400e;
+
+    /* Marque (brand) */
+    --color-brand-primary: #7C3AED;
+    --color-brand-secondary: #6D28D9;
+    --color-brand-dark: #1F2937;
+    --color-brand-light: #F9FAFB;
+}

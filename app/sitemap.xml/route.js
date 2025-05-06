@@ -28,13 +28,13 @@ async function getSitemapData() {
                 url: `${process.env.NEXT_PUBLIC_SITE_URL}/`,
                 lastModified: new Date().toISOString(),
                 changeFrequency: 'daily',
-                priority: 1.0,
+                priority: 0.1,
             },
             {
                 url: `${process.env.NEXT_PUBLIC_SITE_URL}/about`,
                 lastModified: new Date().toISOString(),
                 changeFrequency: 'daily',
-                priority: 6.0,
+                priority: 0.6,
             }
         ];
 
@@ -42,35 +42,35 @@ async function getSitemapData() {
             url: `${process.env.NEXT_PUBLIC_SITE_URL}/${item.slug}`,
             lastModified: new Date().toISOString(),
             changeFrequency: 'daily',
-            priority: 2.0,
+            priority: 0.2,
         })) || [];
 
         const dynamicPagesClassement = categories?.map((item) => ({
             url: `${process.env.NEXT_PUBLIC_SITE_URL}/${item.produit.slug}/${item.slug}`,
             lastModified: new Date().toISOString(),
             changeFrequency: 'daily',
-            priority: 3.0,
+            priority: 0.3,
         })) || [];
 
         const dynamicPagesOffres = offres?.map((item) => ({
             url: `${process.env.NEXT_PUBLIC_SITE_URL}/${item.produit.slug}/${item.categorie.slug}/${item.slug}`,
             lastModified: new Date().toISOString(),
             changeFrequency: 'daily',
-            priority: 4.0,
+            priority: 0.4,
         })) || [];
 
         const dynamicPagesBlog = articles?.map((item) => ({
             url: `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${item.slug}`,
             lastModified: new Date().toISOString(),
             changeFrequency: 'daily',
-            priority: 5.0,
+            priority: 0.5,
         })) || [];
 
         const dynamicPagesPages = pages?.map((item) => ({
             url: `${process.env.NEXT_PUBLIC_SITE_URL}/page/${item.slug}`,
             lastModified: new Date().toISOString(),
             changeFrequency: 'daily',
-            priority: 7.0,
+            priority: 0.7,
         })) || [];
 
         return [

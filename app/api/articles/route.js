@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import fs from 'fs/promises'
 import path from "path";
 import prisma from "@/lib/PrismaClient";
+import { supabase } from "@/lib/supabase";
 
 export async function GET(request) {
     try {
@@ -13,32 +14,23 @@ export async function GET(request) {
         const meta = searchParams.get('meta');
         const xml = searchParams.get('xml');
 
-        // let sql = `SELECT ${footer ? 'title,slug' : '*'} FROM articles ORDER BY id DESC`
         let sql = {
             select: footer ? { title: true, slug: true } : undefined,
             orderBy: { id: 'desc' }
         }
-        // let params = []
 
         if (id) {
-            // sql = `SELECT * FROM articles WHERE id = ?`
             sql = { where: { id: id } }
-            // params = [id]
         }
         if (slug) {
-            // sql = `SELECT ${meta ? 'meta_title,meta_description,status' : '*'} FROM articles WHERE slug = ?`
             sql = {
                 where: { slug: slug },
                 select: meta ? { metaTitle: true, metaDescription: true, status: true } : undefined,
             }
-            // params = [slug]
         }
         if (xml) {
-            // sql = `SELECT slug FROM articles`
             sql = {}
-            // params = []
         }
-        // const articles = await queryDB(sql, params)
         const articles = await prisma.article.findMany(sql)
 
         return NextResponse.json(articles)
@@ -57,27 +49,23 @@ export async function POST(request) {
 
         let imagePublicPath = ''
         if (file) {
-            // Vérifier si file est bien un objet File
-            if (!(file instanceof File)) {
-                return NextResponse.json(
-                    { message: "Le fichier est invalide" },
-                    { status: 401 }
-                );
+            const fileExt = file.name.split(".").pop()
+            const fileName = `${Date.now()}.${fileExt}`
+            const filePath = `${fileName}`
+            let { error } = await supabase.storage
+                .from("images")
+                .upload(filePath, file)
+
+            if (error) {
+                throw error
             }
-            // Définition du dossier d'upload (en dehors de /public/)
-            const uploadDir = path.join(process.cwd(), "uploads"); // Stocke dans un dossier hors `public`
-            await fs.mkdir(uploadDir, { recursive: true }); // Création du dossier si inexistant
 
-            // Génération d'un nom unique pour l'image
-            const imageName = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
-            const filePath = path.join(uploadDir, imageName);
-
-            // Sauvegarde de l'image
-            const buffer = Buffer.from(await file.arrayBuffer());
-            await fs.writeFile(filePath, buffer);
+            const { data: url } = await supabase.storage
+                .from("images")
+                .getPublicUrl(filePath)
 
             // Construction du chemin pour servir l'image via une API
-            imagePublicPath = `/api/uploads/${imageName}`
+            imagePublicPath = `${url.publicUrl}`
         }
 
         await prisma.article.create({
@@ -111,27 +99,23 @@ export async function PUT(request) {
 
         let imagePublicPath = []
         if (file) {
-            // Vérifier si file est bien un objet File
-            if (!(file instanceof File)) {
-                return NextResponse.json(
-                    { message: "Le fichier est invalide" },
-                    { status: 401 }
-                );
+            const fileExt = file.name.split(".").pop()
+            const fileName = `${Date.now()}.${fileExt}`
+            const filePath = `${fileName}`
+            let { error } = await supabase.storage
+                .from("images")
+                .upload(filePath, file)
+
+            if (error) {
+                throw error
             }
-            // Définition du dossier d'upload (en dehors de /public/)
-            const uploadDir = path.join(process.cwd(), "uploads"); // Stocke dans un dossier hors `public`
-            await fs.mkdir(uploadDir, { recursive: true }); // Création du dossier si inexistant
 
-            // Génération d'un nom unique pour l'image
-            const imageName = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
-            const filePath = path.join(uploadDir, imageName);
-
-            // Sauvegarde de l'image
-            const buffer = Buffer.from(await file.arrayBuffer());
-            await fs.writeFile(filePath, buffer);
+            const { data: url } = await supabase.storage
+                .from("images")
+                .getPublicUrl(filePath)
 
             // Construction du chemin pour servir l'image via une API
-            imagePublicPath = `/api/uploads/${imageName}`
+            imagePublicPath = `${url.publicUrl}`
         }
         await prisma.article.update({
             where: { id: id },

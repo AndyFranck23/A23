@@ -2,6 +2,7 @@
 import MyInput from '@/components/Admin/MyInput';
 import { handleImageSelect } from '@/components/composants';
 import axios from 'axios';
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -256,19 +257,27 @@ export default function NewProductForm() {
                                 {/* Prévisualisation des images */}
                                 {form.image.length > 0 && (
                                     <div className="mt-4">
-                                        <h4 className="text-sm font-medium mb-2">Images sélectionnées:</h4>
+                                        <h4 className="text-sm font-medium mb-2">Images sélectionnées :</h4>
                                         <div className="flex flex-wrap gap-2">
                                             {form.image.map((img, index) => (
                                                 <div key={index} className="relative group">
-                                                    <img
-                                                        src={img}
-                                                        alt={`Preview ${index}`}
-                                                        className="h-20 w-20 object-cover rounded border"
-                                                    />
+                                                    <div className="relative w-20 h-20 overflow-hidden rounded border">
+                                                        <Image
+                                                            src={img}                             // URL du blob ou remote
+                                                            alt={`Preview ${index}`}
+                                                            fill                                  // pour remplir le conteneur :contentReference[oaicite:0]{index=0}
+                                                            sizes="80px"                          // conseillé pour éviter CLS :contentReference[oaicite:1]{index=1}
+                                                            style={{ objectFit: 'cover' }}       // remplace className object-cover :contentReference[oaicite:2]{index=2}
+                                                            priority                              // optionnel : charger en priorité
+                                                        />
+                                                    </div>
+
+                                                    {/* 2. Bouton de suppression */}
                                                     <button
                                                         type="button"
-                                                        onClick={() => removeImage(index)}
-                                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        onClick={() => removeImage(img)}
+                                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    >
                                                         ×
                                                     </button>
                                                 </div>

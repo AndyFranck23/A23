@@ -1,6 +1,7 @@
 import path from "path";
 import fs from "fs/promises";
 import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
 
 export async function GET(req, { params }) {
     const { filename } = await params; // Récupère le nom du fichier depuis l'URL
@@ -30,11 +31,16 @@ export async function GET(req, { params }) {
 export async function DELETE(request, { params }) {
     // On récupère le nom de l'image depuis les paramètres d'URL
     const { filename } = await params;
-    const filePath = path.join(process.cwd(), 'uploads', filename);
 
     try {
-        // Supprime le fichier
-        await fs.unlink(filePath);
+        // Supprime le fichier du bucket 'images'
+        const { error } = await supabase.storage
+            .from('images')
+            .remove([filename])
+
+        if (error) {
+            return NextResponse.json({ error: error.message }, { status: 500 })
+        }
         return NextResponse.json({ message: 'Image supprimée avec succès' }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: error.message || 'Erreur lors de la suppression de l\'image' }, { status: 500 });

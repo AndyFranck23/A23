@@ -13,8 +13,8 @@ export const handleImageSelect = async (setForm, form) => {
         // Crée une fenêtre de sélection simple pour l'utilisateur
         const imageList = data.images.map((image, index) => {
             return `
-                    <div class="image-item" onclick="selectImage('${image}')">
-                        <img src="/api/uploads/${image}" alt="${image}" class="image-thumbnail"/>
+                    <div class="image-item" onclick="selectImage('${image.url}')">
+                        <img src="${image.url}" alt="${image.name}" class="image-thumbnail"/>
                         
                     </div>
                 `;
@@ -37,7 +37,8 @@ export const handleImageSelect = async (setForm, form) => {
 
         // Fonction pour sélectionner l'image et fermer le modal
         window.selectImage = (imageName) => {
-            const imageUrl = `/api/uploads/${imageName}`;
+            console.log(imageName)
+            const imageUrl = `${imageName}`;
             if (Array.isArray(form.image))
                 setForm(prev => ({ ...prev, image: [...prev.image, imageUrl] }))
             else
@@ -159,8 +160,8 @@ export const handleImageBrowser = async (callback) => {
         // Crée une fenêtre de sélection simple pour l'utilisateur
         const imageList = data.images.map((image, index) => {
             return `
-                    <div class="image-item" onclick="selectImage('${image}')">
-                        <img src="/api/uploads/${image}" alt="${image}" class="image-thumbnail"/>
+                    <div class="image-item" onclick="selectImage('${image.url}')">
+                        <img src="${image.url}" alt="${image.name}" class="image-thumbnail"/>
                         
                     </div>
                 `;
@@ -183,7 +184,7 @@ export const handleImageBrowser = async (callback) => {
 
         // Fonction pour sélectionner l'image et fermer le modal
         window.selectImage = (imageName) => {
-            const imageUrl = `/api/uploads/${imageName}`;
+            const imageUrl = `${imageName}`;
             callback(imageUrl, { title: imageName });
             document.body.removeChild(modal);
         };

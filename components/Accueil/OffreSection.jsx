@@ -1,15 +1,9 @@
 import React from 'react'
-import BeautyProductCard from '../BeautyProductCard'
 import Link from 'next/link'
-import TechProductCard from '../TechProductCard'
+import TechProductCard from '../tech/TechProductCard'
 import ProductCard from '../Chocolat/ProductCard'
-// import { techProducts } from '@/data/tech'
-// import { beautyProducts } from '@/data/beauty'
-// import { chocolats } from '@/data/chocolats'
 
 const OffreSection = ({ chocolats, technologie, mode }) => {
-    // const technologie = techProducts.slice(0, 3);
-    // const featuredBeauty = beautyProducts.slice(0, 3);
     return (
         <>
             <section className="py-16 px-4">
@@ -56,7 +50,7 @@ const OffreSection = ({ chocolats, technologie, mode }) => {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {mode?.map((product) => (
-                            <BeautyProductCard key={product.id} product={product} />
+                            <TechProductCard key={product.id} product={product} />
                         ))}
                     </div>
                 </div>

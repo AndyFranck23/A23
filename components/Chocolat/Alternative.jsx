@@ -1,9 +1,10 @@
 // app/produit/chocolat-premium/page.js
 
 import { slugify } from "../Slug";
+import TechProductCard from "../tech/TechProductCard";
 import ProductCard from "./ProductCard";
 
-export default async function Alternative({ type }) {
+export default async function Alternative({ type, produit }) {
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?category_id=${type}&limit=6`)
         const { offres } = await response.json()
@@ -48,40 +49,13 @@ export default async function Alternative({ type }) {
                     </h2>
 
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                        {chocolats.map((product, index) => (
-                            // <div key={index} className="group relative border rounded-xl p-4 hover:shadow-lg transition-shadow">
-                            //     <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4">
-                            //         <img
-                            //             src={product.image}
-                            //             alt={product.title}
-                            //             className="w-full h-full object-cover"
-                            //         />
-                            //     </div>
-
-                            //     <div className="flex justify-between items-start mb-2">
-                            //         <h3 className="font-medium text-gray-900">{product.title}</h3>
-                            //         <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">Alternative</span>
-                            //     </div>
-
-                            //     <p className="text-sm text-gray-600 mb-2">{product.desc}</p>
-
-                            //     <div className="flex justify-between items-center">
-                            //         <span className="text-lg font-bold text-amber-600">{product.price}</span>
-                            //         <a
-                            //             href={product.link}
-                            //             className="text-amber-600 hover:text-amber-700 text-sm font-medium"
-                            //             target="_blank"
-                            //             rel="noopener noreferrer"
-                            //         >
-                            //             Voir l'offre →
-                            //         </a>
-                            //     </div>
-                            // </div>
-                            <ProductCard
-                                key={index}
-                                product={product}
-                            />
-                        ))}
+                        {chocolats.map((product, index) =>
+                            produit == 'chocolats' ?
+                                <ProductCard
+                                    key={index}
+                                    product={product}
+                                /> : <TechProductCard key={index} product={product} />
+                        )}
                     </div>
 
                     {/* <p className="mt-6 text-center text-sm text-gray-500">
@@ -89,11 +63,7 @@ export default async function Alternative({ type }) {
                 </p> */}
                 </section>
 
-                {/* Disclosure */}
-                <p className="mt-12 text-center text-sm text-gray-500">
-                    *En tant que Partenaire Amazon, je réalise un bénéfice sur les achats remplissant les conditions requises.
-                </p>
-            </main>
+            </main >
         );
     } catch (error) {
         console.log(error)

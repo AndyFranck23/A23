@@ -72,6 +72,7 @@ export default function MediaManager() {
         e.preventDefault();
         if (selectedFiles.length == 0) return alert("Veuillez entrer une image")
         setUploading(true);
+        // setLoading(true);
 
         const formData = new FormData();
         selectedFiles.forEach(file => {
@@ -79,17 +80,17 @@ export default function MediaManager() {
         });
 
         try {
-            const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_SITE_URL}/api/uploads`,
-                formData,
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/uploads`, formData,
                 { headers: { "Content-Type": "multipart/form-data" } }
             );
             alert(response.data.message);
             await fetchMedia();
         } catch (error) {
             console.error('Upload failed:', error);
+        } finally {
+            setUploading(false);
+            // setLoading(false);
         }
-        setUploading(false);
     };
 
 
@@ -120,7 +121,7 @@ export default function MediaManager() {
                 )}
 
                 {/* Upload Section */}
-                <form onSubmit={handleUpload} className="mb-8 p-4 bg-gray-50 dark:bg-gray-600 rounded-lg">
+                <form onSubmit={handleUpload} encType='multipart/form-data' className="mb-8 p-4 bg-gray-50 dark:bg-gray-600 rounded-lg">
                     <input
                         type="file"
                         multiple
@@ -151,32 +152,32 @@ export default function MediaManager() {
 
                 {/* Media Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    {files.map((file) => (
+                    {files.map((file, index) => (
                         <div
-                            key={file}
+                            key={index}
                             className={`relative group border-2 rounded-lg overflow-hidden transition-all ${selectedMedia.includes(file)
                                 ? 'border-blue-500 scale-95'
                                 : 'border-transparent'
                                 }`}
-                            onClick={() => toggleSelection(file)}
+                            onClick={() => toggleSelection(file.name)}
                         >
                             <div className="absolute top-2 left-2 z-10">
                                 <input
                                     type="checkbox"
-                                    checked={selectedMedia.includes(file)}
+                                    checked={selectedMedia.includes(file.name)}
                                     readOnly
                                     className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                                 />
                             </div>
                             <Image
-                                src={`/api/uploads/${file}`}
-                                alt={file}
+                                src={file.url}
+                                alt={file.name}
                                 width={200}
                                 height={200}
-                                quality={10}
+                                quality={5}
                                 className='w-full h-32 object-cover cursor-pointer'
                             />
-                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all" />
+                            {/* <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all" /> */}
                         </div>
                     ))}
                 </div>

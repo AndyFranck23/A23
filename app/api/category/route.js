@@ -46,8 +46,8 @@ export async function GET(request) {
             // params = [produit_id]
             let where = !isNaN(Number(produit_id)) ? { produit_id: JSON.parse(produit_id) } : { produit: { slug: produit_id } }
             sql = {
-                include: { produit: { select: { slug: true, nom: true } } },
-                where
+                where,
+                include: { produit: { select: { slug: true, nom: true, description: true } } },
             }
         }
         if (id) {
@@ -62,8 +62,16 @@ export async function GET(request) {
             // sql = `SELECT ${meta ? 'status,meta_title,meta_description' : '*'} FROM categories WHERE slug = ?`
             // params = [slug]
             sql = meta ? {
-                select: { status: true, meta_title: true, meta_description: true }
-            } : {}
+                where: { slug: slug },
+                select: {
+                    status: true,
+                    meta_title: true,
+                    meta_description: true
+                }
+            } : {
+                where: { slug: slug },
+                include: { produit: { select: { slug: true, nom: true } } }
+            }
         }
 
         // const categories = await queryDB(sql, params)

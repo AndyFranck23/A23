@@ -28,7 +28,7 @@ export default function CategorySection({ categoryInfo }) {
                     {categoryInfo.map((subcat, index) => (
                         <Link
                             key={index}
-                            href={`/${subcat.produit.slug}/${slugify(subcat.nom)}`}
+                            href={`${process.env.NEXT_PUBLIC_SITE_URL}/${subcat.produit.slug}/${slugify(subcat.nom)}`}
                             className="px-6 py-3 bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-100 rounded-full hover:bg-amber-200 dark:hover:bg-amber-800 transition-colors"
                         >
                             {subcat.nom}

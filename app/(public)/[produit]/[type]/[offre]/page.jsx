@@ -22,7 +22,7 @@ export async function generateMetadata({ params }) {
 
 export default async function page({ params }) {
     try {
-        const { offre } = await params
+        const { offre, produit } = await params
         const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?slug=${offre}`)
         const { offres } = await response.json()
         const chocolats = offres?.map(item => ({
@@ -69,9 +69,11 @@ export default async function page({ params }) {
                                     {chocolats[0]?.price || ''}
                                     <span className="ml-3 text-gray-500 dark:text-gray-200 text-lg line-through">{chocolats[0]?.originalPrice || ''} </span>
                                 </p>
-                                <p className="text-xl text-amber-600 font-bold">
-                                    {chocolats[0]?.poids} g
-                                </p>
+                                {produit == "chocolats" &&
+                                    <p className="text-xl text-amber-600 font-bold">
+                                        {chocolats[0]?.poids} g
+                                    </p>
+                                }
                             </div>
 
                             <a
@@ -81,7 +83,7 @@ export default async function page({ params }) {
                                         ? chocolats[0]?.affiliateLink
                                         : '#'
                                 }
-                                className="inline-block w-full bg-amber-600 hover:bg-amber-700 text-white text-center py-4 px-8 rounded-lg font-medium transition-colors duration-200"
+                                className={`inline-block w-full ${produit == "chocolats" ? 'bg-amber-600 hover:bg-amber-700' : 'bg-tech hover:bg-blue-600'} text-white text-center py-4 px-8 rounded-lg font-medium transition-colors duration-200`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
@@ -125,70 +127,74 @@ export default async function page({ params }) {
                         </div>
                     </section>
 
-                    <Alternative type={chocolats[0]?.categorie.slug} />
+                    <Alternative type={chocolats[0]?.categorie.slug} produit={produit} />
 
                     {/* Section avantages */}
-                    <div className="mt-16 bg-amber-50 dark:bg-gray-700 rounded-2xl p-8 sm:p-12">
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-8 text-center">
-                            Pourquoi choisir ce chocolat ?
-                        </h2>
-                        <div className="grid md:grid-cols-3 gap-8">
-                            {[
-                                {
-                                    icon: '🌱',
-                                    title: 'Agriculture durable',
-                                    text: 'Cultivé sans pesticides dans le respect des écosystèmes'
-                                },
-                                {
-                                    icon: '👩🌾',
-                                    title: 'Commerce équitable',
-                                    text: 'Rémunération juste pour les producteurs locaux'
-                                },
-                                {
-                                    icon: '🍫',
-                                    title: 'Qualité premium',
-                                    text: 'Process de fabrication artisanal et contrôlé'
-                                },
-                            ].map((benefit, index) => (
-                                <div key={index} className="text-center">
-                                    <div className="text-4xl mb-4">{benefit.icon}</div>
-                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 mb-2">{benefit.title}</h3>
-                                    <p className="text-gray-600 dark:text-gray-400">{benefit.text}</p>
-                                </div>
-                            ))}
+                    {produit == 'chocolats' &&
+                        <div className="mt-16 bg-amber-50 dark:bg-gray-700 rounded-2xl p-8 sm:p-12">
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-8 text-center">
+                                Pourquoi choisir ce chocolat ?
+                            </h2>
+                            <div className="grid md:grid-cols-3 gap-8">
+                                {[
+                                    {
+                                        icon: '🌱',
+                                        title: 'Agriculture durable',
+                                        text: 'Cultivé sans pesticides dans le respect des écosystèmes'
+                                    },
+                                    {
+                                        icon: '👩🌾',
+                                        title: 'Commerce équitable',
+                                        text: 'Rémunération juste pour les producteurs locaux'
+                                    },
+                                    {
+                                        icon: '🍫',
+                                        title: 'Qualité premium',
+                                        text: 'Process de fabrication artisanal et contrôlé'
+                                    },
+                                ].map((benefit, index) => (
+                                    <div key={index} className="text-center">
+                                        <div className="text-4xl mb-4">{benefit.icon}</div>
+                                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 mb-2">{benefit.title}</h3>
+                                        <p className="text-gray-600 dark:text-gray-400">{benefit.text}</p>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    }
 
                     {/* Section FAQ */}
-                    <div className="mt-16 max-w-3xl mx-auto">
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6">Questions fréquentes</h2>
-                        <div className="space-y-4">
-                            {[
-                                {
-                                    question: 'Quelle différence avec un chocolat classique ?',
-                                    answer: 'Notre chocolat utilise uniquement des fèves de criollo...'
-                                },
-                                {
-                                    question: 'Livraison disponible où ?',
-                                    answer: 'Livraison en Europe sous 3-5 jours ouvrés'
-                                },
-                            ].map((faq, index) => (
-                                <div key={index} className="border rounded-lg p-4 dark:text-gray-200">
-                                    <details className="group">
-                                        <summary className="flex justify-between items-center font-medium cursor-pointer">
-                                            <span>{faq.question}</span>
-                                            <span className="transition group-open:rotate-180">▼</span>
-                                        </summary>
-                                        <p className="mt-3 text-gray-600 dark:text-gray-400">{faq.answer}</p>
-                                    </details>
-                                </div>
-                            ))}
+                    {produit == 'chocolats' &&
+                        <div className="mt-16 max-w-3xl mx-auto">
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6">Questions fréquentes</h2>
+                            <div className="space-y-4">
+                                {[
+                                    {
+                                        question: 'Quelle différence avec un chocolat classique ?',
+                                        answer: 'Notre chocolat utilise uniquement des fèves de criollo...'
+                                    },
+                                    {
+                                        question: 'Livraison disponible où ?',
+                                        answer: 'Livraison en Europe sous 3-5 jours ouvrés'
+                                    },
+                                ].map((faq, index) => (
+                                    <div key={index} className="border rounded-lg p-4 dark:text-gray-200">
+                                        <details className="group">
+                                            <summary className="flex justify-between items-center font-medium cursor-pointer">
+                                                <span>{faq.question}</span>
+                                                <span className="transition group-open:rotate-180">▼</span>
+                                            </summary>
+                                            <p className="mt-3 text-gray-600 dark:text-gray-400">{faq.answer}</p>
+                                        </details>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    }
 
                     {/* Disclosure */}
                     <p className="mt-12 text-center text-sm text-gray-500">
-                        *En tant que Partenaire Amazon, je réalise un bénéfice sur les achats remplissant les conditions requises.
+                        *En tant que Partenaire {chocolats[0]?.program}, je réalise un bénéfice sur les achats remplissant les conditions requises.
                     </p>
                 </div>
             </main>

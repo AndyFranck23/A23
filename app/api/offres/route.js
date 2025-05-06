@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import fs from 'fs/promises'
 import path from "path";
 import prisma from "@/lib/PrismaClient";
+import { supabase } from "@/lib/supabase";
 
 export async function GET(request) {
     try {
@@ -26,7 +27,7 @@ export async function GET(request) {
 
         let sql = {
             orderBy: { id: 'desc' },
-            where: { status: true },
+            where: { status: admin ? undefined : true },
             include: {
                 produit: { select: { slug: true } },
                 categorie: { select: { slug: true } }
@@ -54,11 +55,7 @@ export async function GET(request) {
                     status: admin ? undefined : true
                 } :
                 {
-                    produit: {
-                        slug: admin ?
-                            produit_id :
-                            { in: produits.map(item => item.slug) }
-                    },
+                    produit: { slug: produit_id },
                     status: admin ? undefined : true
                 }
             sql = {
@@ -98,8 +95,8 @@ export async function GET(request) {
                 where,
                 orderBy: { id: 'desc' },
                 include: {
-                    produit: { select: { slug: true } },
-                    categorie: { select: { slug: true } }
+                    produit: { select: { slug: true, nom: true } },
+                    categorie: { select: { slug: true, nom: true } }
                 },
                 skip: offset, // OFFSET
                 take: JSON.parse(limit), // LIMIT
@@ -170,7 +167,7 @@ export async function GET(request) {
                 },
                 take: limit ? JSON.parse(limit) : undefined, // LIMIT
             } : {
-                where: { categorie: { slug: category_id, status: true } },
+                where: { categorie: { slug: category_id }, status: true },
                 orderBy: { id: 'desc' },
                 include: {
                     produit: { select: { slug: true, nom: true } },
@@ -232,30 +229,21 @@ export async function POST(request) {
 
         let imagePublicPath = []
         if (file.length > 0) {
-            // Vérifier si file est bien un objet File
-            file.forEach(element => {
-                if (!(element instanceof File)) {
-                    return NextResponse.json(
-                        { message: "Le fichier est invalide" },
-                        { status: 401 }
-                    );
+            for (const ele of file) {
+                const fileExt = ele.name.split(".").pop()
+                const fileName = `${Date.now()}.${fileExt}`
+                const filePath = `${fileName}`
+                let { error } = await supabase.storage
+                    .from("images")
+                    .upload(filePath, ele)
+
+                if (error) {
+                    throw error
                 }
-            })
-            // Définition du dossier d'upload (en dehors de /public/)
-            const uploadDir = path.join(process.cwd(), "/uploads"); // Stocke dans un dossier hors `public`
-            await fs.mkdir(uploadDir, { recursive: true }); // Création du dossier si inexistant
-
-            // Génération d'un nom unique pour l'image
-            for (const element of file) {
-                const imageName = `${Date.now()}-${element.name.replace(/\s/g, "_")}`;
-                const filePath = path.join(uploadDir, imageName);
-
-                // Sauvegarde de l'image
-                const buffer = Buffer.from(await element.arrayBuffer());
-                await fs.writeFile(filePath, buffer);
-
-                // Construction du chemin pour servir l'image via une API
-                imagePublicPath.push(`/api/uploads/${imageName}`);
+                const { data: url } = await supabase.storage
+                    .from("images")
+                    .getPublicUrl(filePath)
+                imagePublicPath.push(url.publicUrl);
             }
             // console.log(imagePublicPath)
         }
@@ -303,31 +291,23 @@ export async function PUT(request) {
 
         let imagePublicPath = []
         if (file.length > 0) {
-            // Vérifier si file est bien un objet File
-            file.forEach(element => {
-                if (!(element instanceof File)) {
-                    return NextResponse.json(
-                        { message: "Le fichier est invalide" },
-                        { status: 401 }
-                    );
+            for (const ele of file) {
+                const fileExt = ele.name.split(".").pop()
+                const fileName = `${Date.now()}.${fileExt}`
+                const filePath = `${fileName}`
+                let { error } = await supabase.storage
+                    .from("images")
+                    .upload(filePath, ele)
+
+                if (error) {
+                    throw error
                 }
-            })
-            // Définition du dossier d'upload (en dehors de /public/)
-            const uploadDir = path.join(process.cwd(), "uploads"); // Stocke dans un dossier hors `public`
-            await fs.mkdir(uploadDir, { recursive: true }); // Création du dossier si inexistant
-
-            // Génération d'un nom unique pour l'image
-            for (const element of file) {
-                const imageName = `${Date.now()}-${element.name.replace(/\s/g, "_")}`;
-                const filePath = path.join(uploadDir, imageName);
-
-                // Sauvegarde de l'image
-                const buffer = Buffer.from(await element.arrayBuffer());
-                await fs.writeFile(filePath, buffer);
-
-                // Construction du chemin pour servir l'image via une API
-                imagePublicPath.push(`/api/uploads/${imageName}`);
+                const { data: url } = await supabase.storage
+                    .from("images")
+                    .getPublicUrl(filePath)
+                imagePublicPath.push(url.publicUrl);
             }
+            // console.log(imagePublicPath)
         }
 
         const allImages = [...image, ...imagePublicPath]
@@ -343,7 +323,7 @@ export async function PUT(request) {
                 originalPrice: form.originalPrice,
                 remise: form.remise,
                 program: form.program,
-                image: JSON.stringify(imagePublicPath),
+                image: JSON.stringify(allImages),
                 description: form.description,
                 poids: form.poids,
                 features: form.features,

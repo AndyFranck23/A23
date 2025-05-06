@@ -13,8 +13,8 @@ export async function generateMetadata({ params, searchParams }) {
         const [data] = await response.json()
 
         return {
-            title: data?.meta_title || 'Chocolats Premium - Notre Sélection',
-            description: data?.meta_description || 'Découvrez notre sélection exclusive de chocolats fins et produits d\'affiliation de qualité',
+            title: data?.meta_title || 'Les 3 Merveilles',
+            description: data?.meta_description || 'Découvrez notre sélection exclusive de chocolats, technologie et la mode(vêtements, chaussure, casquete,...) d\'aujourd\'hui d\'affiliation de qualité',
             robots: data?.status == 1 ? currentPage == 1 ? 'index, follow' : 'noindex, follow' : 'noindex, nofollow'
             // openGraph: {
             //     images: ['/og-chocolats.jpg'],
@@ -49,13 +49,13 @@ const page = async ({ params, searchParams }) => {
         return (
             <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
                 {/* Hero Section */}
-                <section className="bg-gradient-to-r from-amber-700 to-amber-600 text-white py-16 px-4">
+                <section className={`bg-gradient-to-r ${produit == 'chocolats' ? 'from-amber-700 to-amber-600' : 'from-tech to-tech'} text-white py-16 px-4`}>
                     <div className="max-w-7xl mx-auto">
                         <Link
-                            href="/chocolats"
+                            href={`${process.env.NEXT_PUBLIC_SITE_URL}/${produit}`}
                             className="inline-block mb-4 text-amber-100 hover:text-white transition-colors"
                         >
-                            ← Retour aux chocolats
+                            ← Retour aux {category?.produit.nom}
                         </Link>
                         <h1 className="text-4xl font-bold mb-4">{category?.nom}</h1>
                         <p className="text-lg max-w-2xl">{category?.description}</p>
@@ -67,9 +67,9 @@ const page = async ({ params, searchParams }) => {
                     <div className="max-w-7xl mx-auto">
                         <div className="flex items-center justify-between mb-8">
                             <h2 className="text-2xl font-bold dark:text-white">
-                                {chocolats.length} produits trouvés
+                                {pagination.total} produits trouvés
                             </h2>
-                            <div className="flex gap-2">
+                            {produit == 'chocolats' && <div className="flex gap-2">
                                 {categories.chocolats.affiliatePrograms.map((program) => (
                                     <span
                                         key={program}
@@ -78,10 +78,10 @@ const page = async ({ params, searchParams }) => {
                                         {program}
                                     </span>
                                 ))}
-                            </div>
+                            </div>}
                         </div>
                         {/* <SearchProducts chocolats={chocolats} type={type} /> */}
-                        <Pagination chocolats={chocolats} currentPage={currentPage} totalPages={pagination.pageCount} />
+                        <Pagination produit={produit} chocolats={chocolats} currentPage={currentPage} totalPages={pagination.pageCount} />
                     </div>
                 </section>
 
