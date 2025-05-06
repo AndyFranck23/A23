@@ -8,6 +8,21 @@ const nextConfig = {
                 port: '',                     // port vide si HTTPS standard
                 pathname: '/storage/v1/object/public/images/**', // <– chemin et sous-chemins
             },
+            {
+                protocol: 'https',
+                hostname: 'c.media-amazon.com',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'm.media-amazon.com',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'images-na.ssl-images-amazon.com',
+                pathname: '/**',
+            },
         ], // <– ajout du domaine Supabase
     },
 };
