@@ -50,7 +50,7 @@ export default function ArticlesSection({ articles }) {
                                     <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
                                         {article.title}
                                     </h3>
-                                    <p className="text-gray-600 dark:text-gray-300 mb-3">
+                                    <p className="text-gray-600 dark:text-gray-300 mb-3 line-clamp-3">
                                         {article.description}
                                     </p>
                                 </div>
