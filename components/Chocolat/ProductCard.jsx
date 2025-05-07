@@ -10,7 +10,7 @@ export default function ProductCard({ product }) {
     const visibleFeatures = showAllFeatures ? features : features.slice(0, 4);
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+        <div className="hover:scale-102 bg-white border-2 border-green-600 dark:bg-gray-800 shadow-xl hover:shadow-xl transition-all duration-300 flex flex-col h-full">
             <div className="relative">
                 <div className="w-full h-48 rounded-t-xl ">
                     <Image

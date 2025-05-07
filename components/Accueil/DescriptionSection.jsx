@@ -7,13 +7,13 @@ const DescriptionSection = () => {
             <div className="container mx-auto flex flex-col md:flex-row items-center">
                 {/* Zone Image */}
                 <div className="md:w-1/2 p-4">
-                    <div className="relative w-full h-80 md:h-96">
+                    <div className="relative w-80 sm:w-auto h-80 md:h-96">
                         <Image
                             src="/engagement.png"
                             alt="Engagement Les 3 Merveilles"
-                            layout="fill"
-                            objectFit="cover"
-                            className="rounded-lg shadow-lg"
+                            fill
+                            quality={50}
+                            className="rounded-lg shadow-lg object-cover"
                         />
                     </div>
                 </div>

@@ -20,8 +20,10 @@ export default async function Footer({ produits }) {
                             {
                                 articles?.length > 0 &&
                                 articles.map((item, index) =>
-                                    <div key={index} className="">
-                                        <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/blog/${item.slug}`} className="hover:text-white text-gray-400">{item.title}</Link>
+                                    <div key={index} className=" text-gray-400">
+                                        <li>
+                                            <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/blog/${item.slug}`} className="hover:text-white">{item.title}</Link>
+                                        </li>
                                     </div>
                                 )
                             }
@@ -29,7 +31,7 @@ export default async function Footer({ produits }) {
                         </div>
                         <div>
                             <h4 className="font-semibold mb-4">Produits</h4>
-                            <ul className="space-y-2 text-gray-400">
+                            <div className="space-y-2 text-gray-400">
                                 {
                                     produits?.length > 0 &&
                                     <>
@@ -38,20 +40,22 @@ export default async function Footer({ produits }) {
                                         )}
                                     </>
                                 }
-                            </ul>
+                            </div>
                         </div>
                         <div>
                             <h4 className="font-semibold mb-4">Légal</h4>
-                            <ul className="space-y-2 text-gray-400">
+                            <div className="space-y-2 text-gray-400">
                                 {
                                     pages?.length > 0 &&
                                     <>
                                         {pages?.map((item, index) =>
-                                            <li key={index}><Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/page/${item.slug}`} className="hover:text-white">{item.title} </Link></li>
+                                            <li key={index} className="list-desc">
+                                                <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/page/${item.slug}`} className="hover:text-white">{item.title} </Link>
+                                            </li>
                                         )}
                                     </>
                                 }
-                            </ul>
+                            </div>
                         </div>
                         <div>
                             <h4 className="font-semibold mb-4">Contact</h4>
