@@ -25,7 +25,7 @@ export default async function RootLayout({ children }) {
     return (
       <html lang="fr" suppressHydrationWarning>
         <head>
-          <meta name="google-site-verification" content="Se1vDnap2z_kfKlGSWxpmWTH56WFkIaVTr2w5ecKVSQ" />
+          <meta name="google-site-verification" content="G_8A9OQVS_5IGOS8Bot4JKtI2oimZSJh1yrvUCEyppA" />
         </head>
         <body>          {/*  className={inter.className} */}
           <Header produits={produit} category={categories} />
