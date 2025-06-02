@@ -1,6 +1,6 @@
 // app/page.jsx
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import ArticlesSection from '@/components/Accueil/ArticlesSection';
 import DescriptionSection from '@/components/Accueil/DescriptionSection';
 import Hero from '@/components/Accueil/Hero';
@@ -19,6 +19,7 @@ async function safeFetch(url, options = {}) {
       ...options,
       // signal: controller.signal,
       cache: 'no-store',  // désactive la mise en cache
+      next: { revalidate: 60 }
     });
     clearTimeout(timeoutId);
 
@@ -71,14 +72,23 @@ export default async function Page() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Hero />
-      <ProductsSection total={total} />
+      <Suspense fallback={<p className="p-4">Chargement des produits…</p>}>
+        <ProductsSection total={total} />
+      </Suspense>
+
       <DescriptionSection />
-      <OffreSection
-        chocolats={chocolats}
-        technologie={technologie}
-        mode={mode}
-      />
-      <ArticlesSection articles={articles} />
+
+      <Suspense fallback={<p className="p-4">Chargement des produits…</p>}>
+        <OffreSection
+          chocolats={chocolats}
+          technologie={technologie}
+          mode={mode}
+        />
+      </Suspense>
+
+      <Suspense fallback={<p className="p-4">Chargement des produits…</p>}>
+        <ArticlesSection articles={articles} />
+      </Suspense>
     </div>
   );
 }

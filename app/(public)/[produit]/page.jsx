@@ -5,6 +5,7 @@
 import { nombrePage } from '@/components/Slug';
 import TechPage from '@/components/tech/TechPage';
 import ChocolatPage from '@/components/Chocolat/ChocolatPage';
+import { Suspense } from 'react';
 
 export async function generateMetadata({ params, searchParams }) {
     try {
@@ -60,8 +61,8 @@ export default async function page({ params, searchParams }) {
         // }
 
         const [chocoRes, subCatRes] = await Promise.all([
-            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?page=${currentPage}&limit=${nombrePage}&produit_id=${produit}`),
-            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?produit_id=${produit}`) // récupère les sous-cat qui on le Nom du champs Type == Chocolats
+            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?page=${currentPage}&limit=${nombrePage}&produit_id=${produit}`, { next: { revalidate: 60 } }),
+            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?produit_id=${produit}`, { next: { revalidate: 60 } }) // récupère les sous-cat qui on le Nom du champs Type == Chocolats
         ])
         const [{ offres, pagination }, subCatData] = await Promise.all([
             chocoRes.json(),
@@ -81,7 +82,9 @@ export default async function page({ params, searchParams }) {
         }
 
         return (
-            <TechPage currentPage={currentPage} produit={produit} categoryInfo={categoryInfo} technologie={data} pagination={pagination} />
+            <Suspense fallback={<p className="p-4">Chargement des produits…</p>}>
+                <TechPage currentPage={currentPage} produit={produit} categoryInfo={categoryInfo} technologie={data} pagination={pagination} />
+            </Suspense>
         )
     } catch (error) {
         console.log(error)
