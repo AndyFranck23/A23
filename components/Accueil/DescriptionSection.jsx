@@ -19,9 +19,9 @@ const DescriptionSection = () => {
                 </div>
                 {/* Zone Texte */}
                 <div className="md:w-1/2 p-4">
-                    <h2 className="text-4xl font-extrabold text-gray-800 dark:text-gray-200">
+                    <h3 className="text-4xl font-extrabold text-gray-800 dark:text-gray-200">
                         Notre Engagement
-                    </h2>
+                    </h3>
                     <p className="mt-6 text-lg text-gray-600 dark:text-gray-300">
                         Chez Les 3 Merveilles, nous nous engageons à vous offrir le meilleur de trois univers : des délices chocolatés, des innovations technologiques et une mode raffinée. Découvrez notre passion et notre savoir-faire à travers des produits uniques.
                     </p>

@@ -4,6 +4,9 @@ import { UserGroupIcon, BookOpenIcon, HeartIcon } from '@heroicons/react/24/outl
 export const metadata = {
     title: 'À propos - Mon Blog d\'Affiliation',
     description: 'Découvrez qui nous sommes et notre passion pour les bonnes affaires',
+    alternates: {
+        canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/about`,
+    },
 };
 
 export default function page() {

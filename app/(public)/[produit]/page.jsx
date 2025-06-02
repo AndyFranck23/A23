@@ -17,7 +17,10 @@ export async function generateMetadata({ params, searchParams }) {
         return {
             title: meta?.meta_title || 'Les 3 Merveilles',
             description: meta?.meta_description || 'Découvrez notre sélection exclusive de chocolats, technologie et la mode d\'aujourd\'hui d\'affiliation de qualité',
-            robots: meta?.status == true ? currentPage == true ? 'index, follow' : 'noindex, follow' : 'noindex, nofollow'
+            robots: meta?.status == true ? currentPage == true ? 'index, follow' : 'noindex, follow' : 'noindex, nofollow',
+            alternates: {
+                canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/${produit}`,
+            },
             // openGraph: {
             //     images: ['/og-chocolats.jpg'],
             // },

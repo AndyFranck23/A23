@@ -9,7 +9,10 @@ export async function generateMetadata({ params }) {
         return {
             title: data?.metaTitle || 'Les 3 Merveilles',
             description: data?.metaDescription || 'Découvrez notre sélection exclusive de chocolats fins et produits d\'affiliation de qualité',
-            robots: data?.status == true ? 'index, follow' : 'noindex, nofollow'
+            robots: data?.status == true ? 'index, follow' : 'noindex, nofollow',
+            alternates: {
+                canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/page/${page}`,
+            },
             // openGraph: {
             //     images: ['/og-chocolats.jpg'],
             // },

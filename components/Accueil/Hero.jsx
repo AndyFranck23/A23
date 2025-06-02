@@ -8,15 +8,15 @@ export default function Hero() {
             {/* Overlay pour améliorer la lisibilité */}
             <div className="absolute inset-0 bg-black opacity-50"></div>
             <div className="relative z-10 flex flex-col justify-center items-center h-full text-center px-4">
-                <p className="text-4xl md:text-6xl font-bold text-white">
+                <h1 className="text-4xl md:text-6xl font-bold text-white">
                     Bienvenue sur Les 3 Merveilles
-                </p>
-                <h1 className="mt-4 text-lg md:text-xl text-gray-300 lg:w-[1000px]">
+                </h1>
+                <h2 className="mt-4 text-lg md:text-xl text-gray-300 lg:w-[1000px]">
                     Découvrez l'univers sur Les 3 Merveilles où se mêlent gourmandise, innovation et style.
                     Laissez-vous tenter par nos chocolats artisanaux, véritables délices pour les papilles,
                     ainsi que par notre sélection technologique (téléphones, casques audio, écouteurs, etc) alliant performance et design.
                     Enfin, affirmez votre personnalité avec notre collection mode tendance, conçue pour sublimer chaque look.
-                </h1>
+                </h2>
                 <button className="mt-6 px-6 py-3 bg-tech hover:bg-amber-200 hover:text-gray-900 text-white rounded-full font-semibold transition">
                     Explorer
                 </button>

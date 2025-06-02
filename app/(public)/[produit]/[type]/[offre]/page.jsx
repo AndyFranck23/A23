@@ -3,14 +3,17 @@ import Alternative from "@/components/Chocolat/Alternative";
 
 export async function generateMetadata({ params }) {
     try {
-        const { offre } = await params
+        const { offre, produit, type } = await params
         const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?meta=df&slug=${offre}`)
         const { offres } = await response.json()
 
         return {
             title: offres[0]?.meta_title || 'Chocolats Premium - Notre Sélection',
             description: offres[0]?.meta_description || 'Découvrez notre sélection exclusive de chocolats fins et produits d\'affiliation de qualité',
-            robots: offres[0]?.status == 1 ? 'index, follow' : 'noindex, nofollow'
+            robots: offres[0]?.status == 1 ? 'index, follow' : 'noindex, nofollow',
+            alternates: {
+                canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/${produit}/${type}/${offre}`,
+            },
             // openGraph: {
             //     images: ['/og-chocolats.jpg'],
             // },
@@ -65,14 +68,14 @@ export default async function page({ params }) {
                             </div> */}
 
                             <div className="flex justify-between">
-                                <p className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-4">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-4">
                                     {chocolats[0]?.price || ''}
                                     <span className="ml-3 text-gray-500 dark:text-gray-200 text-lg line-through">{chocolats[0]?.originalPrice || ''} </span>
-                                </p>
+                                </h2>
                                 {produit == "chocolats" &&
-                                    <p className="text-xl text-amber-600 font-bold">
+                                    <h2 className="text-xl text-amber-600 font-bold">
                                         {chocolats[0]?.poids} g
-                                    </p>
+                                    </h2>
                                 }
                             </div>
 

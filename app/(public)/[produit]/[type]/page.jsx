@@ -8,14 +8,17 @@ export async function generateMetadata({ params, searchParams }) {
     try {
         const searchParam = await searchParams
         const currentPage = parseInt(searchParam.page) || 1
-        const { type } = await params
+        const { type, produit } = await params
         const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?meta=sdfs&slug=${type}`)
         const [data] = await response.json()
 
         return {
             title: data?.meta_title || 'Les 3 Merveilles',
             description: data?.meta_description || 'Découvrez notre sélection exclusive de chocolats, technologie et la mode(vêtements, chaussure, casquete,...) d\'aujourd\'hui d\'affiliation de qualité',
-            robots: data?.status == 1 ? currentPage == 1 ? 'index, follow' : 'noindex, follow' : 'noindex, nofollow'
+            robots: data?.status == 1 ? currentPage == 1 ? 'index, follow' : 'noindex, follow' : 'noindex, nofollow',
+            alternates: {
+                canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/${produit}/${type}`,
+            },
             // openGraph: {
             //     images: ['/og-chocolats.jpg'],
             // },
@@ -58,7 +61,7 @@ const page = async ({ params, searchParams }) => {
                             ← Retour aux {category?.produit.nom}
                         </Link>
                         <h1 className="text-4xl font-bold mb-4">{category?.nom}</h1>
-                        <p className="text-lg max-w-2xl">{category?.description}</p>
+                        <h2 className="text-lg max-w-2xl">{category?.description}</h2>
                     </div>
                 </section>
 
@@ -66,9 +69,9 @@ const page = async ({ params, searchParams }) => {
                 <section className="py-16 px-4">
                     <div className="max-w-7xl mx-auto">
                         <div className="flex items-center justify-between mb-8">
-                            <h2 className="text-2xl font-bold dark:text-white">
+                            <p className="text-2xl font-bold dark:text-white">
                                 {pagination.total} produits trouvés
-                            </h2>
+                            </p>
                             {produit == 'chocolats' && <div className="flex gap-2">
                                 {categories.chocolats.affiliatePrograms.map((program) => (
                                     <span

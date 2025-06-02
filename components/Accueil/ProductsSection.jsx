@@ -8,12 +8,12 @@ export default async function ProductsSection({ total }) {
             <div className=" px-4">
                 <div className="flex justify-center ">
                     <div className="lg:w-[1000px]">
-                        <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-200 mb-4">
+                        <p className="text-3xl font-bold text-center text-gray-800 dark:text-gray-200 mb-4">
                             Nos Produits
-                        </h2>
-                        <p className="text-center text-gray-600 text-lg mb-8 dark:text-gray-200">
-                            Découvrez l'alliance parfaite du chocolat, de la technologie et de la mode.
                         </p>
+                        <h3 className="text-center text-gray-600 text-lg mb-8 dark:text-gray-200">
+                            Découvrez l'alliance parfaite du chocolat, de la technologie et de la mode.
+                        </h3>
                     </div>
                 </div>
                 <div className="flex flex-wrap gap-8 justify-center">

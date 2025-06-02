@@ -15,10 +15,10 @@ export default function TechPage({ categoryInfo, technologie, pagination, curren
                     <h1 className="text-4xl md:text-6xl font-bold mb-6">
                         {categoryInfo[0].produit.nom}
                     </h1>
-                    <p className="text-xl mb-8 max-w-2xl mx-auto">
+                    <h2 className="text-xl mb-8 max-w-2xl mx-auto">
                         {categoryInfo[0].produit.description}
                         {/* Découvrez les dernières innovations tech sélectionnées par nos experts */}
-                    </p>
+                    </h2>
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-tech"></div>
             </section>

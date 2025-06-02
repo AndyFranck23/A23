@@ -12,9 +12,9 @@ const ChocolatPage = ({ categoryInfo, chocolats, pagination, currentPage, produi
                     <h1 className="text-4xl md:text-6xl font-bold mb-6">
                         Chocolats d'Exception
                     </h1>
-                    <p className="text-xl mb-8 max-w-2xl mx-auto">
+                    <h2 className="text-xl mb-8 max-w-2xl mx-auto">
                         Découvrez notre curation de chocolats premium sélectionnés parmi les meilleurs artisans mondiaux
-                    </p>
+                    </h2>
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-amber-800"></div>
             </section>
@@ -23,12 +23,12 @@ const ChocolatPage = ({ categoryInfo, chocolats, pagination, currentPage, produi
             <section className="bg-amber-50 dark:bg-gray-800 py-16 px-4">
                 <div className="max-w-7xl mx-auto text-center">
                     <div className="bg-white dark:bg-gray-700 p-8 rounded-2xl shadow-lg">
-                        <h2 className="text-3xl font-bold mb-4 dark:text-white">
+                        <h3 className="text-3xl font-bold mb-4 dark:text-white">
                             Pourquoi Choisir Nos Produits ?
-                        </h2>
-                        <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
+                        </h3>
+                        <h3 className="text-gray-600 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
                             Découvrez les raisons pour lesquelles nos chocolats premium sont le choix idéal pour les amateurs de saveurs authentiques.
-                        </p>
+                        </h3>
                         <div className="flex flex-wrap justify-center gap-4 mb-6">
                             {[
                                 'Ingrédients 100% naturels',

@@ -9,7 +9,10 @@ export async function generateMetadata({ params }) {
         return {
             title: article?.metaTitle || 'Les 3 Merveilles',
             description: article?.metaDescription || 'Découvrez notre sélection exclusive de chocolats fins et produits d\'affiliation de qualité',
-            robots: article?.status == true ? 'index, follow' : 'noindex, nofollow'
+            robots: article?.status == true ? 'index, follow' : 'noindex, nofollow',
+            alternates: {
+                canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${slug}`,
+            },
             // openGraph: {
             //     images: ['/og-chocolats.jpg'],
             // },
@@ -37,9 +40,9 @@ const page = async ({ params }) => {
                         <h1 className="text-4xl md:text-6xl font-bold text-white">
                             {article?.title}
                         </h1>
-                        <p className="mt-4 text-lg md:text-xl text-gray-300 lg:w-[1000px]">
+                        <h2 className="mt-4 text-lg md:text-xl text-gray-300 lg:w-[1000px]">
                             {article?.description}
-                        </p>
+                        </h2>
                     </div>
                 </section>
                 <section className='bg-gray-50 dark:bg-gray-900 dark:text-gray-200 py-20'>
