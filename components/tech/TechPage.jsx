@@ -12,13 +12,13 @@ export default function TechPage({ categoryInfo, technologie, pagination, curren
             {/* Hero Section */}
             <section className="relative bg-gradient-to-r from-tech to-tech text-white py-24 px-4">
                 <div className="max-w-7xl mx-auto text-center">
-                    <h1 className="text-4xl md:text-6xl font-bold mb-6">
+                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
                         {categoryInfo[0].produit.nom}
-                    </h1>
-                    <h2 className="text-xl mb-8 max-w-2xl mx-auto">
+                    </h2>
+                    <h1 className="text-xl mb-8 max-w-2xl mx-auto">
                         {categoryInfo[0].produit.description}
                         {/* Découvrez les dernières innovations tech sélectionnées par nos experts */}
-                    </h2>
+                    </h1>
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-tech"></div>
             </section>
