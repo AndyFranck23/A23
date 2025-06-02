@@ -68,9 +68,9 @@ export const Menu = ({ className, produits, category }) => {
                             </div>
                         }
                     </div>
-                    <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/blog`} className={`flex justify-between items-center w-full p-3 rounded-2xl  dark:hover:bg-gray-800 hover:bg-gray-200`}>
+                    {/* <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/blog`} className={`flex justify-between items-center w-full p-3 rounded-2xl  dark:hover:bg-gray-800 hover:bg-gray-200`}>
                         Blog
-                    </Link>
+                    </Link> */}
                     <DarkModeToggle className={`flex justify-between items-center w-full p-3 rounded-2xl`} />
                     <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/about`} className={`flex justify-between items-center w-full p-3 rounded-2xl  dark:hover:bg-gray-800 hover:bg-gray-200'}`}>
                         À propos

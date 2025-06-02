@@ -1,6 +1,6 @@
 // app/page.jsx
 
-import React, { Suspense } from 'react';
+import React from 'react';
 import ArticlesSection from '@/components/Accueil/ArticlesSection';
 import DescriptionSection from '@/components/Accueil/DescriptionSection';
 import Hero from '@/components/Accueil/Hero';
@@ -11,17 +11,17 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL;
 
 // Utilitaire pour faire un fetch avec gestion d’erreur et timeout
 async function safeFetch(url, options = {}) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10_000); // 10s timeout
+  // const controller = new AbortController();
+  // const timeoutId = setTimeout(() => controller.abort(), 10_000); // 10s timeout
 
   try {
     const res = await fetch(url, {
       ...options,
       // signal: controller.signal,
-      cache: 'no-store',  // désactive la mise en cache
+      // cache: 'no-store',  // désactive la mise en cache
       next: { revalidate: 60 }
     });
-    clearTimeout(timeoutId);
+    // clearTimeout(timeoutId);
 
     if (!res.ok) {
       throw new Error(`Erreur HTTP ${res.status}`);
@@ -72,23 +72,17 @@ export default async function Page() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Hero />
-      <Suspense fallback={<p className="p-4">Chargement des produits…</p>}>
-        <ProductsSection total={total} />
-      </Suspense>
+      <ProductsSection total={total} />
 
       <DescriptionSection />
 
-      <Suspense fallback={<p className="p-4">Chargement des produits…</p>}>
-        <OffreSection
-          chocolats={chocolats}
-          technologie={technologie}
-          mode={mode}
-        />
-      </Suspense>
+      <OffreSection
+        chocolats={chocolats}
+        technologie={technologie}
+        mode={mode}
+      />
 
-      <Suspense fallback={<p className="p-4">Chargement des produits…</p>}>
-        <ArticlesSection articles={articles} />
-      </Suspense>
+      <ArticlesSection articles={articles} />
     </div>
   );
 }
