@@ -60,8 +60,8 @@ const page = async ({ params, searchParams }) => {
                         >
                             ← Retour aux {category?.produit.nom}
                         </Link>
-                        <h1 className="text-4xl font-bold mb-4">{category?.nom}</h1>
-                        <h2 className="text-lg max-w-2xl">{category?.description}</h2>
+                        <p className="text-4xl font-bold mb-4">{category?.nom}</p>
+                        <h1 className="text-lg max-w-2xl">{category?.description}</h1>
                     </div>
                 </section>
 
