@@ -88,7 +88,7 @@ export default async function page({ params }) {
                                 }
                                 className={`inline-block w-full ${produit == "chocolats" ? 'bg-amber-600 hover:bg-amber-700' : 'bg-tech hover:bg-blue-600'} text-white text-center py-4 px-8 rounded-lg font-medium transition-colors duration-200`}
                                 target="_blank"
-                                rel="noopener"
+                                rel="nofollow noopener"
                             >
                                 ⇨ Voir l'offre chez notre partenaire
                             </a>
