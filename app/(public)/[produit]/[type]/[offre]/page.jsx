@@ -12,7 +12,7 @@ export async function generateMetadata({ params }) {
             description: offres[0]?.meta_description || 'Découvrez notre sélection exclusive de chocolats fins et produits d\'affiliation de qualité',
             robots: offres[0]?.status == 1 ? 'index, follow' : 'noindex, nofollow',
             alternates: {
-                canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/${params.produit}/${params.type}/${offre}`,
+                canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/${params.produit}/${params.type}/${params.offre}`,
             },
             // openGraph: {
             //     images: ['/og-chocolats.jpg'],
