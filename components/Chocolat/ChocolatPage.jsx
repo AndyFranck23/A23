@@ -1,6 +1,6 @@
 import React from 'react'
 import CategorySection from './CategorySection'
-import Link from 'next/link'
+// import Link from 'next/link'
 import Pagination from '../Pagination'
 
 const ChocolatPage = ({ categoryInfo, chocolats, pagination, currentPage, produit }) => {
@@ -44,11 +44,11 @@ const ChocolatPage = ({ categoryInfo, chocolats, pagination, currentPage, produi
                                 </span>
                             ))}
                         </div>
-                        <Link href="/nos-avantages">
+                        {/* <Link href="/nos-avantages">
                             <p className="bg-amber-600 text-white px-8 py-3 rounded-lg hover:bg-amber-700 transition-colors">
                                 En savoir plus
                             </p>
-                        </Link>
+                        </Link> */}
                     </div>
                 </div>
             </section>
@@ -62,10 +62,10 @@ const ChocolatPage = ({ categoryInfo, chocolats, pagination, currentPage, produi
                     <div className="flex items-center justify-between mb-8">
                         <h2 className="text-3xl font-bold dark:text-white">Toute Notre Sélection</h2>
                         <span className="text-amber-600 dark:text-amber-400">
-                            {pagination.total} produits
+                            {pagination?.total} produits
                         </span>
                     </div>
-                    <Pagination produit={produit} chocolats={chocolats} currentPage={currentPage} totalPages={pagination.pageCount} />
+                    <Pagination produit={produit} chocolats={chocolats} currentPage={currentPage} totalPages={pagination?.pageCount} />
                     {/* <SearchProducts chocolats={chocolats} /> */}
                 </div>
             </section>
@@ -77,10 +77,10 @@ const ChocolatPage = ({ categoryInfo, chocolats, pagination, currentPage, produi
                         Offres Spéciales
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {chocolats.slice(0, 3).map((offre) => (
+                        {chocolats?.slice(0, 3).map((offre) => (
                             <div key={offre.id} className="bg-amber-700 p-6 rounded-lg shadow-md">
-                                <h3 className="text-2xl font-semibold mb-2">{offre.name}</h3>
-                                <p className="mb-4">{offre.description}</p>
+                                <h3 className="text-2xl font-semibold mb-2 line-clamp-3">{offre.name}</h3>
+                                <p className="mb-4 line-clamp-3">{offre.description}</p>
                                 <span className="block text-2xl font-bold mb-4">{offre.price}</span>
                                 <button className="bg-white text-amber-600 px-6 py-2 rounded-lg">
                                     Profiter de l'offre

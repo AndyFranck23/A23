@@ -25,7 +25,7 @@ export default function CategorySection({ categoryInfo }) {
                     Explorez par Catégorie
                 </h2>
                 <div className="flex flex-wrap justify-center gap-4">
-                    {categoryInfo.map((subcat, index) => (
+                    {categoryInfo?.map((subcat, index) => (
                         <Link
                             key={index}
                             href={`${process.env.NEXT_PUBLIC_SITE_URL}/${subcat.produit.slug}/${slugify(subcat.nom)}`}

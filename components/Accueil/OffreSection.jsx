@@ -6,7 +6,7 @@ import ProductCard from '../Chocolat/ProductCard'
 const OffreSection = ({ chocolats, technologie, mode }) => {
     return (
         <>
-            <section className="py-16 px-4">
+            <section id='offreSection' className="py-16 px-4">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex items-center justify-between mb-8">
                         <h2 className="text-3xl font-bold dark:text-white">Chocolats d'Exception</h2>

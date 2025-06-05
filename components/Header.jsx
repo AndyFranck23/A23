@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import DarkModeToggle from './DarkModeToggle';
-import { Bars3BottomRightIcon } from '@heroicons/react/24/outline';
+import { Bars3BottomRightIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { Menu } from './Menu';
 
@@ -39,7 +39,11 @@ export default function Header({ produits, category }) {
                             </Link>
                             <DarkModeToggle className={'lg:block hidden'} />
                         </div>
-                        <Bars3BottomRightIcon onClick={() => setMenuActive(!menuActive)} className='w-10 h-10' />
+                        {menuActive ?
+                            <XMarkIcon onClick={() => setMenuActive(!menuActive)} className='w-10 h-10' />
+                            :
+                            <Bars3BottomRightIcon onClick={() => setMenuActive(!menuActive)} className='w-10 h-10' />
+                        }
                     </div >
                 </div >
             </nav >
