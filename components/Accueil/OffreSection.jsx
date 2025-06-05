@@ -27,9 +27,9 @@ const OffreSection = ({ chocolats, technologie, mode }) => {
                 <div className="max-w-7xl mx-auto">
                     <div className="flex items-center justify-between mb-8">
                         <h2 className="text-3xl font-bold dark:text-white">Nouveautés Tech</h2>
-                        {/* <Link href="/tech" className="text-blue-600 dark:text-blue-400 hover:underline">
-                                Explorer →
-                            </Link> */}
+                        <Link href="/technologie" className="text-blue-600 dark:text-blue-400 hover:underline">
+                            Explorer →
+                        </Link>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {technologie?.map((product) => (
@@ -44,9 +44,9 @@ const OffreSection = ({ chocolats, technologie, mode }) => {
                 <div className="max-w-7xl mx-auto">
                     <div className="flex items-center justify-between mb-8">
                         <h2 className="text-3xl font-bold dark:text-white">La Mode d'Aujourd'hui</h2>
-                        {/* <Link href="/beaute" className="text-pink-600 dark:text-pink-400 hover:underline">
-                                Découvrir →
-                            </Link> */}
+                        <Link href="/la-mode" className="text-pink-600 dark:text-pink-400 hover:underline">
+                            Découvrir →
+                        </Link>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {mode?.map((product) => (
