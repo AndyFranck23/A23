@@ -6,32 +6,9 @@ import DescriptionSection from '@/components/Accueil/DescriptionSection';
 import Hero from '@/components/Accueil/Hero';
 import ProductsSection from '@/components/Accueil/ProductsSection';
 import OffreSection from '@/components/Accueil/OffreSection';
+import { safeFetch } from '@/components/composants';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL;
-
-// Utilitaire pour faire un fetch avec gestion d’erreur et timeout
-async function safeFetch(url, options = {}) {
-  // const controller = new AbortController();
-  // const timeoutId = setTimeout(() => controller.abort(), 10_000); // 10s timeout
-
-  try {
-    const res = await fetch(url, {
-      ...options,
-      // signal: controller.signal,
-      // cache: 'no-store',  // désactive la mise en cache
-      next: { revalidate: 60 }
-    });
-    // clearTimeout(timeoutId);
-
-    if (!res.ok) {
-      throw new Error(`Erreur HTTP ${res.status}`);
-    }
-    return res.json();
-  } catch (err) {
-    console.error(`Fetch failed for ${url}:`, err);
-    return null;
-  }
-}
 
 export const dynamic = 'force-dynamic';
 

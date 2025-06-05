@@ -1,7 +1,5 @@
 import { nombrePage, slugify } from "@/components/Slug";
 import { NextResponse } from "next/server";
-import fs from 'fs/promises'
-import path from "path";
 import prisma from "@/lib/PrismaClient";
 import { supabase } from "@/lib/supabase";
 
@@ -16,6 +14,7 @@ export async function GET(request) {
         const id = searchParams.get('id');
         const limit = searchParams.get('limit');
         const nbreOffre = searchParams.get('total');
+        const nbreOffre2 = searchParams.get('total2');
         const admin = searchParams.get('admin');
         const meta = searchParams.get('meta');
         const xml = searchParams.get('xml');
@@ -202,6 +201,14 @@ export async function GET(request) {
                 tab.push(test)
             }
             return NextResponse.json(tab)
+        }
+        if (nbreOffre2) {
+            // const produits = await queryDB(`SELECT id FROM produits`)
+            let tab = []
+            const test = await prisma.offre.count({
+                where: { categorie: { slug: nbreOffre2 } }
+            })
+            return NextResponse.json(test)
         }
 
         // const offres = await queryDB(sql, params)

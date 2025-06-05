@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Pagination from '../Pagination';
 
-export default function TechPage({ categoryInfo, technologie, pagination, currentPage, produit }) {
+export default function TechPage({ offreParCategory, categoryInfo, technologie, pagination, currentPage, produit }) {
     // const categoryInfo = categories.tech;
 
     // Offres spéciales en vedette
@@ -10,13 +10,13 @@ export default function TechPage({ categoryInfo, technologie, pagination, curren
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
             {/* Hero Section */}
-            <section className="relative bg-gradient-to-r from-tech to-tech text-white py-24 px-4">
+            <section className="relative bg-gradient-to-r from-tech to-tech text-white py-10 px-4">
                 <div className="max-w-7xl mx-auto text-center">
                     <p className="text-4xl md:text-6xl font-bold mb-6">
-                        {categoryInfo[0].produit.nom}
+                        {categoryInfo[0]?.produit.nom}
                     </p>
                     <h1 className="text-xl mb-8 max-w-2xl mx-auto">
-                        {categoryInfo[0].produit.description}
+                        {categoryInfo[0]?.produit.description}
                         {/* Découvrez les dernières innovations tech sélectionnées par nos experts */}
                     </h1>
                 </div>
@@ -33,15 +33,15 @@ export default function TechPage({ categoryInfo, technologie, pagination, curren
 
                 {/* Navigation sous-catégories */}
                 <div className="flex flex-wrap gap-4 mb-12 justify-center">
-                    {categoryInfo.map((subcat) => (
+                    {categoryInfo?.map((subcat, index) => (
                         <Link
                             key={subcat.slug}
                             href={`${process.env.NEXT_PUBLIC_SITE_URL}/${subcat.produit.slug}/${subcat.slug}`}
                             className="px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow-md hover:shadow-lg transition-shadow flex items-center"
                         >
-                            <span className="mr-2 dark:text-white">{subcat.nom}</span>
+                            <p className="mr-2 dark:text-white">{subcat.nom}</p>
                             <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full dark:bg-blue-900 dark:text-blue-200">
-                                {pagination.total} programmes
+                                {offreParCategory[index]} programmes
                             </span>
                         </Link>
                     ))}
@@ -49,7 +49,7 @@ export default function TechPage({ categoryInfo, technologie, pagination, curren
 
                 {/* Offres en vedette */}
                 <div className="mb-16">
-                    <Pagination produit={produit} chocolats={technologie} currentPage={currentPage} totalPages={pagination.pageCount} />
+                    <Pagination produit={produit} chocolats={technologie} currentPage={currentPage} totalPages={pagination?.pageCount} />
                 </div>
             </div>
         </div>
