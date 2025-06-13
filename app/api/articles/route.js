@@ -29,7 +29,9 @@ export async function GET(request) {
             }
         }
         if (xml) {
-            sql = {}
+            sql = {
+                select: { title: true, slug: true, createdAt: true }
+            }
         }
         const articles = await prisma.article.findMany(sql)
 

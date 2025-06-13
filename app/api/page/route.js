@@ -37,7 +37,10 @@ export async function GET(request) {
         }
         if (xml) {
             // sql = `SELECT slug FROM pages`
-            sql = { where: { status: true } }
+            sql = {
+                where: { status: true },
+                select: { title: true, slug: true, createdAt: true }
+            }
             // params = []
         }
         // const pages = await queryDB(sql, params)
