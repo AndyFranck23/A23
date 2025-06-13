@@ -112,18 +112,18 @@ export default function TechProductCard({ product }) {
                     {product.categorie.nom}
                 </Link>
                 {product?.remise && (
-                    <div className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-full text-sm">
+                    <div className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 rounded-full text-sm">
                         -{product?.remise}%
                     </div>
                 )}
             </div>
             <div className="p-6 flex flex-col flex-grow">
-                <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-300 mb-2 line-clamp-1">{product?.name}</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm mb-2 line-clamp-2">{product?.description}</p>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2 line-clamp-1">{product?.name}</h3>
+                <p className="text-gray-700 dark:text-gray-300 text-sm mb-2 line-clamp-2">{product?.description}</p>
 
                 <ul className="mb-2 grid grid-cols-2 flex-grow">
                     {visibleFeatures.map((feat, i) => (
-                        <li key={i} className="flex items-center text-gray-700 dark:text-gray-400 text-sm">
+                        <li key={i} className="flex items-center text-gray-700 dark:text-gray-300 text-sm">
                             <svg
                                 className="w-4 h-4 text-green-500 mr-2 flex-shrink-0"
                                 fill="currentColor"
@@ -154,7 +154,7 @@ export default function TechProductCard({ product }) {
                                 {product?.price}
                             </span>
                             {product?.originalPrice && (
-                                <span className="text-gray-400 line-through text-sm">
+                                <span className="text-gray-600 line-through text-sm">
                                     {product?.originalPrice}
                                 </span>
                             )}

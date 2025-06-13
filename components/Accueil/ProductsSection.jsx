@@ -25,7 +25,7 @@ export default async function ProductsSection({ total }) {
                                 alt="Chocolats"
                                 className="object-cover"
                                 fill
-                                quality={50}
+                                quality={10}
                             />
                         </div>
                         <div className="p-4">
@@ -50,7 +50,7 @@ export default async function ProductsSection({ total }) {
                                 alt="Chocolats"
                                 className="object-cover"
                                 fill
-                                quality={50}
+                                quality={10}
                             />
                         </div>
                         <div className="p-4">
@@ -75,7 +75,7 @@ export default async function ProductsSection({ total }) {
                                 alt="Chocolats"
                                 className="object-cover"
                                 fill
-                                quality={50}
+                                quality={10}
                             />
                         </div>
                         <div className="p-4">

@@ -44,7 +44,7 @@ const OffreSection = ({ chocolats, technologie, mode }) => {
                 <div className="max-w-7xl mx-auto">
                     <div className="flex items-center justify-between mb-8">
                         <h2 className="text-3xl font-bold dark:text-white">La Mode d'Aujourd'hui</h2>
-                        <Link href="/la-mode" className="text-pink-600 dark:text-pink-400 hover:underline">
+                        <Link href="/la-mode" className="text-pink-700 dark:text-pink-300 hover:underline">
                             Découvrir →
                         </Link>
                     </div>

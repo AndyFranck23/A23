@@ -12,7 +12,7 @@ const DescriptionSection = () => {
                             src="/engagement.png"
                             alt="Engagement Les 3 Merveilles"
                             fill
-                            quality={50}
+                            quality={10}
                             className="rounded-lg shadow-lg object-cover"
                         />
                     </div>

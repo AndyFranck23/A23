@@ -47,7 +47,7 @@ export default async function Page() {
   // console.log(total)
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <Hero />
       <ProductsSection total={total} />
 
