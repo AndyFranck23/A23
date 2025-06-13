@@ -20,10 +20,12 @@ export default async function Footer({ produits }) {
                             {
                                 articles?.length > 0 &&
                                 articles.map((item, index) =>
-                                    <div key={index} className=" text-gray-400">
-                                        <li>
-                                            <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/blog/${item.slug}`} className="hover:text-white">{item.title}</Link>
-                                        </li>
+                                    <div key={index} className="text-gray-400">
+                                        <ul className="list-inside list-disc">
+                                            <li>
+                                                <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/blog/${item.slug}`} className="hover:text-white">{item.title}</Link>
+                                            </li>
+                                        </ul>
                                     </div>
                                 )
                             }
@@ -34,11 +36,11 @@ export default async function Footer({ produits }) {
                             <div className="space-y-2 text-gray-400">
                                 {
                                     produits?.length > 0 &&
-                                    <>
+                                    <ul className="list-inside list-disc">
                                         {produits?.map((item, index) =>
                                             <li key={index}><Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/${item.slug}`} className="hover:text-white">{item.nom} </Link></li>
                                         )}
-                                    </>
+                                    </ul>
                                 }
                             </div>
                         </div>
@@ -47,13 +49,13 @@ export default async function Footer({ produits }) {
                             <div className="space-y-2 text-gray-400">
                                 {
                                     pages?.length > 0 &&
-                                    <>
+                                    <ul className="list-inside list-disc">
                                         {pages?.map((item, index) =>
                                             <li key={index} className="list-desc">
                                                 <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/page/${item.slug}`} className="hover:text-white">{item.title} </Link>
                                             </li>
                                         )}
-                                    </>
+                                    </ul>
                                 }
                             </div>
                         </div>

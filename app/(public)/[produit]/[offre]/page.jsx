@@ -139,7 +139,7 @@ export default async function page({ params }) {
                     {/* Caractéristiques rapides */}
                     <div id="caractéristique" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mt-8 border-t border-gray-200 lg:w-[800px]">
                         <h2 className="text-4xl font-bold text-blue-500 mb-4">Les caractéristiques</h2>
-                        <h3 className="text-xl font-semibold text-blue-500 mb-4 line-clamp-1">{chocolats[0]?.name}</h3>
+                        <h3 className="text-xl font-semibold text-blue-800 mb-4 line-clamp-1">{chocolats[0]?.name}</h3>
                         <div className="w-full">
                             {chocolats[0]?.features.map((value, index) => {
                                 const [titre, text] = value.split("=");

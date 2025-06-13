@@ -140,7 +140,7 @@ export default function TechProductCard({ product }) {
                     ))}
                 </ul>
                 {features.length > 4 &&
-                    <button className='text-sm text-blue-500' onClick={() => setShowAllFeatures(!showAllFeatures)}>
+                    <button className='text-sm text-blue-800' onClick={() => setShowAllFeatures(!showAllFeatures)}>
                         {
                             showAllFeatures ? 'voir moins' : 'voir plus'
                         }
