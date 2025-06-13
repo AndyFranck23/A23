@@ -15,7 +15,7 @@ export default function Hero() {
                 fill
                 quality={10}
                 className="object-cover object-center"
-                priority
+            // priority
             />
 
             {/* Overlay pour le contraste */}
