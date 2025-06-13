@@ -44,7 +44,7 @@ export default function Carousel({ slides }) {
                                         alt={'imageP' + index}
                                         className='object-contain'
                                         fill
-                                        quality={50}
+                                        quality={10}
                                     // unoptimized={false}
                                     />
                                 </div>

@@ -104,7 +104,7 @@ export default function TechProductCard({ product }) {
                         alt={product.name || 'image'}
                         className='object-contain'
                         fill
-                        quality={50}
+                        quality={10}
                     // unoptimized={false}
                     />
                 </div>

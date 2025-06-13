@@ -38,15 +38,11 @@ async function getSitemapData() {
     const dynamicPagesClassement = categories?.map((item) => ({
         url: `${process.env.NEXT_PUBLIC_SITE_URL}/categorie/${item.slug}`,
         lastModified: new Date().toISOString(),
-        changeFrequency: 'daily',
-        priority: 0.3,
     })) || [];
 
     const dynamicPagesOffres = offres?.map((item) => ({
         url: `${process.env.NEXT_PUBLIC_SITE_URL}/${item.produit.slug}/${item.slug}`,
         lastModified: item.created_at,
-        changeFrequency: 'daily',
-        priority: 0.4,
     })) || [];
 
     const dynamicPagesBlog = articles?.map((item) => ({
@@ -83,8 +79,10 @@ export async function GET() {
                 (url) => `<url>
     <loc>${url.url}</loc>
     <lastmod>${url.lastModified}</lastmod>
-    <changefreq>${url.changeFrequency}</changefreq>
-    <priority>${url.priority}</priority>
+    ${url.changeFrequency || url.priority ?
+                        `<changefreq>${url.changeFrequency}</changefreq>
+                        <priority>${url.priority}</priority>` : ''
+                    }
   </url>`
             )
             .join('')}
