@@ -42,6 +42,7 @@ export default function ArticlesSection({ articles }) {
                                     src={isValidImage(article.image) ? article.image : '/agentIA.png'}
                                     alt={article.title}
                                     fill
+                                    quality={10}
                                     className="w-full h-full object-cover"
                                 />
                             </div>
