@@ -13,9 +13,9 @@ export default function Hero() {
                 src="/hero.webp"
                 alt="Visuel des 3 Merveilles"
                 fill
-                quality={10}
+                quality={20}
                 className="object-cover object-center"
-            // priority
+                priority
             />
 
             {/* Overlay pour le contraste */}
