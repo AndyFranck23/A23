@@ -6,7 +6,7 @@ import { isValidImage } from '../composants';
 
 export default function ProductCard({ product }) {
     const [showAllFeatures, setShowAllFeatures] = useState(false);
-    const features = product.features || [];
+    const features = product?.features || [];
     const visibleFeatures = showAllFeatures ? features : features.slice(0, 4);
 
     return (
@@ -16,7 +16,7 @@ export default function ProductCard({ product }) {
                     <Image
                         src={isValidImage(product.image[0]) ? product.image[0] : '/agentIA.png'}
                         alt={'image'}
-                        className='object-cover'
+                        className='object-contain'
                         fill
                         quality={50}
                     // unoptimized={false}
@@ -30,7 +30,7 @@ export default function ProductCard({ product }) {
             </div>
 
             <div className="p-4 flex flex-col flex-grow">
-                <h3 className="text-xl font-bold mb-2 dark:text-white">{product.name}</h3>
+                <h3 className="text-xl font-bold mb-2 dark:text-white line-clamp-2">{product.name}</h3>
 
                 {/* Description */}
                 <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">
@@ -78,7 +78,7 @@ export default function ProductCard({ product }) {
                     </div>
 
                     <Link
-                        href={`${process.env.NEXT_PUBLIC_SITE_URL}/${product.produit.slug}/${product.categorie.slug}/${product.slug}`}
+                        href={`${process.env.NEXT_PUBLIC_SITE_URL}/${product.produit.slug}/${product.slug}`}
                         className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors w-full text-center block"
                         rel="nofollow sponsored"
                     >

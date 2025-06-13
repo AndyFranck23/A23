@@ -5,20 +5,20 @@ import Pagination from '@/components/Pagination';
 import { nombrePage } from '@/components/Slug';
 import { safeFetch } from '@/components/composants';
 
-export const dynamic = 'force-dynamic';
+// export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params, searchParams }) {
     const searchParam = await searchParams
     const currentPage = parseInt(searchParam.page) || 1
-    const { type, produit } = await params
+    const { type } = await params
     const [data] = await safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?meta=sdfs&slug=${type}`)
 
     return {
         title: data?.meta_title || 'Les 3 Merveilles',
         description: data?.meta_description || 'Découvrez notre sélection exclusive de chocolats, technologie et la mode(vêtements, chaussure, casquete,...) d\'aujourd\'hui d\'affiliation de qualité',
-        robots: data?.status == 1 ? currentPage == 1 ? 'index, follow' : 'noindex, follow' : 'noindex, nofollow',
+        robots: currentPage == 1 ? 'index, follow' : 'noindex, follow',
         alternates: {
-            canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/${produit}/${type}`,
+            canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/categorie/${type}`,
         },
         // openGraph: {
         //     images: ['/og-chocolats.jpg'],
@@ -30,9 +30,9 @@ const page = async ({ params, searchParams }) => {
     const searchParam = await searchParams
     const currentPage = parseInt(searchParam.page) || 1
 
-    const { type, produit } = await params
+    const { type } = await params
     const [{ offres, pagination }, [category]] = await Promise.all([
-        safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?page=${currentPage}&limit=${nombrePage}&produit_id=${produit}&category_id=${type}`),
+        safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?page=${currentPage}&limit=${nombrePage}&category_id=${type}`),
         safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?slug=${type}`)
     ])
 
@@ -45,10 +45,10 @@ const page = async ({ params, searchParams }) => {
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
             {/* Hero Section */}
-            <section className={`bg-gradient-to-r ${produit == 'chocolats' ? 'from-amber-700 to-amber-600' : 'from-tech to-tech'} text-white py-16 px-4`}>
+            <section className={`bg-gradient-to-r ${category?.produit.slug == 'chocolats' ? 'from-amber-700 to-amber-600' : 'from-tech to-tech'} text-white py-16 px-4`}>
                 <div className="max-w-7xl mx-auto">
                     <Link
-                        href={`${process.env.NEXT_PUBLIC_SITE_URL}/${produit}`}
+                        href={`${process.env.NEXT_PUBLIC_SITE_URL}/${category?.produit.slug}`}
                         className="inline-block mb-4 text-amber-100 hover:text-white transition-colors"
                     >
                         ← Retour aux {category?.produit.nom}
@@ -65,7 +65,7 @@ const page = async ({ params, searchParams }) => {
                         <p className="text-2xl font-bold dark:text-white">
                             {pagination.total} produits trouvés
                         </p>
-                        {produit == 'chocolats' && <div className="flex gap-2">
+                        {category?.produit.slug == 'chocolats' && <div className="flex gap-2">
                             {categories.chocolats.affiliatePrograms.map((program) => (
                                 <span
                                     key={program}
@@ -77,7 +77,7 @@ const page = async ({ params, searchParams }) => {
                         </div>}
                     </div>
                     {/* <SearchProducts chocolats={chocolats} type={type} /> */}
-                    <Pagination produit={produit} chocolats={chocolats} currentPage={currentPage} totalPages={pagination.pageCount} />
+                    <Pagination produit={category?.produit.slug} chocolats={chocolats} currentPage={currentPage} totalPages={pagination.pageCount} />
                 </div>
             </section>
 

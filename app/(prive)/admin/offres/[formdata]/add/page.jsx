@@ -1,11 +1,16 @@
 "use client";
 import MyInput from '@/components/Admin/MyInput';
-import { handleImageSelect } from '@/components/composants';
+import { handleImageBrowser, handleImageSelect } from '@/components/composants';
 import axios from 'axios';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import dynamic from "next/dynamic";
+
+const Editor = dynamic(() => import("@tinymce/tinymce-react").then((mod) => mod.Editor), { ssr: false });
+
 
 export default function NewProductForm() {
+    const editorRef = useRef(null);
     const params = useParams()
     const produit_id = params.formdata
     const [load, setLoad] = useState(false);
@@ -81,6 +86,7 @@ export default function NewProductForm() {
         setLoad(true)
 
         try {
+            const content = editorRef.current.getContent();
             const formData = new FormData();
             Object.keys(form).forEach(key => {
                 key == 'image' ? (form[key].filter(ele => !ele.startsWith('blob:'))).forEach((file) => {
@@ -93,6 +99,7 @@ export default function NewProductForm() {
                     formData.append('file', file); // Clé répétée "file"
                 });
             }
+            formData.append('content', JSON.stringify(content))
             const res = await axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -100,6 +107,7 @@ export default function NewProductForm() {
             });
             alert(res.data.message)
             setMessage(res.data.message);
+            editorRef.current.setContent('')
             setForm({
                 ...form,
                 name: '',
@@ -325,14 +333,16 @@ export default function NewProductForm() {
                                 value={form.program}
                                 onChange={handleChange}
                             />
-                            <MyInput
-                                name="features"
-                                required
-                                label={"Caractéristiques (séparées par des virgules)"}
-                                type="text"
-                                value={form.features}
-                                onChange={handleChange}
-                            />
+                            <div className='mt-2'>
+                                <label className="block">Caractéristiques (séparées par des virgules)</label>
+                                <textarea
+                                    name="features"
+                                    value={form.features}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full h-[115px] p-2 border focus:ring-1 focus:ring-blue-500 outline-none dark:bg-transparent dark:border-gray-600"
+                                ></textarea>
+                            </div>
                             <MyInput
                                 name="affiliateLink"
                                 label={"Lien affilié"}
@@ -346,6 +356,53 @@ export default function NewProductForm() {
                                 type="text"
                                 value={form.meta_description}
                                 onChange={handleChange}
+                            />
+                        </div>
+                        <div className="col-span-2">
+                            <Editor
+                                // apiKey={TINY_KEY}
+                                tinymceScriptSrc="/tinymce/tinymce.min.js"
+                                onInit={(evt, editor) => (editorRef.current = editor)}
+                                initialValue="<p>Écris ici...</p>"
+                                init={{
+                                    branding: false, // Masque le branding TinyMCE
+                                    promotion: false, // Désactive les promotions
+                                    resize: true, // Permet le redimensionnement
+                                    image_caption: true, // Active les légendes d'images
+                                    height: 500,
+                                    menubar: true,
+                                    plugins: [
+                                        "image", "fullscreen", "table", "wordcount", "code", "link",
+                                        //  "autoresize"
+                                        // "powerpaste",
+                                        "lists", "advlist"
+                                    ],
+                                    toolbar:
+                                        "undo redo | formatselect | bold italic | forecolor backcolor emoticons | \
+                                                                alignleft aligncenter alignright alignjustify | \
+                                                                bullist numlist outdent indent | removeformat | help | \
+                                                                link image media | codesample emoticons | print fullscreen preview | \
+                                                                ",
+                                    images_upload_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/uploads`,
+                                    automatic_uploads: true,
+                                    file_picker_types: "image media",
+                                    file_picker_callback: handleImageBrowser,
+                                    image_advtab: true,
+                                    image_title: true,
+                                    image_description: true,
+                                    paste_as_text: false, // Ne pas convertir le texte en texte brut
+                                    paste_word_valid_elements: "p,h1,h2,h3,b,strong,i,em,u,a,span,div,br", // Conserver certains styles de Word
+                                    paste_word_cleanup_mode: "keep", // Conserver tous les styles du Word
+                                    paste_data_images: true,
+                                    paste_preprocess: function (plugin, args) {
+                                        // Traiter le contenu avant le collage
+                                        console.log("Prétraitement du collage", args.content);
+                                    },
+                                    paste_postprocess: function (plugin, args) {
+                                        // Traiter le contenu après le collage
+                                        console.log("Post-traitement du collage", args.content);
+                                    },
+                                }}
                             />
                         </div>
                         <div className="sm:flex justify-between">

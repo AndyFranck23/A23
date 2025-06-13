@@ -316,3 +316,11 @@ export async function safeFetch(url, options = {}) {
         return null;
     }
 }
+
+// Fonction pour défiler vers une section
+export const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+    }
+};

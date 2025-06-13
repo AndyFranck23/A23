@@ -7,7 +7,7 @@ import TechPage from '@/components/tech/TechPage';
 import ChocolatPage from '@/components/Chocolat/ChocolatPage';
 import { safeFetch } from '@/components/composants';
 
-export const dynamic = 'force-dynamic';
+// export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params, searchParams }) {
     const searchParam = await searchParams
@@ -18,7 +18,7 @@ export async function generateMetadata({ params, searchParams }) {
     return {
         title: meta?.meta_title || 'Les 3 Merveilles',
         description: meta?.meta_description || 'Découvrez notre sélection exclusive de chocolats, technologie et la mode d\'aujourd\'hui d\'affiliation de qualité',
-        robots: meta?.status == true ? currentPage == true ? 'index, follow' : 'noindex, follow' : 'noindex, nofollow',
+        robots: currentPage == 1 ? 'index, follow' : 'noindex, follow',
         alternates: {
             canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/${produit}`,
         },

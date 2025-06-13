@@ -38,14 +38,16 @@ const Pagination = ({ chocolats, currentPage, totalPages, produit }) => {
 
     return (
         <div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {chocolats?.map((product) =>
-                    produit == "chocolats" ?
-                        <ProductCard
-                            key={product.id}
-                            product={product}
-                        /> : <TechProductCard key={product.id} product={product} />
-                )}
+            <div className="flex justify-center w-full">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {chocolats?.map((product) =>
+                        produit == "chocolats" ?
+                            <ProductCard
+                                key={product.id}
+                                product={product}
+                            /> : <TechProductCard key={product.id} product={product} />
+                    )}
+                </div>
             </div>
 
             <div className="flex flex-wrap justify-center items-center mt-20 gap-2">

@@ -37,6 +37,7 @@ export async function GET(request) {
             sql = {
                 select: {
                     slug: true,
+                    created_at: true,
                     produit: { select: { slug: true } },
                     categorie: { select: { slug: true } }
                 }
@@ -106,9 +107,9 @@ export async function GET(request) {
         }
 
         // Pour la page url: chocolats/bonbonOU...
-        if (limit && pagination && produit_id && category_id) {
+        if (limit && pagination && category_id) {
             sql = {
-                where: { produit: { slug: produit_id }, categorie: { slug: category_id }, status: true },
+                where: { categorie: { slug: category_id }, status: true },
                 orderBy: { id: 'desc' },
                 include: {
                     produit: { select: { slug: true, nom: true } },
@@ -118,7 +119,7 @@ export async function GET(request) {
                 take: JSON.parse(limit), // LIMIT
             }
             total = {
-                where: { produit: { slug: produit_id }, categorie: { slug: category_id }, status: true }
+                where: { categorie: { slug: category_id }, status: true }
             }
         }
 
@@ -132,7 +133,7 @@ export async function GET(request) {
             // LEFT JOIN categories ON offres.category_id = categories.id 
             // WHERE offres.slug = ? AND offres.status = ?`
             sql = {
-                where: { slug: slug, status: true },
+                where: { slug: slug },
                 select: meta ? {
                     status: true,
                     meta_title: true,
@@ -274,6 +275,7 @@ export async function POST(request) {
                 features: form.features,
                 affiliateLink: form.affiliateLink,
                 status: JSON.parse(form.status),
+                content: form.content,
                 meta_title: form.meta_title,
                 meta_description: form.meta_description
             }
@@ -336,6 +338,7 @@ export async function PUT(request) {
                 features: form.features,
                 affiliateLink: form.affiliateLink,
                 status: JSON.parse(form.status),
+                content: form.content,
                 meta_title: form.meta_title,
                 meta_description: form.meta_description
             }

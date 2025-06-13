@@ -1,90 +1,76 @@
+import { safeFetch } from '@/components/composants';
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
 async function getSitemapData() {
-    try {
-        const [offresRes, categoryRes, articlesRes, produitsRes, pagesRes] = await Promise.all([
-            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?xml=ss`, { cache: 'no-store' }),
-            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?xml=ss`, { cache: 'no-store' }),
-            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/articles?xml=dd`, { cache: 'no-store' }),
-            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/produit?xml=ss`, { cache: 'no-store' }),
-            fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/page?xml=dd`, { cache: 'no-store' })
-        ]);
+    const produits = [{ slug: 'chocolats' }, { slug: 'technologie' }, { slug: 'la-mode' }]
+    const [offresData, categories, articles, pages] = await Promise.all([
+        safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?xml=ss`),
+        safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?xml=ss`),
+        safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/articles?xml=dd`),
+        safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/page?xml=dd`)
+    ])
+    const offres = offresData.offres || offresData;
 
-        if (!offresRes.ok || !categoryRes.ok || !articlesRes.ok || !produitsRes || !pagesRes) {
-            throw new Error('Erreur lors de la récupération des données API');
+    const staticPages = [
+        {
+            url: `${process.env.NEXT_PUBLIC_SITE_URL}/`,
+            lastModified: new Date().toISOString(),
+            changeFrequency: 'daily',
+            priority: 1.0,
+        },
+        {
+            url: `${process.env.NEXT_PUBLIC_SITE_URL}/about`,
+            lastModified: new Date().toISOString(),
+            changeFrequency: 'daily',
+            priority: 0.6,
         }
+    ];
 
-        const offresData = await offresRes.json();
-        const categories = await categoryRes.json();
-        const articles = await articlesRes.json();
-        const produits = await produitsRes.json();
-        const pages = await pagesRes.json();
-        const offres = offresData.offres || offresData;
+    const dynamicPagesProduits = produits?.map((item) => ({
+        url: `${process.env.NEXT_PUBLIC_SITE_URL}/${item.slug}`,
+        lastModified: new Date().toISOString(),
+        changeFrequency: 'daily',
+        priority: 0.2,
+    })) || [];
 
-        const staticPages = [
-            {
-                url: `${process.env.NEXT_PUBLIC_SITE_URL}/`,
-                lastModified: new Date().toISOString(),
-                changeFrequency: 'daily',
-                priority: 1.0,
-            },
-            {
-                url: `${process.env.NEXT_PUBLIC_SITE_URL}/about`,
-                lastModified: new Date().toISOString(),
-                changeFrequency: 'daily',
-                priority: 0.6,
-            }
-        ];
+    const dynamicPagesClassement = categories?.map((item) => ({
+        url: `${process.env.NEXT_PUBLIC_SITE_URL}/categorie/${item.slug}`,
+        lastModified: new Date().toISOString(),
+        changeFrequency: 'daily',
+        priority: 0.3,
+    })) || [];
 
-        const dynamicPagesProduits = produits?.map((item) => ({
-            url: `${process.env.NEXT_PUBLIC_SITE_URL}/${item.slug}`,
-            lastModified: new Date().toISOString(),
-            changeFrequency: 'daily',
-            priority: 0.2,
-        })) || [];
+    const dynamicPagesOffres = offres?.map((item) => ({
+        url: `${process.env.NEXT_PUBLIC_SITE_URL}/${item.produit.slug}/${item.slug}`,
+        lastModified: item.created_at,
+        changeFrequency: 'daily',
+        priority: 0.4,
+    })) || [];
 
-        const dynamicPagesClassement = categories?.map((item) => ({
-            url: `${process.env.NEXT_PUBLIC_SITE_URL}/${item.produit.slug}/${item.slug}`,
-            lastModified: new Date().toISOString(),
-            changeFrequency: 'daily',
-            priority: 0.3,
-        })) || [];
+    const dynamicPagesBlog = articles?.map((item) => ({
+        url: `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${item.slug}`,
+        lastModified: new Date().toISOString(),
+        changeFrequency: 'daily',
+        priority: 0.5,
+    })) || [];
 
-        const dynamicPagesOffres = offres?.map((item) => ({
-            url: `${process.env.NEXT_PUBLIC_SITE_URL}/${item.produit.slug}/${item.categorie.slug}/${item.slug}`,
-            lastModified: new Date().toISOString(),
-            changeFrequency: 'daily',
-            priority: 0.4,
-        })) || [];
+    const dynamicPagesPages = pages?.map((item) => ({
+        url: `${process.env.NEXT_PUBLIC_SITE_URL}/page/${item.slug}`,
+        lastModified: new Date().toISOString(),
+        changeFrequency: 'daily',
+        priority: 0.7,
+    })) || [];
 
-        const dynamicPagesBlog = articles?.map((item) => ({
-            url: `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${item.slug}`,
-            lastModified: new Date().toISOString(),
-            changeFrequency: 'daily',
-            priority: 0.5,
-        })) || [];
-
-        const dynamicPagesPages = pages?.map((item) => ({
-            url: `${process.env.NEXT_PUBLIC_SITE_URL}/page/${item.slug}`,
-            lastModified: new Date().toISOString(),
-            changeFrequency: 'daily',
-            priority: 0.7,
-        })) || [];
-
-        return [
-            ...staticPages,
-            ...dynamicPagesProduits,
-            ...dynamicPagesClassement,
-            ...dynamicPagesOffres,
-            ...dynamicPagesBlog,
-            ...dynamicPagesPages,
-        ];
-    } catch (error) {
-        console.error('Fetch failed for posts in sitemap:', error);
-        return [];
-    }
+    return [
+        ...staticPages,
+        ...dynamicPagesProduits,
+        ...dynamicPagesClassement,
+        ...dynamicPagesOffres,
+        ...dynamicPagesBlog,
+        ...dynamicPagesPages,
+    ];
 }
 
 export async function GET() {

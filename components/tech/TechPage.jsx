@@ -36,7 +36,7 @@ export default function TechPage({ offreParCategory, categoryInfo, technologie, 
                     {categoryInfo?.map((subcat, index) => (
                         <Link
                             key={subcat.slug}
-                            href={`${process.env.NEXT_PUBLIC_SITE_URL}/${subcat.produit.slug}/${subcat.slug}`}
+                            href={`${process.env.NEXT_PUBLIC_SITE_URL}/categorie/${subcat.slug}`}
                             className="px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow-md hover:shadow-lg transition-shadow flex items-center"
                         >
                             <p className="mr-2 dark:text-white">{subcat.nom}</p>

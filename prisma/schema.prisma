@@ -9,38 +9,35 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 model Produit {
-  id               Int       @id @default(autoincrement())
-  nom              String    @default("")
-  slug             String    @default("")
-  description      String    @default("")
-  created_at       DateTime  @default(now())
-  status           Boolean  
-  meta_title       String    @default("")
-  meta_description String    @default("")
-
+  id               Int        @id @default(autoincrement())
+  nom              String     @default("")
+  slug             String     @default("")
+  description      String     @default("")
+  created_at       DateTime   @default(now())
+  status           Boolean
+  meta_title       String     @default("")
+  meta_description String     @default("")
   categories       Category[]
   offres           Offre[]
 }
 
-
 model Category {
-  id               Int       @id @default(autoincrement())
+  id               Int      @id @default(autoincrement())
   produit_id       Int
-  nom              String    @default("")     @db.VarChar(255)
-  slug             String    @default("")     @db.VarChar(100)
-  description      String    @default("")
-  status           Boolean  
-  created_at       DateTime  @default(now())
-  meta_title       String    @default("")
-  meta_description String    @default("")
-
-  produit          Produit?  @relation(fields: [produit_id], references: [id])
+  nom              String   @default("") @db.VarChar(255)
+  slug             String   @default("") @db.VarChar(100)
+  description      String   @default("")
+  status           Boolean
+  created_at       DateTime @default(now())
+  meta_title       String   @default("")
+  meta_description String   @default("")
+  produit          Produit  @relation(fields: [produit_id], references: [id])
   offres           Offre[]
 }
 
@@ -48,63 +45,61 @@ model Offre {
   id               Int       @id @default(autoincrement())
   produit_id       Int
   category_id      Int?
-  name             String     @default("")     @db.VarChar(255)
-  slug             String     @default("")     @db.VarChar(255)
-  price            String     @default("")     @db.VarChar(50)
-  originalPrice    String     @default("")     @db.VarChar(50)
-  remise           String     @default("")     @db.VarChar(50)
-  program          String     @default("")     @db.VarChar(100)
-  image            String     @default("")
-  description      String     @default("")
-  poids            String     @default("")     @db.VarChar(50)
-  features         String     @default("")
-  affiliateLink    String     @default("")
-  status           Boolean   
-  created_at       DateTime   @default(now())
-  meta_title       String     @default("")
-  meta_description String     @default("")
-
-  produit          Produit?   @relation(fields: [produit_id], references: [id])
-  categorie        Category?  @relation(fields: [category_id], references: [id])
+  name             String    @default("") @db.VarChar(255)
+  slug             String    @default("") @db.VarChar(255)
+  price            String    @default("") @db.VarChar(50)
+  originalPrice    String    @default("") @db.VarChar(50)
+  remise           String    @default("") @db.VarChar(50)
+  program          String    @default("") @db.VarChar(100)
+  image            String    @default("")
+  description      String    @default("")
+  poids            String    @default("") @db.VarChar(50)
+  features         String    @default("")
+  affiliateLink    String    @default("")
+  status           Boolean
+  content          String?   @default("")
+  created_at       DateTime  @default(now())
+  meta_title       String    @default("")
+  meta_description String    @default("")
+  produit          Produit   @relation(fields: [produit_id], references: [id])
+  categorie        Category? @relation(fields: [category_id], references: [id])
 }
 
 model Admin {
   id         Int      @id @default(autoincrement())
-  nom        String   @default("")   @db.VarChar(255)
-  email      String   @default("")   @db.VarChar(255)
-  password   String   @default("")   @db.VarChar(255)
+  nom        String   @default("") @db.VarChar(255)
+  email      String   @default("") @db.VarChar(255)
+  password   String   @default("") @db.VarChar(255)
   created_at DateTime @default(now())
 }
 
 model Article {
-  id               Int      @id @default(autoincrement())
-  title            String    @default("")
-  slug             String    @default("")
-  description      String    @default("")
-  content          String    @default("")
-  category         String    @default("")
-  image            String    @default("")
-  metaTitle        String    @default("")   @map("meta_title")
-  metaDescription  String    @default("")   @map("meta_description")
-  status           Boolean   
-  createdAt        DateTime @default(now()) @map("created_at")
+  id              Int      @id @default(autoincrement())
+  title           String   @default("")
+  slug            String   @default("")
+  description     String   @default("")
+  content         String   @default("")
+  category        String   @default("")
+  image           String   @default("")
+  metaTitle       String   @default("") @map("meta_title")
+  metaDescription String   @default("") @map("meta_description")
+  status          Boolean
+  createdAt       DateTime @default(now()) @map("created_at")
 
   @@map("articles")
 }
 
 model Page {
-  id               Int      @id @default(autoincrement())
-  title            String    @default("")   @db.Text
-  slug             String    @default("")   @db.Text
-  description      String    @default("")   @db.Text
-  content          String    @default("")   @db.Text
-  image            String    @default("")   @db.Text
-  metaTitle        String    @default("")   @map("meta_title") @db.Text
-  metaDescription  String    @default("")   @map("meta_description") @db.Text
-  status           Boolean 
-  createdAt        DateTime @default(now()) @map("created_at")
+  id              Int      @id @default(autoincrement())
+  title           String   @default("")
+  slug            String   @default("")
+  description     String   @default("")
+  content         String   @default("")
+  image           String   @default("")
+  metaTitle       String   @default("") @map("meta_title")
+  metaDescription String   @default("") @map("meta_description")
+  status          Boolean
+  createdAt       DateTime @default(now()) @map("created_at")
 
   @@map("pages")
 }
-
-

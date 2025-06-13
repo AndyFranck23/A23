@@ -1,13 +1,10 @@
 "use client"
+
+import { scrollToSection } from "../composants";
+
 // components/Hero.jsx
 export default function Hero() {
-    // Fonction pour défiler vers une section
-    const scrollToSection = (id) => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.scrollIntoView({ behavior: "smooth" });
-        }
-    };
+
     return (
         <section
             className="relative bg-cover bg-center h-auto dark:bg-gray-800 p-10 md:p-0 md:h-[500px]"
@@ -20,10 +17,7 @@ export default function Hero() {
                     Bienvenue sur Les 3 Merveilles
                 </h1>
                 <h2 className="mt-4 text-lg md:text-xl text-gray-300 lg:w-[1000px]">
-                    Découvrez l'univers sur Les 3 Merveilles où se mêlent gourmandise, innovation et style.
-                    Laissez-vous tenter par nos chocolats artisanaux, véritables délices pour les papilles,
-                    ainsi que par notre sélection technologique (téléphones, casques audio, écouteurs, etc) alliant performance et design.
-                    Enfin, affirmez votre personnalité avec notre collection mode tendance, conçue pour sublimer chaque look.
+                    Les 3 Merveilles : chocolats artisanaux, technologie alliant performance et design, mode tendance pour sublimer chaque look.
                 </h2>
                 <button onClick={() => scrollToSection("offreSection")} className="mt-6 px-6 py-3 bg-tech hover:bg-amber-200 hover:text-gray-900 text-white rounded-full font-semibold transition">
                     Explorer

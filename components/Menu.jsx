@@ -53,7 +53,7 @@ export const Menu = ({ className, produits, category }) => {
                                                             {category?.map((elt, index) =>
                                                                 <div key={index} className="">
                                                                     {elt.produit.slug == item.slug ?
-                                                                        <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/${item.slug}/${elt.slug}`} className='flex justify-between items-center w-full p-2 rounded-lg dark:hover:bg-gray-900 hover:bg-gray-300'>{elt.nom} </Link> : ''
+                                                                        <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/categorie/${elt.slug}`} className='flex justify-between items-center w-full p-2 rounded-lg dark:hover:bg-gray-900 hover:bg-gray-300'>{elt.nom} </Link> : ''
                                                                     }
                                                                 </div>
                                                             )

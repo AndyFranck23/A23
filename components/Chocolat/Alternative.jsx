@@ -39,24 +39,26 @@ export default async function Alternative({ type, produit }) {
     ];
 
     return (
-        <main className="min-h-screen bg-white dark:bg-transparent">
+        <main className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 mx-auto">
             {/* ... (le reste du code précédent reste identique jusqu'à la section FAQ) */}
 
             {/* Section Alternatives */}
-            <section className="mt-16">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-8 text-center">
+            <section className="mt-10 py-5">
+                <h2 className="text-4xl font-bold text-blue-500 pb-10 text-center">
                     Alternatives populaires
                 </h2>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {chocolats.map((product, index) =>
-                        produit == 'chocolats' ?
-                            <ProductCard
-                                key={index}
-                                product={product}
-                            /> : <TechProductCard key={index} product={product} />
-                    )}
+                <div className=" flex justify-center w-full">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {chocolats?.map((product, index) =>
+                            produit == 'chocolats' ?
+                                <ProductCard
+                                    key={index}
+                                    product={product}
+                                /> : <TechProductCard key={index} product={product} />
+                        )}
+                    </div>
                 </div>
+                {/* <ProductCard2 {...product} /> */}
 
                 {/* <p className="mt-6 text-center text-sm text-gray-500">
                     Ces suggestions sont basées sur les préférences de nos clients
@@ -66,3 +68,5 @@ export default async function Alternative({ type, produit }) {
         </main >
     );
 }
+
+

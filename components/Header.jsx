@@ -5,6 +5,7 @@ import DarkModeToggle from './DarkModeToggle';
 import { Bars3BottomRightIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { Menu } from './Menu';
+import Image from 'next/image';
 
 export default function Header({ produits, category }) {
     const [menuActive, setMenuActive] = useState(false)
@@ -17,7 +18,15 @@ export default function Header({ produits, category }) {
                     <div className={`flex justify-between h-16 items-center`}>
                         <Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/`} className="text-2xl font-bold">
                             <div className="flex items-center">
-                                <img src='/logo.png' className='h-20 w-20 object-cover' />
+                                <div className="relative h-20 w-20">
+                                    <Image
+                                        src={'/logo.png'}
+                                        alt={'logo'}
+                                        className='object-cover'
+                                        fill
+                                        quality={10}
+                                    />
+                                </div>
                                 <span className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                                     Les 3 Merveilles
                                 </span>

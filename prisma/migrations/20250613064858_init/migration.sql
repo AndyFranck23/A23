@@ -44,6 +44,7 @@ CREATE TABLE "Offre" (
     "features" TEXT NOT NULL DEFAULT '',
     "affiliateLink" TEXT NOT NULL DEFAULT '',
     "status" BOOLEAN NOT NULL,
+    "content" TEXT DEFAULT '',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "meta_title" TEXT NOT NULL DEFAULT '',
     "meta_description" TEXT NOT NULL DEFAULT '',
