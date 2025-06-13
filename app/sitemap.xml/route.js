@@ -4,12 +4,12 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 async function getSitemapData() {
-    const produits = [{ slug: 'chocolats' }, { slug: 'technologie' }, { slug: 'la-mode' }]
-    const [offresData, categories, articles, pages] = await Promise.all([
+    const [offresData, categories, articles, pages, produits] = await Promise.all([
         safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?xml=ss`),
         safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?xml=ss`),
         safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/articles?xml=dd`),
-        safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/page?xml=dd`)
+        safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/page?xml=dd`),
+        safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/produit?xml=ss`),
     ])
     const offres = offresData.offres || offresData;
 
@@ -30,14 +30,14 @@ async function getSitemapData() {
 
     const dynamicPagesProduits = produits?.map((item) => ({
         url: `${process.env.NEXT_PUBLIC_SITE_URL}/${item.slug}`,
-        lastModified: new Date().toISOString(),
+        lastModified: item.created_at,
         changeFrequency: 'daily',
         priority: 0.2,
     })) || [];
 
     const dynamicPagesClassement = categories?.map((item) => ({
         url: `${process.env.NEXT_PUBLIC_SITE_URL}/categorie/${item.slug}`,
-        lastModified: new Date().toISOString(),
+        lastModified: item.created_at,
     })) || [];
 
     const dynamicPagesOffres = offres?.map((item) => ({
@@ -47,14 +47,14 @@ async function getSitemapData() {
 
     const dynamicPagesBlog = articles?.map((item) => ({
         url: `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${item.slug}`,
-        lastModified: new Date().toISOString(),
+        lastModified: item.createdAt,
         changeFrequency: 'daily',
         priority: 0.5,
     })) || [];
 
     const dynamicPagesPages = pages?.map((item) => ({
         url: `${process.env.NEXT_PUBLIC_SITE_URL}/page/${item.slug}`,
-        lastModified: new Date().toISOString(),
+        lastModified: item.createdAt,
         changeFrequency: 'daily',
         priority: 0.7,
     })) || [];

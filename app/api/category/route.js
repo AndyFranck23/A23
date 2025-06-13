@@ -36,6 +36,7 @@ export async function GET(request) {
                 select: {
                     slug: true,
                     nom: true,
+                    created_at: true,
                     produit: { select: { slug: true } }
                 }
             }

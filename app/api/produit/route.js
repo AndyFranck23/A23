@@ -24,7 +24,7 @@ export async function GET(request) {
         if (xml) {
             // sql = `SELECT slug,nom FROM produits`
             sql = {
-                select: { nom: true, slug: true }
+                select: { nom: true, slug: true, created_at: true }
             }
             // params = []
         }
