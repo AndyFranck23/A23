@@ -45,10 +45,10 @@ export default async function page({ params }) {
 
     return (
         <>
-            <script
+            {/* <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-            />
+            /> */}
             <main className="min-h-screen bg-white dark:bg-gray-900">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     {/* Header avec image et prix */}
