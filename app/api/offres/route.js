@@ -141,10 +141,10 @@ export async function GET(request) {
                     produit: { select: { nom: true, slug: true } },
                     // categorie: { select: { nom: true, slug: true } }
                 } : undefined,
-                // include: meta ? undefined : {
-                //     produit: { select: { nom: true, slug: true } },
-                //     categorie: { select: { nom: true, slug: true } }
-                // }
+                include: meta ? undefined : {
+                    produit: { select: { nom: true, slug: true } },
+                    categorie: { select: { nom: true, slug: true } }
+                }
             }
             // params = [slug, 1]
             // total = await queryDB(`SELECT COUNT(*) as total FROM offres WHERE slug = ? AND status = ?`, [slug, 1]);
