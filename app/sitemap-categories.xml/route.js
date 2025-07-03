@@ -9,7 +9,7 @@ export async function GET() {
   ${categories.map(item => `
     <url>
       <loc>${host}/categorie/${item.slug}</loc>
-      <lastmod>${new Date(item.created_at).toISOString()}</lastmod>
+      <lastmod>${new Date(item.updated_at || item.created_at).toISOString()}</lastmod>
       <changefreq>daily</changefreq>
       <priority>0.7</priority>
     </url>

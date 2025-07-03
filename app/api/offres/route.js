@@ -38,6 +38,7 @@ export async function GET(request) {
                 select: {
                     slug: true,
                     created_at: true,
+                    updated_at: true,
                     produit: { select: { slug: true } },
                     categorie: { select: { slug: true } }
                 }

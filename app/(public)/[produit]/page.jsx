@@ -7,7 +7,7 @@ import TechPage from '@/components/tech/TechPage';
 import ChocolatPage from '@/components/Chocolat/ChocolatPage';
 import { safeFetch } from '@/components/composants';
 
-// export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params, searchParams }) {
     const searchParam = await searchParams

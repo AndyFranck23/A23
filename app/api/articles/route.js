@@ -30,7 +30,7 @@ export async function GET(request) {
         }
         if (xml) {
             sql = {
-                select: { title: true, slug: true, createdAt: true }
+                select: { title: true, slug: true, createdAt: true, updated_at: true }
             }
         }
         const articles = await prisma.article.findMany(sql)

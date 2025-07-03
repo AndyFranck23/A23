@@ -39,7 +39,7 @@ export async function GET(request) {
             // sql = `SELECT slug FROM pages`
             sql = {
                 where: { status: true },
-                select: { title: true, slug: true, createdAt: true }
+                select: { title: true, slug: true, createdAt: true, updated_at: true }
             }
             // params = []
         }

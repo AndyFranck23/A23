@@ -8,6 +8,7 @@ export default function ListeOffres() {
     const [artilces, setArticles] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const maxlength = 20
 
     useEffect(() => {
         // Fonction pour récupérer les artilces depuis l'API
@@ -82,7 +83,7 @@ export default function ListeOffres() {
                             artilces.map((elt, index) => (
                                 <tr key={index}>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm font-medium text-gray-900 dark:text-gray-200">{elt.title}</div>
+                                        <div className="text-sm font-medium text-gray-900 dark:text-gray-200">{elt.title.length > maxlength ? elt.title.slice(0, maxlength) + "..." : elt.title}</div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="text-sm text-gray-500 dark:text-gray-400">{elt.category}</div>

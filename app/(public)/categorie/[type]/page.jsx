@@ -5,7 +5,7 @@ import Pagination from '@/components/Pagination';
 import { nombrePage } from '@/components/Slug';
 import { safeFetch } from '@/components/composants';
 
-// export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params, searchParams }) {
     const searchParam = await searchParams

@@ -6,57 +6,72 @@ export async function GET() {
   try {
     // Récupère la date du dernier offre ajouté
     const lastOffres = await prisma.offre.findFirst({
-      orderBy: { created_at: 'desc' },
-      select: { created_at: true }
+      where: {
+        updated_at: { not: null },
+      },
+      orderBy: { updated_at: 'desc' },
+      select: { updated_at: true }
     })
     // Récupère la date du dernier category ajouté
     const lastCategory = await prisma.category.findFirst({
-      orderBy: { created_at: 'desc' },
-      select: { created_at: true }
+      where: {
+        updated_at: { not: null },
+      },
+      orderBy: { updated_at: 'desc' },
+      select: { updated_at: true }
     })
     // Récupère la date du dernier produit ajouté
     const lastProduit = await prisma.produit.findFirst({
-      orderBy: { created_at: 'desc' },
-      select: { created_at: true }
+      where: {
+        updated_at: { not: null },
+      },
+      orderBy: { updated_at: 'desc' },
+      select: { updated_at: true }
     })
     // Récupère la date du dernier article ajouté
     const lastBlog = await prisma.article.findFirst({
-      orderBy: { createdAt: 'desc' },
-      select: { createdAt: true }
+      where: {
+        updated_at: { not: null },
+      },
+      orderBy: { updated_at: 'desc' },
+      select: { updated_at: true }
     })
     // Récupère la date du dernier page ajouté
     const lastPage = await prisma.page.findFirst({
-      orderBy: { createdAt: 'desc' },
-      select: { createdAt: true }
+      where: {
+        updated_at: { not: null },
+      },
+      orderBy: { updated_at: 'desc' },
+      select: { updated_at: true }
     })
 
     // Fonction pour convertir une date en ISO ou donner la date actuelle par défaut
     const formatDate = (date) =>
       date ? new Date(date).toISOString() : new Date().toISOString();
-    console.log(formatDate(lastOffres?.created_at))
+    // console.log(formatDate(lastOffres?.updated_at))
 
     const host = process.env.NEXT_PUBLIC_SITE_URL;
     const xml = `<?xml version="1.0" encoding="UTF-8" ?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
     <loc>${host}/sitemap-offres.xml</loc>
-    <lastmod>${formatDate(lastOffres?.created_at)}</lastmod>
+    <lastmod>${formatDate(lastOffres?.updated_at)}</lastmod>
   </sitemap>
   <sitemap>
     <loc>${host}/sitemap-categories.xml</loc>
-    <lastmod>${formatDate(lastCategory?.created_at)}</lastmod>
+    <lastmod>${formatDate(lastCategory?.updated_at)}</lastmod>
   </sitemap>
   <sitemap>
     <loc>${host}/sitemap-produit.xml</loc>
-    <lastmod>${formatDate(lastProduit?.created_at)}</lastmod>
+    <lastmod>${formatDate(lastProduit?.updated_at)}</lastmod>
   </sitemap>
   <sitemap>
     <loc>${host}/sitemap-blog.xml</loc>
-    <lastmod>${formatDate(lastBlog?.createdAt)}</lastmod>
+    <lastmod>${formatDate(lastBlog?.updated_at)}</lastmod>
   </sitemap>
   <sitemap>
     <loc>${host}/sitemap-pages.xml</loc>
-    <lastmod>${formatDate(lastPage?.createdAt)}</lastmod>
+    <lastmod>${formatDate(lastPage?.updated_at)}</lastmod>
   </sitemap>
   <sitemap>
     <loc>${host}/sitemap-static.xml</loc>

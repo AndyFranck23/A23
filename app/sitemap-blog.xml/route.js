@@ -9,7 +9,7 @@ export async function GET() {
   ${articles.map(item => `
     <url>
       <loc>${host}/blog/${item.slug}</loc>
-      <lastmod>${new Date(item.createdAt).toISOString()}</lastmod>
+      <lastmod>${new Date(item.updated_at || item.createdAt).toISOString()}</lastmod>
       <changefreq>weekly</changefreq>
       <priority>0.5</priority>
     </url>

@@ -12,6 +12,7 @@ export default function ListeOffres() {
     const [loading, setLoading] = useState(true);
     const [suppression, setSuppression] = useState(false);
     const [error, setError] = useState(null);
+    const maxlength = 20
 
     useEffect(() => {
         // Fonction pour récupérer les offres depuis l'API
@@ -93,7 +94,7 @@ export default function ListeOffres() {
                                 offres.map((offre) => (
                                     <tr key={offre.id}>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900 dark:text-gray-200">{offre.name}</div>
+                                            <div className="text-sm font-medium text-gray-900 dark:text-gray-200">{offre.name.length > maxlength ? offre.name.slice(0, maxlength) + "..." : offre.name}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm text-gray-500 dark:text-gray-400">{offre.produit.nom}</div>

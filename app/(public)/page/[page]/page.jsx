@@ -1,7 +1,7 @@
 import { safeFetch } from '@/components/composants';
 import React from 'react'
 
-// export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }) {
     const { page } = await params

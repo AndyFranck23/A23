@@ -20,6 +20,7 @@ model Produit {
   slug             String     @default("")
   description      String     @default("")
   created_at       DateTime   @default(now())
+  updated_at       DateTime?   @updatedAt
   status           Boolean
   meta_title       String     @default("")
   meta_description String     @default("")
@@ -35,6 +36,7 @@ model Category {
   description      String   @default("")
   status           Boolean
   created_at       DateTime @default(now())
+  updated_at       DateTime? @updatedAt
   meta_title       String   @default("")
   meta_description String   @default("")
   produit          Produit  @relation(fields: [produit_id], references: [id])
@@ -59,6 +61,7 @@ model Offre {
   status           Boolean
   content          String?   @default("")
   created_at       DateTime  @default(now())
+  updated_at       DateTime?  @updatedAt
   meta_title       String    @default("")
   meta_description String    @default("")
   produit          Produit   @relation(fields: [produit_id], references: [id])
@@ -71,6 +74,7 @@ model Admin {
   email      String   @default("") @db.VarChar(255)
   password   String   @default("") @db.VarChar(255)
   created_at DateTime @default(now())
+  updated_at DateTime? @updatedAt
 }
 
 model Article {
@@ -85,6 +89,7 @@ model Article {
   metaDescription String   @default("") @map("meta_description")
   status          Boolean
   createdAt       DateTime @default(now()) @map("created_at")
+  updated_at      DateTime? @updatedAt
 
   @@map("articles")
 }
@@ -100,6 +105,7 @@ model Page {
   metaDescription String   @default("") @map("meta_description")
   status          Boolean
   createdAt       DateTime @default(now()) @map("created_at")
+  updated_at      DateTime? @updatedAt
 
   @@map("pages")
 }

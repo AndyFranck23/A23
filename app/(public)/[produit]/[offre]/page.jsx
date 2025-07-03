@@ -2,7 +2,7 @@ import Carousel from "@/components/Accueil/Carousel";
 import Alternative from "@/components/Chocolat/Alternative";
 import { safeFetch } from "@/components/composants";
 
-// export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }) {
     const { offre, produit } = await params

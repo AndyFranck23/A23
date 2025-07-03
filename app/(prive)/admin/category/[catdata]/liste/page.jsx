@@ -14,6 +14,7 @@ export default function ListeOffres() {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const maxlength = 20
 
     useEffect(() => {
         // Fonction pour récupérer les categories depuis l'API
@@ -92,7 +93,7 @@ export default function ListeOffres() {
                                 categories.map((elt, index) => (
                                     <tr key={index}>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900 dark:text-gray-200">{elt.nom}</div>
+                                            <div className="text-sm font-medium text-gray-900 dark:text-gray-200">{elt.nom.length > maxlength ? elt.nom.slice(0, maxlength) + "..." : elt.nom}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm text-gray-500 dark:text-gray-400">{elt.category}</div>
