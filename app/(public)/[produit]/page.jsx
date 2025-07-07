@@ -30,10 +30,10 @@ export async function generateMetadata({ params, searchParams }) {
             canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/${produit}`,
         },
         openGraph: {
-            title: meta?.meta_title + '2' || 'Les 3 Merveilles',
+            title: meta?.meta_title + '3' || 'Les 3 Merveilles',
             description: meta?.meta_description || 'Découvrez notre sélection exclusive de chocolats, technologie et la mode d\'aujourd\'hui d\'affiliation de qualité',
             images: [{
-                url: `${process.env.NEXT_PUBLIC_SITE_URL}/public/${image}`,
+                url: `${process.env.NEXT_PUBLIC_SITE_URL}/${image}`,
                 width: 1200,
                 height: 630,
                 atl: meta?.meta_title || 'les 3 merveilles'
