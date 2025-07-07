@@ -32,12 +32,22 @@ export async function generateMetadata({ params, searchParams }) {
         openGraph: {
             title: meta?.meta_title + '3' || 'Les 3 Merveilles',
             description: meta?.meta_description || 'Découvrez notre sélection exclusive de chocolats, technologie et la mode d\'aujourd\'hui d\'affiliation de qualité',
+            url: `${process.env.NEXT_PUBLIC_SITE_URL}/${produit}`,
+            // Fiche produit:	product
+            // Page catégorie:	website
+            // Page article (blog):	article
+            // Page d’accueil:	website
+            type: 'website',
+            siteName: 'Les 3 Merveilles',
             images: [{
                 url: `${process.env.NEXT_PUBLIC_SITE_URL}/${image}`,
                 width: 1200,
                 height: 630,
                 atl: meta?.meta_title || 'les 3 merveilles'
             }],
+            other: {
+                'fb:app_id': '978066750965088',
+            },
         },
     }
 }
