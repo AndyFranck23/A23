@@ -15,11 +15,11 @@ export async function generateMetadata({ params, searchParams }) {
     const { produit } = await params
     let image = ''
     if (produit == 'technologie')
-        image = '/public/tech.png'
+        image = 'tech.png'
     else if (produit == 'la-mode')
-        image == '/public/mode.png'
+        image == 'mode.png'
     else if (produit == 'chocolats')
-        image == '/public/chocolat.png'
+        image == 'chocolat.png'
     const [meta] = await safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/produit?slug=${produit}&meta=hh`)
 
     return {
@@ -30,7 +30,14 @@ export async function generateMetadata({ params, searchParams }) {
             canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/${produit}`,
         },
         openGraph: {
-            images: [image],
+            title: meta?.meta_title + '2' || 'Les 3 Merveilles',
+            description: meta?.meta_description || 'Découvrez notre sélection exclusive de chocolats, technologie et la mode d\'aujourd\'hui d\'affiliation de qualité',
+            images: [{
+                url: `${process.env.NEXT_PUBLIC_SITE_URL}/public/${image}`,
+                width: 1200,
+                height: 630,
+                atl: meta?.meta_title || 'les 3 merveilles'
+            }],
         },
     }
 }
