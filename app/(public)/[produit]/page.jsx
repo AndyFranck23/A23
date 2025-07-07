@@ -13,6 +13,13 @@ export async function generateMetadata({ params, searchParams }) {
     const searchParam = await searchParams
     const currentPage = parseInt(searchParam.page) || 1
     const { produit } = await params
+    let image = ''
+    if (produit == 'technologie')
+        image = '/public/tech.png'
+    else if (produit == 'la-mode')
+        image == '/public/mode.png'
+    else if (produit == 'chocolats')
+        image == '/public/chocolat.png'
     const [meta] = await safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/produit?slug=${produit}&meta=hh`)
 
     return {
@@ -22,9 +29,9 @@ export async function generateMetadata({ params, searchParams }) {
         alternates: {
             canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/${produit}`,
         },
-        // openGraph: {
-        //     images: ['/og-chocolats.jpg'],
-        // },
+        openGraph: {
+            images: [image],
+        },
     }
 }
 
