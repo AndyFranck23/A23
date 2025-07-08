@@ -81,7 +81,7 @@ const ChocolatPage = ({ categoryInfo, chocolats, pagination, currentPage, produi
                             <div key={offre.id} className="bg-amber-700 p-6 rounded-lg shadow-md">
                                 <h3 className="text-2xl font-semibold mb-2 line-clamp-3">{offre.name}</h3>
                                 <p className="mb-4 line-clamp-3">{offre.description}</p>
-                                <span className="block text-2xl font-bold mb-4">{offre.price}</span>
+                                <span className="block text-2xl font-bold mb-4">{JSON.parse(offre.price)[0].prix} {offre.devise == 'USD' ? '$' : '€'}</span>
                                 <button className="bg-white text-amber-600 px-6 py-2 rounded-lg">
                                     Profiter de l'offre
                                 </button>
