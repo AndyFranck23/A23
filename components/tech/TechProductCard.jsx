@@ -151,13 +151,13 @@ export default function TechProductCard({ product }) {
                         {/* <span className="text-lg font-bold text-indigo-600">{price}</span> */}
                         <div>
                             <span className="text-2xl font-bold text-blue-600 dark:text-blue-400 mr-2">
-                                {product?.price}
+                                {JSON.parse(product?.price)[0] ? JSON.parse(product?.price)[0].prix : ''} {product?.devise == 'USD' ? '$' : '€'}
                             </span>
-                            {product?.originalPrice && (
+                            {/* {product?.originalPrice && (
                                 <span className="text-gray-600 line-through text-sm">
                                     {product?.originalPrice}
                                 </span>
-                            )}
+                            )} */}
                         </div>
                         <Link
                             href={`${process.env.NEXT_PUBLIC_SITE_URL}/${product.produit.slug}/${product.slug}`}

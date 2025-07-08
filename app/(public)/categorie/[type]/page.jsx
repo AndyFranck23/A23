@@ -12,6 +12,7 @@ export async function generateMetadata({ params, searchParams }) {
     const currentPage = parseInt(searchParam.page) || 1
     const { type } = await params
     const [data] = await safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/category?meta=sdfs&slug=${type}`)
+    const image = data ? JSON.parse(data?.offres[0].image) : ''
 
     return {
         title: data?.meta_title || 'Les 3 Merveilles',
@@ -20,9 +21,26 @@ export async function generateMetadata({ params, searchParams }) {
         alternates: {
             canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/categorie/${type}`,
         },
-        // openGraph: {
-        //     images: ['/og-chocolats.jpg'],
-        // },
+        openGraph: {
+            title: data?.meta_title || 'Les 3 Merveilles',
+            description: data?.meta_description || 'Découvrez notre sélection exclusive de chocolats, technologie et la mode d\'aujourd\'hui d\'affiliation de qualité',
+            url: `${process.env.NEXT_PUBLIC_SITE_URL}/categorie/${type}`,
+            // Fiche produit:	product
+            // Page catégorie:	website
+            // Page article (blog):	article
+            // Page d’accueil:	website
+            type: 'website',
+            siteName: 'Les 3 Merveilles',
+            images: [{
+                url: image[0] == undefined ? undefined : image[0],
+                width: 1200,
+                height: 630,
+                alt: data?.meta_title || 'les 3 merveilles'
+            }],
+            other: {
+                'fb:app_id': '978066750965088',
+            },
+        },
     };
 }
 

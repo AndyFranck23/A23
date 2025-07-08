@@ -25,19 +25,23 @@ export default function NewProductForm() {
         name: '',
         category: '',
         subcategory: '',
-        price: '',
-        originalPrice: '',
+        price: [],
+        devise: '',
         remise: '',
-        program: '',
+        remiseDate: '',
         image: [],
         description: '',
         poids: 0,
         features: '',
-        affiliateLink: '',
         status: false,
         content: '',
         meta_title: '',
         meta_description: ''
+    });
+    const [champTemporaire, setChampTemporaire] = useState({
+        partenaire: '',
+        prix: '',
+        lien: ''
     });
     const [message, setMessage] = useState('');
 
@@ -47,21 +51,35 @@ export default function NewProductForm() {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?id=${id}`)
                 const { offres } = await response.json()
                 const data = offres
+                let price = [];
+                try {
+                    const raw = data[0]?.price;
+
+                    if (typeof raw === "string") {
+                        const parsed = JSON.parse(raw);
+
+                        if (Array.isArray(parsed)) {
+                            price = parsed;
+                        }
+                    }
+                } catch (error) {
+                    // Ignorer toute erreur de parsing
+                    price = [];
+                }
                 setForm({
                     produit_id: data[0].produit_id,
                     category_id: data[0].category_id,
                     name: data[0].name,
                     category: data[0].produit.nom,
                     subcategory: data[0].categorie.nom,
-                    price: data[0].price,
-                    originalPrice: data[0].originalPrice,
+                    price: price,
+                    devise: data[0].devise,
                     remise: data[0].remise,
-                    program: data[0].program,
+                    remiseDate: data[0].remiseDate == null ? '' : data[0].remiseDate.split("T")[0],
                     image: data[0].image == "" ? [] : JSON.parse(data[0].image),
                     description: data[0].description,
                     poids: data[0].poids,
                     features: data[0].features,
-                    affiliateLink: data[0].affiliateLink,
                     status: data[0].status,
                     content: data[0]?.content ? JSON.parse(data[0].content) : data[0]?.content,
                     meta_title: data[0].meta_title,
@@ -88,6 +106,35 @@ export default function NewProductForm() {
         }
         fetchCategories()
     }, [])
+
+    const handleTempChange = (field, value) => {
+        setChampTemporaire(prev => ({
+            ...prev,
+            [field]: field === 'prix' ? parseFloat(value) || '' : value
+        }));
+    };
+
+    const ajouterDonnee = () => {
+        const { partenaire, prix, lien } = champTemporaire;
+        if (partenaire && prix && lien) {
+            setForm(prev => ({
+                ...prev,
+                price: [...prev.price, champTemporaire]
+            }));
+            setChampTemporaire({ partenaire: '', prix: '', lien: '' });
+        } else {
+            alert("Veuillez remplir les 3 champs avant d'ajouter.");
+        }
+    };
+
+    const modifierDonnee = (index, field, value) => {
+        const nouvellesDonnees = [...form.price];
+        nouvellesDonnees[index][field] = field === 'prix' ? parseFloat(value) || '' : value;
+        setForm(prev => ({
+            ...prev,
+            price: nouvellesDonnees
+        }));
+    };
 
     const handleImageChange = (type, value) => {
         if (type === 'url') {
@@ -123,7 +170,8 @@ export default function NewProductForm() {
                 key == 'image' ? (form[key].filter(ele => !ele.startsWith('blob:'))).forEach((file) => {
                     formData.append(key, file)
                 }) :
-                    formData.append(key, form[key]);
+                    key == 'price' ? formData.append(key, JSON.stringify(form[key])) :
+                        formData.append(key, form[key]);
             });
             if (imageFile) {
                 imageFile.forEach((file) => {
@@ -158,14 +206,14 @@ export default function NewProductForm() {
         <>
             <div className="w-full h-screen text-gray-700 dark:text-gray-200 dark:bg-gray-700">
                 <div className="max-w-4xl mx-auto p-4">
-                    <h1 className="text-2xl font-bold mb-4">Modification d'un offre</h1>
+                    <h1 className="text-2xl font-bold mb-4 text-indigo-600">Modification d'un produit</h1>
                     {message && <p className="mb-4 text-green-600">{message}</p>}
                     <form onSubmit={handleSubmit} encType='multipart/form-data' className="md:grid grid-cols-2 gap-3">
                         <div className="">
                             <MyInput
                                 name="name"
                                 required
-                                label={"Nom de l'offre"}
+                                label={"Nom du produit"}
                                 type="text"
                                 value={form.name}
                                 onChange={handleChange}
@@ -194,12 +242,14 @@ export default function NewProductForm() {
                                 >
                                     <option value="" className='hidden'>Sélection</option>
                                     {
+                                        type.length > 0 &&
                                         type?.map((item, index) =>
                                             <option key={index} value={item.nom} className='dark:bg-gray-600'>{item.nom}</option>
                                         )
                                     }
                                 </select>
                             </div>
+                            {/* Ajout de l'image */}
                             <div className="">
                                 <label className="block text-gray-700 font-medium mb-2 text-sm sm:text-md">
                                     Images (Multiple)
@@ -265,27 +315,19 @@ export default function NewProductForm() {
                                 {/* Prévisualisation des images */}
                                 {form.image.length > 0 && (
                                     <div className="mt-4">
-                                        <h4 className="text-sm font-medium mb-2">Images sélectionnées :</h4>
+                                        <h4 className="text-sm font-medium mb-2">Images sélectionnées:</h4>
                                         <div className="flex flex-wrap gap-2">
                                             {form.image.map((img, index) => (
                                                 <div key={index} className="relative group">
-                                                    <div className="relative w-20 h-20 overflow-hidden rounded border">
-                                                        <Image
-                                                            src={img}                             // URL du blob ou remote
-                                                            alt={`Preview ${index}`}
-                                                            fill                                  // pour remplir le conteneur :contentReference[oaicite:0]{index=0}
-                                                            sizes="80px"                          // conseillé pour éviter CLS :contentReference[oaicite:1]{index=1}
-                                                            style={{ objectFit: 'cover' }}       // remplace className object-cover :contentReference[oaicite:2]{index=2}
-                                                            priority                              // optionnel : charger en priorité
-                                                        />
-                                                    </div>
-
-                                                    {/* 2. Bouton de suppression */}
+                                                    <img
+                                                        src={img}
+                                                        alt={`Preview ${index}`}
+                                                        className="h-20 w-20 object-cover rounded border"
+                                                    />
                                                     <button
                                                         type="button"
                                                         onClick={() => removeImage(img)}
-                                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                    >
+                                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                                         ×
                                                     </button>
                                                 </div>
@@ -294,11 +336,49 @@ export default function NewProductForm() {
                                     </div>
                                 )}
                             </div>
+                            {/* Fin image */}
                             <div className='mt-2'>
                                 <label className="block">Description</label>
                                 <textarea
                                     name="description"
                                     value={form.description}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full h-[115px] p-2 border focus:ring-1 focus:ring-blue-500 outline-none dark:bg-transparent dark:border-gray-600"
+                                ></textarea>
+                            </div>
+                        </div>
+                        <div className="">
+                            <MyInput
+                                name="poids"
+                                required
+                                label={"Poids"}
+                                type="text"
+                                value={form.poids}
+                                onChange={handleChange}
+                            />
+                            <MyInput
+                                name="remise"
+                                label={"Remise (%)"}
+                                type="number"
+                                value={form.remise}
+                                onChange={handleChange}
+                            />
+                            {
+                                form.remise &&
+                                <MyInput
+                                    name="remiseDate"
+                                    label={"Date fin du remise"}
+                                    type="date"
+                                    value={form.remiseDate}
+                                    onChange={handleChange}
+                                />
+                            }
+                            <div className='mt-2'>
+                                <label className="block">Caractéristiques (séparées par des virgules)</label>
+                                <textarea
+                                    name="features"
+                                    value={form.features}
                                     onChange={handleChange}
                                     required
                                     className="w-full h-[115px] p-2 border focus:ring-1 focus:ring-blue-500 outline-none dark:bg-transparent dark:border-gray-600"
@@ -311,62 +391,6 @@ export default function NewProductForm() {
                                 value={form.meta_title}
                                 onChange={handleChange}
                             />
-                        </div>
-                        <div className="">
-                            <MyInput
-                                name="poids"
-                                required
-                                label={"Poids"}
-                                type="text"
-                                value={form.poids}
-                                onChange={handleChange}
-                            />
-                            <MyInput
-                                name="price"
-                                required
-                                label={"Prix"}
-                                type="text"
-                                value={form.price}
-                                onChange={handleChange}
-                            />
-                            <MyInput
-                                name="originalPrice"
-                                label={"Prix original"}
-                                type="text"
-                                value={form.originalPrice}
-                                onChange={handleChange}
-                            />
-                            <MyInput
-                                name="remise"
-                                label={"Remise (%)"}
-                                type="number"
-                                value={form.remise}
-                                onChange={handleChange}
-                            />
-                            <MyInput
-                                name="program"
-                                label={"Programme"}
-                                type="text"
-                                value={form.program}
-                                onChange={handleChange}
-                            />
-                            <div className='mt-2'>
-                                <label className="block">Caractéristiques (séparées par des virgules)</label>
-                                <textarea
-                                    name="features"
-                                    value={form.features}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full h-[115px] p-2 border focus:ring-1 focus:ring-blue-500 outline-none dark:bg-transparent dark:border-gray-600"
-                                ></textarea>
-                            </div>
-                            <MyInput
-                                name="affiliateLink"
-                                label={"Lien affilié"}
-                                type="text"
-                                value={form.affiliateLink}
-                                onChange={handleChange}
-                            />
                             <MyInput
                                 name="meta_description"
                                 label={"Meta Déscription"}
@@ -374,6 +398,101 @@ export default function NewProductForm() {
                                 value={form.meta_description}
                                 onChange={handleChange}
                             />
+                        </div>
+
+                        {/* Champs des prix */}
+                        <div className="p-2 w-full space-y-6 border-2 border-gray-700 dark:border-gray-400 md:col-span-2 mt-5">
+
+                            {/* Champs d’ajout */}
+                            <div className="md:grid grid-cols-2 gap-2 text-gray-700 dark:text-gray-200">
+                                <div className="space-y-2 p-3 rounded bg-gray-100 dark:bg-gray-700 ">
+                                    <h2 className="text-2xl font-bold">Ajout et modification des prix</h2>
+                                    <MyInput
+                                        type="text"
+                                        placeholder="Partenaire"
+                                        value={champTemporaire.partenaire}
+                                        onChange={(e) => handleTempChange('partenaire', e.target.value)}
+                                    />
+                                    <MyInput
+                                        type="number"
+                                        placeholder="Prix"
+                                        step="0.01"
+                                        value={champTemporaire.prix}
+                                        onChange={(e) => handleTempChange('prix', e.target.value)}
+                                    />
+                                    <MyInput
+                                        type="text"
+                                        placeholder="Lien"
+                                        value={champTemporaire.lien}
+                                        onChange={(e) => handleTempChange('lien', e.target.value)}
+                                    />
+
+                                    <button
+                                        type='button'
+                                        onClick={ajouterDonnee}
+                                        className="bg-indigo-600 text-white px-4 py-2 rounded w-full"
+                                    >
+                                        Ajouter
+                                    </button>
+                                </div>
+
+                                {/* Affichage stylisé des données */}
+                                <div className="space-y-4 overflow-y-auto h-[290px] p-2">
+                                    <h3 className="text-lg font-semibold">Prix, partenaire et lien affilié enregistré</h3>
+                                    {form.price.length === 0 ? (
+                                        <p className="text-gray-500">Aucune offre ajoutée pour le moment.</p>
+                                    ) : (
+                                        form.price.map((item, index) => (
+                                            <div key={index} className="border rounded p-2 bg-transparent shadow space-y-1 text-gray-700 dark:text-gray-200">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-medium">Partenaire :</span>
+                                                    <input
+                                                        type="text"
+                                                        value={item.partenaire}
+                                                        onChange={(e) => modifierDonnee(index, 'partenaire', e.target.value)}
+                                                        className="border-b border-gray-300 focus:outline-none focus:border-indigo-500"
+                                                    />
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-medium">Prix :</span>
+                                                    <input
+                                                        type="number"
+                                                        step={0.01}
+                                                        value={item.prix}
+                                                        onChange={(e) => modifierDonnee(index, 'prix', e.target.value)}
+                                                        className="border-b border-gray-300 focus:outline-none focus:border-indigo-500"
+                                                    />
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-medium">Lien :</span>
+                                                    <input
+                                                        type="text"
+                                                        value={item.lien}
+                                                        onChange={(e) => modifierDonnee(index, 'lien', e.target.value)}
+                                                        className="border-b border-gray-300 focus:outline-none focus:border-indigo-500"
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-full max-w-sm">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Sélectionnez une devise (Unité monétaire)
+                            </label>
+                            <select
+                                name='devise'
+                                value={form.devise}
+                                required
+                                onChange={(e) => handleChange(e)}
+                                className="block w-full rounded-lg border border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            >
+                                <option value="" className='hidden'>-- Choisir une devise --</option>
+                                <option value="EUR">Euro (€)</option>
+                                <option value="USD">Dollar ($)</option>
+                            </select>
                         </div>
                         <div className="col-span-2">
                             <Editor
@@ -396,13 +515,11 @@ export default function NewProductForm() {
                                     ],
                                     toolbar:
                                         "undo redo | formatselect | bold italic | forecolor backcolor emoticons | \
-                                                alignleft aligncenter alignright alignjustify | \
-                                                bullist numlist outdent indent | removeformat | help | \
-                                                link image media | codesample emoticons | print fullscreen preview | \
-                                                ",
-                                    images_upload_url: `/api/uploads`,
-                                    document_base_url: process.env.NEXT_PUBLIC_SITE_URL,
-                                    relative_urls: false,
+                                                                alignleft aligncenter alignright alignjustify | \
+                                                                bullist numlist outdent indent | removeformat | help | \
+                                                                link image media | codesample emoticons | print fullscreen preview | \
+                                                                ",
+                                    images_upload_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/uploads`,
                                     automatic_uploads: true,
                                     file_picker_types: "image media",
                                     file_picker_callback: handleImageBrowser,
@@ -430,7 +547,7 @@ export default function NewProductForm() {
                                 className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 col-span-2"
                             >
                                 {
-                                    load ? "Enregistrement en cours ..." : "Modifier le produit"
+                                    load ? "Enregistrement en cours ..." : "Enregistrer le produit"
                                 }
                             </button>
                             {
@@ -465,7 +582,7 @@ export default function NewProductForm() {
                             <div className="mb-5 flex items-center justify-center">
                                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                             </div>
-                            <h2 className="text-2xl font-bold dark:text-white">Enregistrement en cours ...</h2>
+                            <h2 className="text-2xl font-bold dark:text-white">Modification en cours ...</h2>
                         </div>
                     </div>
                 )

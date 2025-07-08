@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Offre" ADD COLUMN     "remiseDate" TIMESTAMP(3),
+ALTER COLUMN "price" SET DATA TYPE TEXT;

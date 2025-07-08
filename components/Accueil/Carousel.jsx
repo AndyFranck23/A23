@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { isValidImage, scrollToSection } from '../composants';
 import Image from 'next/image';
+import { ChevronDownIcon } from '@heroicons/react/24/solid';
 
 export default function Carousel({ slides }) {
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -19,12 +20,12 @@ export default function Carousel({ slides }) {
     const goToSlide = (index) => setCurrentSlide(index);
 
     // Changement automatique toutes les 5 secondes
-    useEffect(() => {
-        const timer = setInterval(() => {
-            nextSlide();
-        }, 5000);
-        return () => clearInterval(timer);
-    }, [currentSlide]);
+    // useEffect(() => {
+    //     const timer = setInterval(() => {
+    //         nextSlide();
+    //     }, 5000);
+    //     return () => clearInterval(timer);
+    // }, [currentSlide]);
 
     return (
         <>
@@ -76,7 +77,7 @@ export default function Carousel({ slides }) {
 
             </div>
             {/* Indicateurs de navigation */}
-            <div className="flex w-full items-center p-1 mt-4 space-x-5">
+            <div className="flex w-full items-center p-1 mt-4 space-x-5 overflow-x-auto">
                 {slides?.map((slide, index) => (
                     <button
                         onClick={() => goToSlide(index)}
@@ -102,11 +103,12 @@ export default function Carousel({ slides }) {
                     </button>
                 ))}
             </div>
-            <button onClick={() => scrollToSection("caractéristique")}
-                className='w-full text-white text-lg shadow-lg font-bold bg-black p-2 rounded-full mt-5 hover:bg-white hover:border-2 hover:border-black hover:text-black transition-all duration-400'>
-                Caractéristique Clé
-            </button>
-
+            <div className="flex w-full justify-center">
+                <button onClick={() => scrollToSection("caractéristique")}
+                    className='w-md flex items-center justify-center text-white text-lg shadow-lg font-bold bg-indigo-800 p-2 rounded-full mt-5 hover:bg-white hover:border-2 hover:border-black hover:text-black transition-all duration-400'>
+                    Voir toutes les caractéristiques <ChevronDownIcon className='ml-5 w-5 h-5 font-bold' />
+                </button>
+            </div>
         </>
     );
 }

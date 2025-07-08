@@ -60,13 +60,13 @@ export default function ProductCard({ product }) {
                 <div className="mt-auto space-y-2 pt-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            {product.originalPrice && (
+                            {/* {product.originalPrice && (
                                 <span className="text-gray-600 line-through text-sm">
                                     {product.originalPrice}
                                 </span>
-                            )}
+                            )} */}
                             <span className="text-2xl font-bold text-green-600 dark:text-green-400">
-                                {product.price}
+                                {JSON.parse(product.price)[0].prix} {product.devise == 'USD' ? '$' : '€'}
                             </span>
                         </div>
                         <div className="text-xl text-amber-600 font-bold">

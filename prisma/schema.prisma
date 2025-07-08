@@ -49,15 +49,14 @@ model Offre {
   category_id      Int?
   name             String    @default("") @db.VarChar(255)
   slug             String    @default("") @db.VarChar(255)
-  price            String    @default("") @db.VarChar(50)
-  originalPrice    String    @default("") @db.VarChar(50)
+  price            String    @default("")
+  devise           String    @default("") @db.VarChar(10)
   remise           String    @default("") @db.VarChar(50)
-  program          String    @default("") @db.VarChar(100)
+  remiseDate       DateTime?
   image            String    @default("")
   description      String    @default("")
   poids            String    @default("") @db.VarChar(50)
   features         String    @default("")
-  affiliateLink    String    @default("")
   status           Boolean
   content          String?   @default("")
   created_at       DateTime  @default(now())

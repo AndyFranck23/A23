@@ -24,24 +24,57 @@ export default function NewProductForm() {
         name: '',
         category: '',
         subcategory: '',
-        price: '',
-        originalPrice: '',
+        price: [],
+        devise: '',
         remise: '',
-        program: '',
+        remiseDate: '',
         image: [],
         description: '',
         poids: 0,
         features: '',
-        affiliateLink: '',
         status: false,
         meta_title: '',
         meta_description: ''
+    });
+    const [champTemporaire, setChampTemporaire] = useState({
+        partenaire: '',
+        prix: '',
+        lien: ''
     });
     const [message, setMessage] = useState('');
 
     useEffect(() => {
         fetchCategories()
     }, [])
+
+    const handleTempChange = (field, value) => {
+        setChampTemporaire(prev => ({
+            ...prev,
+            [field]: field === 'prix' ? parseFloat(value) || '' : value
+        }));
+    };
+
+    const ajouterDonnee = () => {
+        const { partenaire, prix, lien } = champTemporaire;
+        if (partenaire && prix && lien) {
+            setForm(prev => ({
+                ...prev,
+                price: [...prev.price, champTemporaire]
+            }));
+            setChampTemporaire({ partenaire: '', prix: '', lien: '' });
+        } else {
+            alert("Veuillez remplir les 3 champs avant d'ajouter.");
+        }
+    };
+
+    const modifierDonnee = (index, field, value) => {
+        const nouvellesDonnees = [...form.price];
+        nouvellesDonnees[index][field] = field === 'prix' ? parseFloat(value) || '' : value;
+        setForm(prev => ({
+            ...prev,
+            price: nouvellesDonnees
+        }));
+    };
 
     const fetchCategories = async () => {
         try {
@@ -92,7 +125,8 @@ export default function NewProductForm() {
                 key == 'image' ? (form[key].filter(ele => !ele.startsWith('blob:'))).forEach((file) => {
                     formData.append(key, file)
                 }) :
-                    formData.append(key, form[key]);
+                    key == 'price' ? formData.append(key, JSON.stringify(form[key])) :
+                        formData.append(key, form[key]);
             });
             if (imageFile) {
                 imageFile.forEach((file) => {
@@ -113,14 +147,13 @@ export default function NewProductForm() {
                 name: '',
                 subcategory: '',
                 price: '',
-                originalPrice: '',
+                devise: '',
                 remise: '',
-                program: '',
+                remiseDate: '',
                 image: [],
                 description: '',
                 poids: 0,
                 features: '',
-                affiliateLink: '',
                 status: false,
                 meta_title: '',
                 meta_description: ''
@@ -146,7 +179,7 @@ export default function NewProductForm() {
         <>
             <div className="w-full h-screen text-gray-700 dark:text-gray-200 dark:bg-gray-700">
                 <div className="max-w-4xl mx-auto p-4">
-                    <h1 className="text-2xl font-bold mb-4">Ajouter un nouveau produit</h1>
+                    <h1 className="text-2xl font-bold mb-4 text-indigo-600">Ajouter un nouveau produit</h1>
                     {message && <p className="mb-4 text-green-600">{message}</p>}
                     <form onSubmit={handleSubmit} encType='multipart/form-data' className="md:grid grid-cols-2 gap-3">
                         <div className="">
@@ -287,13 +320,6 @@ export default function NewProductForm() {
                                     className="w-full h-[115px] p-2 border focus:ring-1 focus:ring-blue-500 outline-none dark:bg-transparent dark:border-gray-600"
                                 ></textarea>
                             </div>
-                            <MyInput
-                                name="meta_title"
-                                label={"Meta Title"}
-                                type="text"
-                                value={form.meta_title}
-                                onChange={handleChange}
-                            />
                         </div>
                         <div className="">
                             <MyInput
@@ -305,34 +331,22 @@ export default function NewProductForm() {
                                 onChange={handleChange}
                             />
                             <MyInput
-                                name="price"
-                                required
-                                label={"Prix"}
-                                type="text"
-                                value={form.price}
-                                onChange={handleChange}
-                            />
-                            <MyInput
-                                name="originalPrice"
-                                label={"Prix original"}
-                                type="text"
-                                value={form.originalPrice}
-                                onChange={handleChange}
-                            />
-                            <MyInput
                                 name="remise"
                                 label={"Remise (%)"}
                                 type="number"
                                 value={form.remise}
                                 onChange={handleChange}
                             />
-                            <MyInput
-                                name="program"
-                                label={"Programme"}
-                                type="text"
-                                value={form.program}
-                                onChange={handleChange}
-                            />
+                            {
+                                form.remise &&
+                                <MyInput
+                                    name="remiseDate"
+                                    label={"Date fin du remise"}
+                                    type="date"
+                                    value={form.remiseDate}
+                                    onChange={handleChange}
+                                />
+                            }
                             <div className='mt-2'>
                                 <label className="block">Caractéristiques (séparées par des virgules)</label>
                                 <textarea
@@ -344,10 +358,10 @@ export default function NewProductForm() {
                                 ></textarea>
                             </div>
                             <MyInput
-                                name="affiliateLink"
-                                label={"Lien affilié"}
+                                name="meta_title"
+                                label={"Meta Title"}
                                 type="text"
-                                value={form.affiliateLink}
+                                value={form.meta_title}
                                 onChange={handleChange}
                             />
                             <MyInput
@@ -357,6 +371,99 @@ export default function NewProductForm() {
                                 value={form.meta_description}
                                 onChange={handleChange}
                             />
+                        </div>
+
+                        {/* Champs des prix */}
+                        <div className="p-2 w-full space-y-6 border-2 border-gray-700 dark:border-gray-400 md:col-span-2 mt-5">
+
+                            {/* Champs d’ajout */}
+                            <div className="md:grid grid-cols-2 gap-2 text-gray-700 dark:text-gray-200">
+                                <div className="space-y-2 p-3 rounded bg-gray-100 dark:bg-gray-700 ">
+                                    <h2 className="text-2xl font-bold">Ajout et modification des prix</h2>
+                                    <MyInput
+                                        type="text"
+                                        placeholder="Partenaire"
+                                        value={champTemporaire.partenaire}
+                                        onChange={(e) => handleTempChange('partenaire', e.target.value)}
+                                    />
+                                    <MyInput
+                                        type="number"
+                                        placeholder="Prix"
+                                        value={champTemporaire.prix}
+                                        onChange={(e) => handleTempChange('prix', e.target.value)}
+                                    />
+                                    <MyInput
+                                        type="text"
+                                        placeholder="Lien"
+                                        value={champTemporaire.lien}
+                                        onChange={(e) => handleTempChange('lien', e.target.value)}
+                                    />
+
+                                    <button
+                                        type='button'
+                                        onClick={ajouterDonnee}
+                                        className="bg-indigo-600 text-white px-4 py-2 rounded w-full"
+                                    >
+                                        Ajouter
+                                    </button>
+                                </div>
+
+                                {/* Affichage stylisé des données */}
+                                <div className="space-y-4 overflow-y-auto h-[290px] p-2">
+                                    <h3 className="text-lg font-semibold">Prix, partenaire et lien affilié enregistré</h3>
+                                    {form.price.length === 0 ? (
+                                        <p className="text-gray-500">Aucune offre ajoutée pour le moment.</p>
+                                    ) : (
+                                        form.price.map((item, index) => (
+                                            <div key={index} className="border rounded p-2 bg-transparent shadow space-y-1 text-gray-700 dark:text-gray-200">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-medium">Partenaire :</span>
+                                                    <input
+                                                        type="text"
+                                                        value={item.partenaire}
+                                                        onChange={(e) => modifierDonnee(index, 'partenaire', e.target.value)}
+                                                        className="border-b border-gray-300 focus:outline-none focus:border-indigo-500"
+                                                    />
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-medium">Prix :</span>
+                                                    <input
+                                                        type="number"
+                                                        value={item.prix}
+                                                        onChange={(e) => modifierDonnee(index, 'prix', e.target.value)}
+                                                        className="border-b border-gray-300 focus:outline-none focus:border-indigo-500"
+                                                    />
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-medium">Lien :</span>
+                                                    <input
+                                                        type="text"
+                                                        value={item.lien}
+                                                        onChange={(e) => modifierDonnee(index, 'lien', e.target.value)}
+                                                        className="border-b border-gray-300 focus:outline-none focus:border-indigo-500"
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-full max-w-sm">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Sélectionnez une devise (Unité monétaire)
+                            </label>
+                            <select
+                                name='devise'
+                                value={form.devise}
+                                required
+                                onChange={(e) => handleChange(e)}
+                                className="block w-full rounded-lg border border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            >
+                                <option value="" className='hidden'>-- Choisir une devise --</option>
+                                <option value="EUR">Euro (€)</option>
+                                <option value="USD">Dollar ($)</option>
+                            </select>
                         </div>
                         <div className="col-span-2">
                             <Editor

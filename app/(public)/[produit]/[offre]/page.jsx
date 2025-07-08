@@ -1,12 +1,14 @@
 import Carousel from "@/components/Accueil/Carousel";
 import Alternative from "@/components/Chocolat/Alternative";
 import { safeFetch } from "@/components/composants";
+import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }) {
     const { offre, produit } = await params
     const { offres } = await safeFetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/offres?meta=df&slug=${offre}`)
+    const image = offres[0] ? JSON.parse(offres[0]?.image) : ''
 
     return {
         title: offres[0]?.meta_title || 'Chocolats Premium - Notre Sélection',
@@ -15,9 +17,26 @@ export async function generateMetadata({ params }) {
         alternates: {
             canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/${produit}/${offre}`,
         },
-        // openGraph: {
-        //     images: ['/og-chocolats.jpg'],
-        // },
+        openGraph: {
+            title: offres[0]?.meta_title || 'Les 3 Merveilles',
+            description: offres[0]?.meta_description || 'Découvrez notre sélection exclusive de chocolats, technologie et la mode d\'aujourd\'hui d\'affiliation de qualité',
+            url: `${process.env.NEXT_PUBLIC_SITE_URL}/${produit}/${offre}`,
+            // Fiche produit:	product (non supporter avec l'App router)
+            // Page catégorie:	website
+            // Page article (blog):	article
+            // Page d’accueil:	website
+            type: 'article',
+            siteName: 'Les 3 Merveilles',
+            images: [{
+                url: image[0] == undefined ? undefined : image[0],
+                width: 1200,
+                height: 630,
+                alt: offres[0]?.meta_title || 'les 3 merveilles'
+            }],
+            other: {
+                'fb:app_id': '978066750965088',
+            },
+        },
     };
 }
 
@@ -29,6 +48,25 @@ export default async function page({ params }) {
         features: item.features.split('|').map(f => f.trim()),
         image: item.image == "" ? [] : JSON.parse(item.image)
     }))
+    let price = [];
+    try {
+        const raw = chocolats[0]?.price;
+
+        if (typeof raw === "string") {
+            const parsed = JSON.parse(raw);
+
+            if (Array.isArray(parsed)) {
+                price = parsed;
+            }
+        }
+    } catch (error) {
+        // Ignorer toute erreur de parsing
+        price = [];
+    }
+
+    function capitalizeFirstLetter(text) {
+        return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+    }
 
     const jsonLd = {
         "@context": "https://schema.org",
@@ -43,28 +81,39 @@ export default async function page({ params }) {
         }
     };
 
+    const testPrix = [{ partenaire: "Amazon", prix: 800, lien: '#' }, { partenaire: "huawei", prix: 700, lien: '#' }, { partenaire: "Allibaba", prix: 900, lien: '#' }]
+    // Récupérer les prix seulement
+    const prixArray = testPrix.map(item => item.prix);
+
+    // Trouver le minimum et le maximum
+    const prixMin = Math.min(...prixArray);
+    const prixMax = Math.max(...prixArray);
+
     return (
         <>
-            {/* <script
+            <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-            /> */}
+            />
             <main className="min-h-screen bg-white dark:bg-gray-900">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-12">
                     {/* Header avec image et prix */}
-                    <div className="lg:grid lg:grid-cols-2 lg:gap-16">
+                    <div className="md:grid md:grid-cols-2 md:gap-16">
                         {/* Galerie images */}
-                        <div className="mb-8 lg:mb-0">
+                        <div className="mb-8 md:mb-0">
                             <div className="aspect-w-1 aspect-h-1 overflow-hidden">
                                 <Carousel slides={chocolats[0]?.image} />
                             </div>
                         </div>
 
                         {/* Détails produit */}
-                        <div className="lg:py-8">
-                            <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-200 mb-4">
+                        <div className="md:py-8">
+                            <h1 className="text-4xl text-center font-bold text-indigo-600 mb-5">
                                 {chocolats[0]?.name || ''}
                             </h1>
+                            <div className="w-full flex justify-center mb-4">
+                                <div className="w-[50px] h-2 bg-gradient-to-r from-indigo-600 to-[#2E6B5E] rounded-4xl"></div>
+                            </div>
 
                             {/* <div className="flex items-center gap-2 mb-6">
                                 <span className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm font-medium">
@@ -74,88 +123,90 @@ export default async function page({ params }) {
                                     Équitable
                                 </span>
                             </div> */}
+                            {produit == "chocolats" &&
+                                <h2 className="text-xl text-amber-600 font-bold mb-5">
+                                    {chocolats[0]?.poids} g
+                                </h2>
+                            }
 
                             <div className="flex justify-between">
-                                <h2 className="text-4xl font-bold text-blue-500 mb-4">
-                                    {chocolats[0]?.price || ''}
-                                    <span className="ml-3 text-gray-500 dark:text-gray-200 text-lg line-through">{chocolats[0]?.originalPrice || ''} </span>
-                                </h2>
-                                {produit == "chocolats" &&
-                                    <h2 className="text-xl text-amber-600 font-bold mb-5">
-                                        {chocolats[0]?.poids} g
-                                    </h2>
+                                {
+                                    Array.isArray(price) &&
+                                    <div className="w-full space-y-3 my-2">
+                                        {price.map((item, index) =>
+                                            <div className="hover:bg-gray-200 dark:hover:bg-gray-700 duration-100 w-full text-lg font-semibold flex justify-between items-center h-[50px] px-4 bg-gray-100 dark:bg-gray-800 rounded-4xl" key={index}>
+                                                <p className="text-gray-800 dark:text-gray-200">
+                                                    {item.partenaire}
+                                                </p>
+                                                <a href={
+                                                    typeof chocolats[0]?.affiliateLink === "string" &&
+                                                        (chocolats[0]?.affiliateLink.startsWith("http://") || chocolats[0]?.affiliateLink.startsWith("https://"))
+                                                        ? chocolats[0]?.affiliateLink
+                                                        : '#'
+                                                }
+                                                    className={`text-white rounded-4xl w-[120px] px-4 p-1 flex items-center justify-between font-medium transition-colors duration-200 ${produit == "chocolats" ? 'bg-amber-600 hover:bg-amber-700' : 'bg-tech'}`}
+                                                    target="_blank"
+                                                    rel="nofollow noopener">
+                                                    <ShoppingCartIcon className='w-7 h-7' /> {item.prix} {chocolats[0].devise == 'USD' ? '$' : '€'}
+                                                </a>
+                                            </div>
+                                        )}
+                                    </div>
                                 }
+
                             </div>
-
-                            <a
-                                href={
-                                    typeof chocolats[0]?.affiliateLink === "string" &&
-                                        (chocolats[0]?.affiliateLink.startsWith("http://") || chocolats[0]?.affiliateLink.startsWith("https://"))
-                                        ? chocolats[0]?.affiliateLink
-                                        : '#'
-                                }
-                                className={`inline-block w-full text-2xl font-bold ${produit == "chocolats" ? 'bg-amber-600 hover:bg-amber-700' : 'bg-tech hover:bg-blue-600'} text-white text-center py-4 px-8 rounded-lg font-medium transition-colors duration-200`}
-                                target="_blank"
-                                rel="nofollow noopener"
-                            >
-                                Acheter ⇨
-                                {/* Prix: {chocolats[0]?.price || ''} */}
-                            </a>
-                            {/* Description détaillée */}
-                            <section className="mt-16 max-w-3xl mx-auto">
-                                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6">Description du produit</h2>
-                                <div className="prose text-gray-600 dark:text-gray-400">
-                                    <p>
-                                        {/* Découvrez notre chocolat noir d'exception élaboré par des maîtres chocolatiers.
-                                Avec ses 90% de cacao pur origine Pérou, cette tablette offre une expérience
-                                sensorielle unique caractérisée par : */}
-                                        {chocolats[0]?.description || ''}
-                                    </p>
-                                    {/* <ul>
-                                <li>Une amertume équilibrée et des notes fruitées</li>
-                                <li>Une texture onctueuse et cassante à la fois</li>
-                                <li>Un processus de fermentation naturel de 7 jours</li>
-                                <li>Un emballage 100% recyclable</li>
-                            </ul> */}
-                                </div>
-                            </section>
-
                         </div>
                     </div>
 
                 </div>
 
                 <div className="">
+                    {/* Description détaillée */}
+                    <section className="my-5 max-w-3xl mx-auto px-10">
+                        <h2 className="md:text-4xl text-3xl text-center font-bold text-indigo-600 mb-6">Description</h2>
+                        <div className="prose text-gray-600 dark:text-gray-400">
+                            <p>
+                                {/* Découvrez notre chocolat noir d'exception élaboré par des maîtres chocolatiers.
+                                Avec ses 90% de cacao pur origine Pérou, cette tablette offre une expérience
+                                sensorielle unique caractérisée par : */}
+                                {chocolats[0]?.description || ''}
+                            </p>
+                            {/* <ul>
+                                <li>Une amertume équilibrée et des notes fruitées</li>
+                                <li>Une texture onctueuse et cassante à la fois</li>
+                                <li>Un processus de fermentation naturel de 7 jours</li>
+                                <li>Un emballage 100% recyclable</li>
+                            </ul> */}
+                        </div>
+                    </section>
                     {chocolats[0]?.content ? (
                         <section className='bg-gray-100 dark:bg-gray-900 dark:text-gray-200 p-5 w-full flex justify-center'>
-                            <div className="overflow-x-auto lg:w-[800px]">
+                            <div className="overflow-x-auto md:w-[800px]">
                                 <div className="no-tailwind" dangerouslySetInnerHTML={{ __html: JSON.parse(chocolats[0].content) }} />
                             </div>
                         </section>
-                    ) : (
-                        <p></p>
-                    )}
+                    ) : ''}
 
                     {/* Caractéristiques rapides */}
-                    <div id="caractéristique" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mt-8 border-t border-gray-200 lg:w-[800px]">
-                        <h2 className="text-4xl font-bold text-blue-500 mb-4">Les caractéristiques</h2>
-                        <h3 className="text-xl font-semibold text-blue-800 mb-4 line-clamp-1">{chocolats[0]?.name}</h3>
+                    <div id="caractéristique" className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-12 mt-8 border-t border-gray-200 md:w-[800px]">
+                        <h2 className="md:text-4xl text-3xl font-bold text-indigo-600 text-center mb-4">Les caractéristiques</h2>
+                        <h3 className="text-xl font-semibold text-blue-800 mb-4 text-center line-clamp-1">{chocolats[0]?.name}</h3>
                         <div className="w-full">
                             {chocolats[0]?.features.map((value, index) => {
                                 const [titre, text] = value.split("=");
                                 const elements = !text ? titre.split(',').map(f => f.trim()) : text.split(',').map(f => f.trim())
                                 return (
                                     <div className="" key={index}>
-                                        {!text ? '' : <h3 className="text-xl font-semibold text-red-400 my-4">{titre}</h3>}
+                                        {!text ? '' : <h3 className="text-md md:text-lg font-bold text-red-400 my-4">{titre.toUpperCase()}</h3>}
                                         {elements?.map((test, i) => {
                                             const [label, element] = test.split(":");
                                             return (
-                                                <div key={i} className={`${i % 2 == 0 ? 'bg-gray-100 dark:bg-gray-800' : ''} grid grid-cols-2 p-4 px-10`}>
-                                                    <span className="font-semibold text-xl text-gray-800 dark:text-gray-200">{label}</span>
+                                                <div key={i} className={`${i % 2 == 0 ? 'bg-gray-100 dark:bg-gray-800' : ''} grid grid-cols-2 p-4 px-5`}>
+                                                    <span className="font-semibold text-lg text-gray-700 dark:text-gray-200 w-35 md:w-full overflow-x-auto">{capitalizeFirstLetter(label)}</span>
                                                     {/* <svg className="w-4 h-4 mr-1 mt-0.5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" />
                                     </svg> */}
-                                                    <span className="flex-1 text-gray-600 dark:text-gray-400 text-lg">{element}</span>
+                                                    <span className="flex-1 text-gray-600 dark:text-gray-400 text-md">{element}</span>
                                                 </div>
                                             )
                                         })}
@@ -231,7 +282,7 @@ export default async function page({ params }) {
                     }
 
                     {/* Disclosure */}
-                    <p className="mt-12 text-center text-sm text-gray-500 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <p className="mt-12 text-center text-sm text-gray-500 max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-12">
                         *En tant que Partenaire {chocolats[0]?.program}, je réalise un bénéfice sur les achats remplissant les conditions requises.
                     </p>
                 </div>

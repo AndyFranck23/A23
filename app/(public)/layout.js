@@ -13,6 +13,26 @@ export const metadata = {
   alternates: {
     canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/`,
   },
+  openGraph: {
+    title: 'Les 3 Merveilles',
+    description: 'Découvrez notre sélection exclusive de chocolats, technologie et la mode d\'aujourd\'hui d\'affiliation de qualité',
+    url: `${process.env.NEXT_PUBLIC_SITE_URL}/`,
+    // Fiche produit:	product
+    // Page catégorie:	website
+    // Page article (blog):	article
+    // Page d’accueil:	website
+    type: 'website',
+    siteName: 'Les 3 Merveilles',
+    images: [{
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/logo.png`,
+      width: 1200,
+      height: 630,
+      alt: 'les 3 merveilles'
+    }],
+    other: {
+      'fb:app_id': '978066750965088',
+    },
+  },
 };
 
 export default async function RootLayout({ children }) {
@@ -27,7 +47,6 @@ export default async function RootLayout({ children }) {
     <html lang="fr" suppressHydrationWarning>
       <head>
         <meta name="google-site-verification" content="Se1vDnap2z_kfKlGSWxpmWTH56WFkIaVTr2w5ecKVSQ" />
-        <link href="../globals.css" rel="stylesheet" />
       </head>
       <body>          {/*  className={inter.className} */}
         <Header produits={produit} category={categories} />

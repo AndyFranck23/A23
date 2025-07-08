@@ -49,7 +49,12 @@ export async function GET(request) {
             let where = !isNaN(Number(produit_id)) ? { produit_id: JSON.parse(produit_id) } : { produit: { slug: produit_id } }
             sql = {
                 where,
-                include: { produit: { select: { slug: true, nom: true, description: true } } },
+                select: {
+                    id: true,
+                    nom: true,
+                    slug: true,
+                    produit: { select: { slug: true, nom: true, description: true } }
+                }
             }
         }
         if (id) {
@@ -68,8 +73,15 @@ export async function GET(request) {
                 select: {
                     status: true,
                     meta_title: true,
-                    meta_description: true
-                }
+                    meta_description: true,
+                    offres: {
+                        take: 1,
+                        orderBy: {
+                            created_at: 'asc',
+                        },
+                        select: { image: true }
+                    },
+                },
             } : {
                 where: { slug: slug },
                 include: { produit: { select: { slug: true, nom: true } } }

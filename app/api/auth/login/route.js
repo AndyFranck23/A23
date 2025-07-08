@@ -17,7 +17,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request) {
     try {
-        const session = 5; // temps de session en heure
+        const session = 24; // temps de session en heure
         const { email, password } = await request.json();
 
         // Récupération utilisateur

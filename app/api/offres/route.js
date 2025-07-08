@@ -141,6 +141,7 @@ export async function GET(request) {
                     meta_description: true,
                     produit: { select: { nom: true, slug: true } },
                     // categorie: { select: { nom: true, slug: true } }
+                    image: true
                 } : undefined,
                 include: meta ? undefined : {
                     produit: { select: { nom: true, slug: true } },
@@ -254,11 +255,15 @@ export async function POST(request) {
                     .getPublicUrl(filePath)
                 imagePublicPath.push(url.publicUrl);
             }
-            // console.log(imagePublicPath)
         }
         image.forEach(element => {
             imagePublicPath.push(element)
         });
+
+        let date = null
+        if (form.remise && form.remiseDate) {
+            date = new Date(form.remiseDate)
+        }
 
         await prisma.offre.create({
             data: {
@@ -267,14 +272,13 @@ export async function POST(request) {
                 name: form.name,
                 slug: slugify(form.name),
                 price: form.price,
-                originalPrice: form.originalPrice,
+                devise: form.devise,
                 remise: form.remise,
-                program: form.program,
+                remiseDate: date,
                 image: JSON.stringify(imagePublicPath),
                 description: form.description,
                 poids: form.poids,
                 features: form.features,
-                affiliateLink: form.affiliateLink,
                 status: JSON.parse(form.status),
                 content: form.content,
                 meta_title: form.meta_title,
@@ -321,6 +325,10 @@ export async function PUT(request) {
         }
 
         const allImages = [...image, ...imagePublicPath]
+        let date = null
+        if (form.remise && form.remiseDate) {
+            date = new Date(form.remiseDate)
+        }
 
         await prisma.offre.update({
             where: { id: id },
@@ -330,14 +338,13 @@ export async function PUT(request) {
                 name: form.name,
                 slug: slugify(form.name),
                 price: form.price,
-                originalPrice: form.originalPrice,
+                devise: form.devise,
                 remise: form.remise,
-                program: form.program,
+                remiseDate: date,
                 image: JSON.stringify(allImages),
                 description: form.description,
                 poids: form.poids,
                 features: form.features,
-                affiliateLink: form.affiliateLink,
                 status: JSON.parse(form.status),
                 content: form.content,
                 meta_title: form.meta_title,

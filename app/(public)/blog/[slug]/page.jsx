@@ -14,9 +14,26 @@ export async function generateMetadata({ params }) {
         alternates: {
             canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${slug}`,
         },
-        // openGraph: {
-        //     images: ['/og-chocolats.jpg'],
-        // },
+        openGraph: {
+            title: article?.meta_title || 'Les 3 Merveilles',
+            description: article?.meta_description || 'Découvrez notre sélection exclusive de chocolats, technologie et la mode d\'aujourd\'hui d\'affiliation de qualité',
+            url: `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${slug}`,
+            // Fiche produit:	product
+            // Page catégorie:	website
+            // Page article (blog):	article
+            // Page d’accueil:	website
+            type: 'article',
+            siteName: 'Les 3 Merveilles',
+            images: [{
+                url: article?.image,
+                width: 1200,
+                height: 630,
+                alt: article?.meta_title || 'les 3 merveilles'
+            }],
+            other: {
+                'fb:app_id': '978066750965088',
+            },
+        },
     };
 }
 

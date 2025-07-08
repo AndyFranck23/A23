@@ -44,7 +44,7 @@ export default async function Alternative({ type, produit }) {
 
             {/* Section Alternatives */}
             <section className="mt-10 py-5">
-                <h2 className="text-4xl font-bold text-blue-500 pb-10 text-center">
+                <h2 className="md:text-4xl text-3xl font-bold text-indigo-600 pb-10 text-center">
                     Alternatives populaires
                 </h2>
                 <div className=" flex justify-center w-full">
