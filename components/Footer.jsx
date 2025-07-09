@@ -63,7 +63,7 @@ export default async function Footer({ produits }) {
                             <h4 className="font-semibold mb-4">Contact</h4>
                             <a href='mailto:andyrakotoarimanitra@gmail.com' className="text-gray-400">contact@les3merveilles.com</a>
                             <div className="flex space-x-6 mt-4 text-xl">
-                                <a href="https://web.facebook.com/profile.php?id=61577903498285" target="_blank" className="hover:text-blue-400"><i className="fa-brands fa-facebook"></i> </a>
+                                <a href="https://web.facebook.com/profile.php?id=61577903498285" target="_blank" className="hover:text-blue-400" aria-label="Page Facebook"><i className="fa-brands fa-facebook"></i> </a>
                                 <a href="#" target="_blank" className="hover:text-blue-400"><i className="fa-brands fa-instagram"></i> </a>
                                 <a href="#" target="_blank" className="hover:text-blue-400"><i className="fa-brands fa-linkedin"></i> </a>
                             </div>
