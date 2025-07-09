@@ -14,7 +14,7 @@ export default function ProductCard({ product }) {
             <div className="relative">
                 <div className="w-full h-48 rounded-t-xl ">
                     <Image
-                        src={isValidImage(product.image[0]) ? product.image[0] : '/agentIA.png'}
+                        src={isValidImage(product?.image[0]) ? product?.image[0] : '/agentIA.png'}
                         alt={'image'}
                         className='object-contain'
                         fill
@@ -22,19 +22,19 @@ export default function ProductCard({ product }) {
                     // unoptimized={false}
                     />
                 </div>
-                {product.remise && (
+                {product?.remise && (
                     <div className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 rounded-full text-sm">
-                        -{product.remise}%
+                        -{product?.remise}%
                     </div>
                 )}
             </div>
 
             <div className="p-4 flex flex-col flex-grow">
-                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100 line-clamp-2">{product.name}</h3>
+                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100 line-clamp-2">{product?.name}</h3>
 
                 {/* Description */}
                 <p className="text-gray-700 dark:text-gray-300 text-sm mb-4 line-clamp-3">
-                    {product.description}
+                    {product?.description}
                 </p>
 
                 {/* Caractéristiques */}
@@ -66,11 +66,11 @@ export default function ProductCard({ product }) {
                                 </span>
                             )} */}
                             <span className="text-2xl font-bold text-green-600 dark:text-green-400">
-                                {JSON.parse(product.price)[0].prix} {product.devise == 'USD' ? '$' : '€'}
+                                {JSON.parse(product?.price)[0].prix} {product?.devise == 'USD' ? '$' : '€'}
                             </span>
                         </div>
                         <div className="text-xl text-amber-600 font-bold">
-                            {product.poids} g
+                            {product?.poids} g
                         </div>
                         {/* <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full dark:bg-blue-900 dark:text-blue-200">
                             Comm. {product.commission}
@@ -78,7 +78,7 @@ export default function ProductCard({ product }) {
                     </div>
 
                     <Link
-                        href={`${process.env.NEXT_PUBLIC_SITE_URL}/${product.produit.slug}/${product.slug}`}
+                        href={`${process.env.NEXT_PUBLIC_SITE_URL}/${product?.produit.slug}/${product?.slug}`}
                         className="
     block w-full text-center px-4 py-2 rounded-lg
     bg-green-700 text-white hover:bg-green-800

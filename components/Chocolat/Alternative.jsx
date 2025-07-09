@@ -39,7 +39,7 @@ export default async function Alternative({ type, produit }) {
     ];
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 mx-auto">
+        <main className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 mx-auto mb-10">
             {/* ... (le reste du code précédent reste identique jusqu'à la section FAQ) */}
 
             {/* Section Alternatives */}

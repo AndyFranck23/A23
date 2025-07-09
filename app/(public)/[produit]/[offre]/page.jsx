@@ -1,6 +1,8 @@
 import Carousel from "@/components/Accueil/Carousel";
 import Alternative from "@/components/Chocolat/Alternative";
 import { safeFetch } from "@/components/composants";
+import Features from "@/components/Features";
+import Prices from "@/components/Prices";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 
 export const dynamic = 'force-dynamic';
@@ -64,30 +66,67 @@ export default async function page({ params }) {
         price = [];
     }
 
-    function capitalizeFirstLetter(text) {
-        return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-    }
-
-    const jsonLd = {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        "name": chocolats[0]?.name,
-        "image": chocolats[0]?.image[0],
-        "description": chocolats[0]?.description,
-        "offers": {
-            "@type": "Offer",
-            "price": chocolats[0]?.price,
-            "priceCurrency": "EUR"
-        }
-    };
-
-    const testPrix = [{ partenaire: "Amazon", prix: 800, lien: '#' }, { partenaire: "huawei", prix: 700, lien: '#' }, { partenaire: "Allibaba", prix: 900, lien: '#' }]
-    // Récupérer les prix seulement
-    const prixArray = testPrix.map(item => item.prix);
+    const prixArray = Array.isArray(price) ? price.map(item => item.prix) : []
 
     // Trouver le minimum et le maximum
     const prixMin = Math.min(...prixArray);
     const prixMax = Math.max(...prixArray);
+
+    // const aggregateRating = {
+    //     "@type": "AggregateRating",
+    //     "ratingValue": "4.5", // nombre d'étoiles
+    //     "reviewCount": "10" // nombre d'avis
+    // };
+
+    // const review = [
+    //     {
+    //         "@type": "Review",
+    //         "author": {
+    //             "@type": "Person",
+    //             "name": "Alice"
+    //         },
+    //         "datePublished": "2024-06-01",
+    //         "reviewBody": "Très bon produit.",
+    //         "reviewRating": {
+    //             "@type": "Rating",
+    //             "ratingValue": "5", // nombre d'étoiles
+    //             "bestRating": "5"  // meilleur avis
+    //         }
+    //     }
+    // ];
+
+    const offers =
+        price.length === 1
+            ? {
+                "@type": "Offer",
+                "price": price[0].prix,
+                "priceCurrency": chocolats[0]?.devise,
+                "availability": "https://schema.org/InStock",
+                "url": `${process.env.NEXT_PUBLIC_SITE_URL}/${chocolats[0]?.produit.slug}/${chocolats[0]?.slug}`
+            }
+            : {
+                "@type": "AggregateOffer",
+                "lowPrice": prixMin,
+                "highPrice": prixMax,
+                "priceCurrency": chocolats[0]?.devise,
+                "availability": "https://schema.org/InStock",
+                "url": `${process.env.NEXT_PUBLIC_SITE_URL}/${chocolats[0]?.produit.slug}/${chocolats[0]?.slug}`
+            };
+
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": chocolats[0]?.name || '',
+        "image": chocolats[0]?.image || [],
+        "description": chocolats[0]?.meta_description || '',
+        "brand": {
+            "@type": "Brand",
+            "name": "Les 3 Merveilles"
+        },
+        "offers": offers
+    };
+
+
 
     return (
         <>
@@ -96,7 +135,7 @@ export default async function page({ params }) {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <main className="min-h-screen bg-white dark:bg-gray-900">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-12">
+                <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-12">
                     {/* Header avec image et prix */}
                     <div className="md:grid md:grid-cols-2 md:gap-16">
                         {/* Galerie images */}
@@ -128,164 +167,122 @@ export default async function page({ params }) {
                                     {chocolats[0]?.poids} g
                                 </h2>
                             }
-
-                            <div className="flex justify-between">
-                                {
-                                    Array.isArray(price) &&
-                                    <div className="w-full space-y-3 my-2">
-                                        {price.map((item, index) =>
-                                            <div className="hover:bg-gray-200 dark:hover:bg-gray-700 duration-100 w-full text-lg font-semibold flex justify-between items-center h-[50px] px-4 bg-gray-100 dark:bg-gray-800 rounded-4xl" key={index}>
-                                                <p className="text-gray-800 dark:text-gray-200">
-                                                    {item.partenaire}
-                                                </p>
-                                                <a href={
-                                                    typeof chocolats[0]?.affiliateLink === "string" &&
-                                                        (chocolats[0]?.affiliateLink.startsWith("http://") || chocolats[0]?.affiliateLink.startsWith("https://"))
-                                                        ? chocolats[0]?.affiliateLink
-                                                        : '#'
-                                                }
-                                                    className={`text-white rounded-4xl w-[120px] px-4 p-1 flex items-center justify-between font-medium transition-colors duration-200 ${produit == "chocolats" ? 'bg-amber-600 hover:bg-amber-700' : 'bg-tech'}`}
-                                                    target="_blank"
-                                                    rel="nofollow noopener">
-                                                    <ShoppingCartIcon className='w-7 h-7' /> {item.prix} {chocolats[0].devise == 'USD' ? '$' : '€'}
-                                                </a>
-                                            </div>
-                                        )}
-                                    </div>
-                                }
-
-                            </div>
+                            <Prices price={price} chocolats={chocolats[0]} produit={produit} />
                         </div>
                     </div>
 
                 </div>
 
-                <div className="">
-                    {/* Description détaillée */}
-                    <section className="my-5 max-w-3xl mx-auto px-10">
-                        <h2 className="md:text-4xl text-3xl text-center font-bold text-indigo-600 mb-6">Description</h2>
-                        <div className="prose text-gray-600 dark:text-gray-400">
-                            <p>
-                                {/* Découvrez notre chocolat noir d'exception élaboré par des maîtres chocolatiers.
+                <div className="w-full flex justify-center">
+                    <div className="max-w-3xl px-4 sm:px-6 md:px-8">
+                        {/* Description détaillée */}
+                        <section className="my-5 mx-auto">
+                            <h2 className="md:text-4xl text-3xl text-center font-bold text-indigo-600 mb-6">Description</h2>
+                            <div className="prose text-gray-600 dark:text-gray-400">
+                                <p>
+                                    {/* Découvrez notre chocolat noir d'exception élaboré par des maîtres chocolatiers.
                                 Avec ses 90% de cacao pur origine Pérou, cette tablette offre une expérience
                                 sensorielle unique caractérisée par : */}
-                                {chocolats[0]?.description || ''}
-                            </p>
-                            {/* <ul>
+                                    {chocolats[0]?.description || ''}
+                                </p>
+                                {/* <ul>
                                 <li>Une amertume équilibrée et des notes fruitées</li>
                                 <li>Une texture onctueuse et cassante à la fois</li>
                                 <li>Un processus de fermentation naturel de 7 jours</li>
                                 <li>Un emballage 100% recyclable</li>
                             </ul> */}
-                        </div>
-                    </section>
-                    {chocolats[0]?.content ? (
-                        <section className='bg-gray-100 dark:bg-gray-900 dark:text-gray-200 p-5 w-full flex justify-center'>
-                            <div className="overflow-x-auto md:w-[800px]">
-                                <div className="no-tailwind" dangerouslySetInnerHTML={{ __html: JSON.parse(chocolats[0].content) }} />
                             </div>
                         </section>
-                    ) : ''}
+                        {chocolats[0]?.content ?
+                            <section className=' dark:text-gray-200 p-5 flex justify-center'>
+                                <div className="overflow-x-auto">
+                                    <div className="no-tailwind" dangerouslySetInnerHTML={{ __html: JSON.parse(chocolats[0].content) }} />
+                                </div>
+                            </section>
+                            : ''}
 
-                    {/* Caractéristiques rapides */}
-                    <div id="caractéristique" className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-12 mt-8 border-t border-gray-200 md:w-[800px]">
-                        <h2 className="md:text-4xl text-3xl font-bold text-indigo-600 text-center mb-4">Les caractéristiques</h2>
-                        <h3 className="text-xl font-semibold text-blue-800 mb-4 text-center line-clamp-1">{chocolats[0]?.name}</h3>
-                        <div className="w-full">
-                            {chocolats[0]?.features.map((value, index) => {
-                                const [titre, text] = value.split("=");
-                                const elements = !text ? titre.split(',').map(f => f.trim()) : text.split(',').map(f => f.trim())
-                                return (
-                                    <div className="" key={index}>
-                                        {!text ? '' : <h3 className="text-md md:text-lg font-bold text-red-400 my-4">{titre.toUpperCase()}</h3>}
-                                        {elements?.map((test, i) => {
-                                            const [label, element] = test.split(":");
-                                            return (
-                                                <div key={i} className={`${i % 2 == 0 ? 'bg-gray-100 dark:bg-gray-800' : ''} grid grid-cols-2 p-4 px-5`}>
-                                                    <span className="font-semibold text-lg text-gray-700 dark:text-gray-200 w-35 md:w-full overflow-x-auto">{capitalizeFirstLetter(label)}</span>
-                                                    {/* <svg className="w-4 h-4 mr-1 mt-0.5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" />
-                                    </svg> */}
-                                                    <span className="flex-1 text-gray-600 dark:text-gray-400 text-md">{element}</span>
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
-                                )
-                            })}
+                        <Features chocolats={chocolats[0]} />
+                        <div className="font-bold text-md md:text-lg text-center mb-5">
+                            <h3 className="text-indigo-600">
+                                {chocolats[0]?.name || ''} <span className="text-gray-700 dark:text-gray-200">au meilleur prix</span>
+                            </h3>
+                        </div>
+                        <div className="w-full flex justify-center mb-10">
+                            <div className="w-[50px] h-2 bg-gradient-to-r from-indigo-600 to-[#2E6B5E] rounded-4xl"></div>
+                        </div>
+                        <Prices price={price} chocolats={chocolats[0]} produit={produit} />
+
+                    </div>
+                </div>
+                <Alternative type={chocolats[0]?.categorie.slug} produit={produit} />
+
+                {/* Section avantages */}
+                {produit == 'chocolats' &&
+                    <div className="mt-16 bg-amber-50 dark:bg-gray-700 rounded-2xl py-8 sm:p-12">
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-8 text-center">
+                            Pourquoi choisir ce chocolat ?
+                        </h2>
+                        <div className="grid md:grid-cols-3 gap-8">
+                            {[
+                                {
+                                    icon: '🌱',
+                                    title: 'Agriculture durable',
+                                    text: 'Cultivé sans pesticides dans le respect des écosystèmes'
+                                },
+                                {
+                                    icon: '👩🌾',
+                                    title: 'Commerce équitable',
+                                    text: 'Rémunération juste pour les producteurs locaux'
+                                },
+                                {
+                                    icon: '🍫',
+                                    title: 'Qualité premium',
+                                    text: 'Process de fabrication artisanal et contrôlé'
+                                },
+                            ].map((benefit, index) => (
+                                <div key={index} className="text-center">
+                                    <div className="text-4xl mb-4">{benefit.icon}</div>
+                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 mb-2">{benefit.title}</h3>
+                                    <p className="text-gray-600 dark:text-gray-400">{benefit.text}</p>
+                                </div>
+                            ))}
                         </div>
                     </div>
+                }
 
-                    <Alternative type={chocolats[0]?.categorie.slug} produit={produit} />
-
-                    {/* Section avantages */}
-                    {produit == 'chocolats' &&
-                        <div className="px-4 mt-16 bg-amber-50 dark:bg-gray-700 rounded-2xl p-8 sm:p-12">
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-8 text-center">
-                                Pourquoi choisir ce chocolat ?
-                            </h2>
-                            <div className="grid md:grid-cols-3 gap-8">
-                                {[
-                                    {
-                                        icon: '🌱',
-                                        title: 'Agriculture durable',
-                                        text: 'Cultivé sans pesticides dans le respect des écosystèmes'
-                                    },
-                                    {
-                                        icon: '👩🌾',
-                                        title: 'Commerce équitable',
-                                        text: 'Rémunération juste pour les producteurs locaux'
-                                    },
-                                    {
-                                        icon: '🍫',
-                                        title: 'Qualité premium',
-                                        text: 'Process de fabrication artisanal et contrôlé'
-                                    },
-                                ].map((benefit, index) => (
-                                    <div key={index} className="text-center">
-                                        <div className="text-4xl mb-4">{benefit.icon}</div>
-                                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 mb-2">{benefit.title}</h3>
-                                        <p className="text-gray-600 dark:text-gray-400">{benefit.text}</p>
-                                    </div>
-                                ))}
-                            </div>
+                {/* Section FAQ */}
+                {produit == 'chocolats' &&
+                    <div className="px-4 mt-16 max-w-3xl mx-auto mb-10">
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6">Questions fréquentes</h2>
+                        <div className="space-y-4">
+                            {[
+                                {
+                                    question: 'Quelle différence avec un chocolat classique ?',
+                                    answer: 'Notre chocolat utilise uniquement des fèves de criollo...'
+                                },
+                                {
+                                    question: 'Livraison disponible où ?',
+                                    answer: 'Livraison en Europe sous 3-5 jours ouvrés'
+                                },
+                            ].map((faq, index) => (
+                                <div key={index} className="border rounded-lg p-4 dark:text-gray-200">
+                                    <details className="group">
+                                        <summary className="flex justify-between items-center font-medium cursor-pointer">
+                                            <span>{faq.question}</span>
+                                            <span className="transition group-open:rotate-180">▼</span>
+                                        </summary>
+                                        <p className="mt-3 text-gray-600 dark:text-gray-400">{faq.answer}</p>
+                                    </details>
+                                </div>
+                            ))}
                         </div>
-                    }
+                    </div>
+                }
 
-                    {/* Section FAQ */}
-                    {produit == 'chocolats' &&
-                        <div className="px-4 mt-16 max-w-3xl mx-auto">
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6">Questions fréquentes</h2>
-                            <div className="space-y-4">
-                                {[
-                                    {
-                                        question: 'Quelle différence avec un chocolat classique ?',
-                                        answer: 'Notre chocolat utilise uniquement des fèves de criollo...'
-                                    },
-                                    {
-                                        question: 'Livraison disponible où ?',
-                                        answer: 'Livraison en Europe sous 3-5 jours ouvrés'
-                                    },
-                                ].map((faq, index) => (
-                                    <div key={index} className="border rounded-lg p-4 dark:text-gray-200">
-                                        <details className="group">
-                                            <summary className="flex justify-between items-center font-medium cursor-pointer">
-                                                <span>{faq.question}</span>
-                                                <span className="transition group-open:rotate-180">▼</span>
-                                            </summary>
-                                            <p className="mt-3 text-gray-600 dark:text-gray-400">{faq.answer}</p>
-                                        </details>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    }
-
-                    {/* Disclosure */}
-                    <p className="mt-12 text-center text-sm text-gray-500 max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-12">
-                        *En tant que Partenaire {chocolats[0]?.program}, je réalise un bénéfice sur les achats remplissant les conditions requises.
-                    </p>
-                </div>
+                {/* Disclosure */}
+                {/* <p className="mt-12 text-center text-sm text-gray-500 max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-12">
+                    *En tant que Partenaire {chocolats[0]?.program}, je réalise un bénéfice sur les achats remplissant les conditions requises.
+                </p> */}
             </main>
         </>
     )
