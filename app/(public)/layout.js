@@ -46,6 +46,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
+        <meta name="fo-verify" content="29a3564a-e004-4cb9-a966-1022b81d6079" />
         <meta name="google-site-verification" content="Se1vDnap2z_kfKlGSWxpmWTH56WFkIaVTr2w5ecKVSQ" />
       </head>
       <body>          {/*  className={inter.className} */}
